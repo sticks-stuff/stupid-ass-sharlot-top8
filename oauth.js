@@ -5,8 +5,9 @@ const CLIENT_SECRET = "8e1a8efc0d81a30239b408c60ebed4c9d06391060c380ced2c30ac528
 
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get('code');
+const accessToken = urlParams.get('access_token');
 
-if(!code) {
+if(!code && !accessToken) {
 	window.location.href = `https://start.gg/oauth/authorize?response_type=code&client_id=${CLIENT_ID}&scope=${scopes}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`; 
 }
 
@@ -22,15 +23,13 @@ const headers = {
 	'Content-Type': 'application/json',
 };
 
-var accessToken;
-
-if(code) {
+if(code && !accessToken) {
 	fetch('https://corsproxy.io/?https://api.start.gg/oauth/access_token', { 
 		method: 'POST',
 		body: JSON.stringify(data),
 		headers: headers
 	}).then(res => res.json()).then(json => {
-		accessToken = json.access_token;
+		window.location.href = `http://127.0.0.1:5500?access_token=${json.access_token}`; 
 		run();
 	}).catch(e => {
 		console.log(e);

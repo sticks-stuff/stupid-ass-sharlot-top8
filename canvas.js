@@ -37,44 +37,78 @@ ctx.rect(0, 0, SIZE[0], SIZE[1]);
 ctx.fillStyle = 'limegreen';
 ctx.fill();
 
-function run() {
-	eventData("tournament/p-neke-popoff-56-illuminating-dullbulb-s-secrets/event/ultimate-singles").then(data => {
-		console.log(data);
-	
-		var images = [];
-	
-		for (let i = 0; i < 8; i++) {
-			const player = data.players[i];
-			const mainChar = Object.keys(player.chars)[0];
-	
-			images[i] = new Image();
-			images[i].src = `assets/ssbu/murals/${mainChar.replace(" ", "_")}-3.png`;
-	
-			if(mainChar in STUPID_OFFSETS) {
-				if(i == 7) {
-					images[i].onload = () => {
-						drawImageProp(ctx, images[i], POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], STUPID_OFFSETS[mainChar][0], STUPID_OFFSETS[mainChar][1]); 
-						finish();
-					};
-				} else {
-					images[i].onload = () => drawImageProp(ctx, images[i], POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], STUPID_OFFSETS[mainChar][0], STUPID_OFFSETS[mainChar][1]);
-				}
-			} else {
-				if(i == 7) {
-					images[i].onload = () => {
-						drawImageProp(ctx, images[i], POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0.5, 0); 
-						finish();
-					};
-				} else {
-					images[i].onload = () => drawImageProp(ctx, images[i], POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0.5, 0);
-				}
-			}
-		}
-	})
-}
 
-function finish() {
-	var base_image = new Image();
-	base_image.src = 'assets/marco.png';
-	base_image.onload = () => ctx.drawImage(base_image, 0, 0);
+eventData("tournament/p-neke-popoff-56-illuminating-dullbulb-s-secrets/event/ultimate-singles").then(data => {
+	console.log(data);
+
+	var images = [];
+
+	for (let i = 0; i < 8; i++) {
+
+		const player = data.players[i];
+		const mainChar = Object.keys(player.chars)[0];
+
+		var image = new Image();
+		image.src = `assets/ssbu/murals/${mainChar.replace(" ", "_")}-3.png`;
+
+		var offsetX = 0.5;
+		var offsetY = 0.5;
+
+		if(mainChar in STUPID_OFFSETS) {
+			offsetX = STUPID_OFFSETS[mainChar][0];
+			offsetY = STUPID_OFFSETS[mainChar][1];
+		}
+
+		if(i == 7) {
+			image.onload = (e) => {
+				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY); 
+				secondaries(data);
+			};
+		} else {
+			image.onload = (e) => drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY);
+		}
+	}
+})
+
+
+function secondaries(data) {
+	for (let i = 0; i < 8; i++) {
+
+		const player = data.players[i];
+		var char_offset = 0;
+
+		for (let j = 1; j < Object.keys(player.chars).length; j++) {
+			const element = Object.keys(player.chars)[j];
+			const currentI = i;
+			const current_char_offset = char_offset;
+			image = new Image();
+			image.src = `assets/ssbu/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
+
+			image.onload = (e) => {
+				var size;
+				var right_margin;
+				var iconSize = 32;
+
+				if (currentI == 0) {
+					size = BIG
+				} else if (currentI < 4) {
+					size = MED
+				} else {
+					size = SMA
+				}
+
+				if(size == BIG) {
+					right_margin = 14;
+					iconSize = 64;
+				} else if (size == MED) {
+					right_margin = 8;
+				} else {
+					right_margin = 6;
+				}
+				drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + current_char_offset * (iconSize + 4) + right_margin, iconSize, iconSize)
+				console.log(element, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + current_char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
+			};
+			char_offset++;
+		}
+	}
 }
