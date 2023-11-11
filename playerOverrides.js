@@ -2,7 +2,7 @@ const PLAYER_OVERRIDES = {
     "ss23": {
         twitter: "ss2342",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Byleth": 2,
                 "Donkey Kong": 2
             }
@@ -11,7 +11,7 @@ const PLAYER_OVERRIDES = {
     "miss GayManWatch": {
         twitter: "stick_twt",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Steve": 5,
                 "Pac-Man": 7
             },
@@ -29,8 +29,10 @@ const PLAYER_OVERRIDES = {
     "AlastairBL": {
         twitter: "AlastairBL_",
         characters: {
-            ssbu: {
-                "Sora": 1
+            ultimate: {
+                "Sora": 1,
+                "Cloud": 1,
+                "Joker": 1
             },
             melee: {
                 "Marth": 1
@@ -43,7 +45,7 @@ const PLAYER_OVERRIDES = {
     "Big Red": {
         twitter: "Red_NZFGC",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Fox": 4,
                 "Pichu": 5,
                 "Wolf": 6
@@ -52,7 +54,7 @@ const PLAYER_OVERRIDES = {
     },
     "BoBert": {
         characters: {
-            ssbu: {
+            ultimate: {
                 "Falco": 2,
                 "Terry": 7
             },
@@ -66,26 +68,32 @@ const PLAYER_OVERRIDES = {
         }
     },
     "dingdongkid": {
-        twitter: "dingdongkid"
+        twitter: "dingdongkid",
+        characters: {
+            melee: {
+                "Donkey Kong": 3
+            }
+        }
     },
     "Dull_Bulb": {
         twitter: "DullBulbGaming",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Incineroar": 6,
                 "Jigglypuff": 1,
                 "Wario": 2,
                 "Kirby": 6,
                 "Ganondorf": 2,
                 "Roy": 5,
-                "Samus": 3
+                "Samus": 3,
+                "Yoshi": 5
             }
         }
     },
     "IcyK": {
         twitter: "IcyKeswick",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Bowser": 4
             },
             melee: {
@@ -99,7 +107,7 @@ const PLAYER_OVERRIDES = {
     "LooseGoose": {
         twitter: "goose_loose69",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Ike": 6
             }
         }
@@ -107,7 +115,7 @@ const PLAYER_OVERRIDES = {
     "LunaFrost": {
         twitter: "SpaceGlaceon",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Kazuya": 3,
                 "Wolf": 7
             }
@@ -118,14 +126,14 @@ const PLAYER_OVERRIDES = {
     },
     "Secret Asian": {
         characters: {
-            ssbu: {
+            ultimate: {
                 "Cloud": 1
             }
         }
     },
     "Smithereen": {
         characters: {
-            ssbu: {
+            ultimate: {
                 "Lucas": 1,
                 "Steve": 2,
                 "Kirby": 6
@@ -134,7 +142,7 @@ const PLAYER_OVERRIDES = {
     },
     "TapJumper": {
         characters: {
-            ssbu: {
+            ultimate: {
                 "Fox": 1
             }
         }
@@ -142,7 +150,7 @@ const PLAYER_OVERRIDES = {
     "Unladen": {
         twitter: "UnladenSwellow",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Daisy": 3
             },
             melee: {
@@ -170,13 +178,90 @@ const PLAYER_OVERRIDES = {
     "Zingar": {
         twitter: "Zingar_NZ",
         characters: {
-            ssbu: {
+            ultimate: {
                 "Snake": 1,
                 "Pac-Man": 1
             },
             melee: {
                 "Falco": 1
+            }
+        }
+    },
+    "Phases": {
+        characters: {
+            ultimate: {
+                "Ness": 7
+            }
+        }
+    },
+    "Strike": {
+        twitter: "Strik3r14"
+    },
+    "BenDaBanana": {
+        characters: {
+            ultimate: {
+                "Roy": 1
+            }
+        }
+    },
+    "Kanra": {
+        characters: {
+            ultimate: {
+                "Zero Suit Samus": 2
+            }
+        }
+    },
+    "Entry": {
+        characters: {
+            ultimate: {
+                "Diddy Kong": 3
+            }
+        }
+    },
+    "Phinn": {
+        twitter: "Phinn_SSB"
+    },
+    "Taurii": {
+        characters: {
+            ultimate: {
+                "Rosalina & Luma": 6
             },
+            melee: {
+                "Peach": 3,
+                "Jigglypuff": 2,
+                "Samus": 2
+            },
+            pplus: {
+                "Zelda": 2
+            }
+        }
+    },
+    "Avarich": {
+        twitter: "Avarich95",
+        characters: {
+            melee: {
+                "Captain Falcon": 4
+            }
+        }
+    },
+    "Eggus": {
+        twitter: "EggusTime"
+    },
+    "The Doll Room.": {
+        twitter: "jvne_m",
+        characters: {
+            pplus: {
+                "Captain Falcon": 15
+            }
+        }
+    },
+    "fidel cashflow": {
+        twitter: "rowaok",
+        characters: {
+            melee: {
+                "Fox": 1,
+                "Sheik": 4
+            }
         }
     }
 }

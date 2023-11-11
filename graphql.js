@@ -9,6 +9,7 @@ query SetsQuery($slug: String) {
 	  startAt
 	  videogame {
 		id
+		name
 		displayName
 	  }
 	  tournament { name city slug shortSlug}
@@ -147,18 +148,8 @@ async function eventData(slug) {
     }
 
     const event = eventData["event"];
-    var game = event["videogame"]["displayName"];
-
-	switch (game) {
-		case "Ultimate":
-			game = "Super Smash Bros. Ultimate"
-			break;
-		case "Melee":
-			game = "Super Smash Bros. Melee"
-			break;
-		default:
-			break;
-	}
+    var displayGame = event["videogame"]["name"];
+    var game = event["videogame"]["displayName"].toLowerCase();
 
     const btext = [];
     if (event["startAt"]) {
@@ -172,7 +163,7 @@ async function eventData(slug) {
     btext.push(event["numEntrants"] + " Participants");
     const btextResult = btext.join(" - ");
 
-    const ttext = event["tournament"]["name"].split(" - ")[0] + " - " + game;
+    const ttext = event["tournament"]["name"].split(" - ")[0] + " - " + displayGame;
 
     const link = event["tournament"]["shortSlug"] ? `https://start.gg/${event["tournament"]["shortSlug"]}` : `start.gg/${event["tournament"]["slug"]}`;
 
@@ -181,7 +172,7 @@ async function eventData(slug) {
         "toptext": ttext,
         "bottomtext": btextResult,
         "url": link,
-        "game": game,
+        "game": game
     };
 
     return finalData;

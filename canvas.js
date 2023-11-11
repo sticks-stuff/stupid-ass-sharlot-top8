@@ -28,23 +28,26 @@ const STUPID_OFFSETS = {
 	Byleth: [0.5, 0.25]
 }
 
+const PRIMARY_COLOR = "#682f77"
+const SECONDARY_COLOR = "#ff3d8b"
+
 var canvas = document.getElementById('canvas');
 canvas.width = SIZE[0];
 canvas.height = SIZE[1];
 var ctx = canvas.getContext('2d');
 
-ctx.beginPath();
-ctx.rect(0, 0, SIZE[0], SIZE[1]);
-ctx.fillStyle = 'limegreen';
-ctx.fill();
+// ctx.beginPath();
+// ctx.rect(0, 0, SIZE[0], SIZE[1]);
+// ctx.fillStyle = 'black';
+// ctx.fill();
 
-let f = new FontFace("DFGothic-SU", "url('assets/fonts/DFGothic-SU-WIN-RKSJ-H.woff2')");
+// let f = new FontFace("DFGothic-SU", "url('assets/fonts/DFGothic-SU-WIN-RKSJ-H.woff2')");
 
-f.load().then(function(font) {
-	document.fonts.add(font);
-	ctx.font = "135px DFGothic-SU";
-	ctx.fillText("1", 62, 279);
-})
+// f.load().then(function(font) {
+// 	document.fonts.add(font);
+// 	ctx.font = "135px DFGothic-SU";
+// 	ctx.fillText("1", 62, 279);
+// })
 
 
 // function drawTextToFit(context, text, maxWidth, maxHeight) {
@@ -80,32 +83,56 @@ f.load().then(function(font) {
 //   const optimalFontSize = drawTextToFit(ctx, '7', 1233 - 1179, 498 - 444);
 //   console.log(`Optimal Font Size: ${optimalFontSize}`);
 
+// overlay();
+
 
 eventData("tournament/p-neke-popoff-56-illuminating-dullbulb-s-secrets/event/ultimate-singles").then(data => {
 	console.log(data);
+	var base_image = new Image();
+	base_image.src = 'assets/pop_background.png';
+	base_image.onload = () => {
+		drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
+		ctx.beginPath();
+		ctx.rect(0, 0, SIZE[0], SIZE[1]);
+		ctx.fillStyle = '#0000004D'; //darken
+		ctx.fill();
 
-	for (let i = 0; i < 8; i++) {
+		for (let i = 0; i < 8; i++) {
+	
+			const player = data.players[i];
+			const mainChar = player.chars[0][0];
+	
+			var image = new Image();
+			var tag = player.tag;
+			if(player.tag.includes(" | ")) {
+				tag = player.tag.split(" | ")[1];
+			}
 
-		const player = data.players[i];
-		const mainChar = player.chars[0][0];
-
-		var image = new Image();
-		image.src = `assets/ssbu/murals/${mainChar.replace(" ", "_")}-3.png`;
-
-		var offsetX = 0.5;
-		var offsetY = 0.5;
-
-		if(mainChar in STUPID_OFFSETS) {
-			offsetX = STUPID_OFFSETS[mainChar][0];
-			offsetY = STUPID_OFFSETS[mainChar][1];
+			if(data["game"] == "ultimate") {
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar] + 1}.png`;
+				} else {
+					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_")}-1.png`;
+				}
+			}
+	
+			var offsetX = 0.5;
+			var offsetY = 0.5;
+	
+			if(mainChar in STUPID_OFFSETS) {
+				offsetX = STUPID_OFFSETS[mainChar][0];
+				offsetY = STUPID_OFFSETS[mainChar][1];
+			}
+	
+			image.onload = i == 7 ? (e) => {
+				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY); 
+				secondaries(data);
+			} : (e) => drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY);
 		}
+	};
 
-		image.onload = i == 7 ? (e) => {
-			drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY); 
-			secondaries(data);
-		} : (e) => drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY);
-	}
 })
+
 
 
 function secondaries(data) {
@@ -129,7 +156,18 @@ function secondaries(data) {
 			const currentI = i;
 			const current_char_offset = char_offset;
 			image = new Image();
-			image.src = `assets/ssbu/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
+
+			var image = new Image();
+			var tag = player.tag;
+			if(player.tag.includes(" | ")) {
+				tag = player.tag.split(" | ")[1];
+			}
+
+			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
+				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${PLAYER_OVERRIDES[tag].characters[data["game"]][element]}.png`;
+			} else {
+				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
+			}
 
 			image.onload = (e) => {
 				var size;
@@ -164,12 +202,40 @@ function secondaries(data) {
 	}
 }
 
+// Returns the renderable image (canvas)
+function createCanvas(width, height) {
+    return Object.assign(document.createElement("canvas"), {width, height});
+}
+
 function overlay(data) {
-	var base_image = new Image();
-	base_image.src = 'assets/marco.png';
-	base_image.onload = () => {
-		ctx.drawImage(base_image, 0, 0);
-		numbers(data);
+	var canvas1 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");;
+	var canvas2 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");;
+	
+	var marco = new Image();
+	marco.src = 'assets/marco.png';
+	marco.onload = (e) => {
+		canvas1.beginPath();
+		canvas1.rect(0, 0, SIZE[0], SIZE[1]);
+		canvas1.fillStyle = PRIMARY_COLOR;
+		canvas1.fill();
+		canvas1.globalCompositeOperation = "destination-in";
+		canvas1.drawImage(marco, 0, 0);
+
+		var polo = new Image();
+		polo.src = 'assets/polo.png';
+		polo.onload = (e) => {
+			canvas2.beginPath();
+			canvas2.rect(0, 0, SIZE[0], SIZE[1]);
+			canvas2.fillStyle = SECONDARY_COLOR;
+			canvas2.fill();
+			canvas2.globalCompositeOperation = "destination-in";
+			canvas2.drawImage(polo, 0, 0);
+
+			ctx.drawImage(canvas1.canvas, 0, 0);
+			ctx.drawImage(canvas2.canvas, 0, 0);
+			// ctx.drawImage(polo, 0, 0);
+			numbers(data);
+		}
 	};
 }
 
@@ -186,7 +252,7 @@ var font_color1 = "#ffffff";
 var font_color2 = "#ffffff";
 var font_shadow1 = "#000000";
 var font_shadow2 = "#000000";
-var the_font = 'assets/fonts/DFGothic-SU-WIN-RKSJ-H-01.ttf';
+var the_font = 'assets/fonts/DFGothic-with_macron_O.woff2';
 
 function text(data) {
 
@@ -227,17 +293,22 @@ function text(data) {
 				size = SMA;
 			}
 		
-			if (data.players[i]["twitter"]) {
+			var tag = data.players[i].tag;
+			if(data.players[i].tag.includes(" | ")) {
+				tag = data.players[i].tag.split(" | ")[1];
+			}
+
+			if (data.players[i]["twitter"] || PLAYER_OVERRIDES[tag]?.twitter) {
 				let color;
 		
 				// if (customcolor) {
 				// 	color = customcolor;
 				// } else {
-					color = "rgba(255, 40, 56, 255)";
+					// color = "rgba(255, 40, 56, 255)";
 				// }
 		
 				// Drawing twitter box
-				ctx.fillStyle = color;
+				ctx.fillStyle = PRIMARY_COLOR;
 				ctx.fillRect(POSTWI[i][0], POSTWI[i][1], SIZETWI[i][0], SIZETWI[i][1]);
 		
 				// Twitter bird icon
@@ -279,10 +350,17 @@ function text(data) {
 				// ctx.font = ffont; // Assuming ffont is the font for Twitter handle
 				// ctx.fillStyle = font_color1;
 				// ctx.shadowColor = font_shadow1;
+				var twitter;
+				
+				if(PLAYER_OVERRIDES[tag]?.twitter) {
+					twitter = "@" + PLAYER_OVERRIDES[tag]?.twitter;
+				} else {
+					twitter = data.players[i]["twitter"];
+				}
 				fitText(
 					ctx,
 					twitter_box,
-					data.players[i]["twitter"],
+					twitter,
 					the_font,
 					54,
 					"center",
