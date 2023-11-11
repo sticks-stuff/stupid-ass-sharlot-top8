@@ -1,5 +1,5 @@
 function drawText(ctx, pos, text, font, fill = 'rgb(255, 255, 255)', shadow = null, shadowOffset = [0.55, 0.55], outlineThickness = 0, outlineColor = null) {
-	console.log(`CTX.FONT ${font}`);
+	// console.log(`CTX.FONT ${font}`);
 	if (shadow) {
 		const offsetX = Math.floor(Math.sqrt(font.size) * shadowOffset[0]);
 		const offsetY = Math.floor(Math.sqrt(font.size) * shadowOffset[1]);
@@ -23,7 +23,7 @@ function measureHeight(aFont, aSize, aChars, aOptions={}) { // https://stackover
     // if you do pass aOptions.ctx, keep in mind that the ctx properties will be changed and not set back. so you should have a devoted canvas for this
     // if you dont pass in a width to aOptions, it will return it to you in the return object
     // the returned width is Math.ceil'ed
-    console.error('aChars: "' + aChars + '"');
+    // console.error('aChars: "' + aChars + '"');
     var defaultOptions = {
         width: undefined, // if you specify a width then i wont have to use measureText to get the width
         canAndCtx: undefined, // set it to object {can:,ctx:} // if not provided, i will make one
@@ -82,11 +82,11 @@ function measureHeight(aFont, aSize, aChars, aOptions={}) { // https://stackover
 
     ctx.fillStyle = 'white';
 
-    console.log('w:', w);
+    // console.log('w:', w);
 
     var avgOfRange = (aOptions.range + 1) / 2;
     var yBaseline = Math.ceil(aSize * avgOfRange);
-    console.log('yBaseline:', yBaseline);
+    // console.log('yBaseline:', yBaseline);
 
     ctx.fillText(aChars, 0, yBaseline);
 
@@ -131,34 +131,35 @@ async function fitText(ctx, box, text, fontdir, guess = 30, align = "left", alig
 	
 	const [x1, y1, x2, y2] = box;
 	
-	console.log(text, box);
+	// console.log(text, box);
 	
-	ctx.strokeStyle = 'purple';
-	ctx.stroke();
+	// ctx.strokeStyle = 'purple';
+	// ctx.stroke();
 	
 	const width = x2 - x1;
 	const height = y2 - y1;
 	// console.log("WHAT THE FUCK???")
 	// ctx.rect(x1, y1, width, height);
-	// console.log(`ctx.rect(${x1}, ${y1}, ${width}, ${height})`);
+	// console.log(`${text}ctx.rect(${x1}, ${y1}, ${width}, ${height})`);
 	// console.log("WHAT THE FUCK???")
 	// ctx.strokeStyle = 'purple';
 	// ctx.stroke();
 	
 	
-	console.log({box}, {text}, {width}, {height})
+	// console.log({box}, {text}, {width}, {height})
 
-	console.log({x1}, {y1}, {width}, {height});
+	// console.log({x1}, {y1}, {width}, {height});
 
 	let fontSize = guess; // Initial font size (you can adjust this)
 	let minSize = 1;
 	let maxSize = guess;
+	// console.log({maxSize})
 	let font = await loadFont(fontdir, maxSize);
 	ctx.font = font
 	var textWidth = ctx.measureText(text).width;
 	var textHeight = parseInt(font, 10);
-	console.log({ textWidth })
-	console.log({ width })
+	// console.log({ textWidth })
+	// console.log({ width })
 
 	while (textWidth >= width || textHeight >= height) {
 		// const middleSize = Math.floor((minSize + maxSize) / 2);
@@ -169,7 +170,8 @@ async function fitText(ctx, box, text, fontdir, guess = 30, align = "left", alig
 		textWidth = ctx.measureText(text).width;
 		textHeight = parseInt(font, 10);
 		// const textHeight = middleSize; // Assuming height is proportional to font size
-		console.log({ textWidth })
+		// console.log({ textWidth })
+		// console.log({ maxSize })
 
 		// if (textWidth <= width) {
 		maxSize = maxSize - 1;
@@ -177,9 +179,9 @@ async function fitText(ctx, box, text, fontdir, guess = 30, align = "left", alig
 	}
 
 	// var [textWidth, textHeight] = [ctx.measureText(text).width, parseInt(font, 10)];
-	console.log(`THE MEASURED TEXT WIDTH OF ${text} IS ${textWidth}`);
-	console.log(`THE MAX SIZE OF ${text} IS ${maxSize}`);
-	console.log(`THE MAX WIDTH WIDTH OF ${text} IS ${width}`);
+	// console.log(`THE MEASURED TEXT WIDTH OF ${text} IS ${textWidth}`);
+	// console.log(`THE MAX SIZE OF ${text} IS ${maxSize}`);
+	// console.log(`THE MAX WIDTH WIDTH OF ${text} IS ${width}`);
 	console.log(`FONT OF ${text} IS ${font}`);
 
 	let posX = x1;
@@ -196,14 +198,14 @@ async function fitText(ctx, box, text, fontdir, guess = 30, align = "left", alig
 	if (alignv === "bottom") {
 		posY += height - measureHeight(font, maxSize, text).relativeBot;
 	} else if (alignv === "middle") {
-		var thing = measureHeight(font, maxSize, text)
-		console.log({text}, {thing})
+		// var thing = measureHeight(font, maxSize, text)
+		// console.log({text}, {thing})
 		posY += (height - (measureHeight(font, maxSize, text).relativeTop) - measureHeight(font, maxSize, text).height * 1.15) + measureHeight(font, maxSize, text).relativeBot;
 	}
 
 
 
-	drawText(ctx, [posX, posY], text, font);
+	drawText(ctx, [posX, posY], text, font, fill, shadow);
 }
 
 async function loadFont(fontdir, size) {
@@ -215,25 +217,29 @@ async function loadFont(fontdir, size) {
 
 function drawText(ctx, pos, text, font, fill = 'rgb(255, 255, 255)', shadow = null, shadowOffset = [0.55, 0.55], outlineThickness = 0, outlineColor = null) {
 	if (shadow) {
-		const offsetX = Math.floor(Math.sqrt(font.size) * shadowOffset[0]);
-		const offsetY = Math.floor(Math.sqrt(font.size) * shadowOffset[1]);
-		ctx.fillStyle = shadow;
-		ctx.font = font;
-		ctx.fillText(text, pos[0] + offsetX, pos[1] + offsetY);
+		ctx.shadowOffsetX = Math.floor(Math.sqrt(parseInt(font, 10)) * shadowOffset[0]);
+		ctx.shadowOffsetY = Math.floor(Math.sqrt(parseInt(font, 10)) * shadowOffset[1]);
+		ctx.shadowColor = shadow;
+		// const offsetX = Math.floor(Math.sqrt(font.size) * shadowOffset[0]);
+		// const offsetY = Math.floor(Math.sqrt(font.size) * shadowOffset[1]);
+		// ctx.fillStyle = fill;
+		// ctx.font = font;
+		// ctx.fillText(text, pos[0] + offsetX, pos[1] + offsetY);
 	}
 
 	ctx.fillStyle = fill;
 	ctx.font = font;
 	ctx.fillText(text, pos[0], pos[1]);
 
-	if (outlineThickness > 0) {
-		ctx.lineWidth = outlineThickness;
-		ctx.strokeStyle = outlineColor || fill;
-		ctx.strokeText(text, pos[0], pos[1]);
-	}
+	// if (outlineThickness > 0) {
+	// 	ctx.lineWidth = outlineThickness;
+	// 	ctx.strokeStyle = outlineColor || fill;
+	// 	ctx.strokeText(text, pos[0], pos[1]);
+	// }
+	ctx.shadowColor = null;
+	ctx.shadowOffsetY = 0;
+	ctx.shadowOffsetX = 0;
 }
 
-var font_color = "#ffffff";
-var font_shadow = "#000000";
 
 

@@ -15,8 +15,9 @@ const POSTWI = [[52, 624], [552, 398], [831, 398], [1109, 398],
 // Boxes of texts in the corner
 const POSTXT = [[53, 45, 803, 80], // top left
 		  [53, 730, 997, 765], // bottom left
-		  [1075, 726, 1361, 778], // botttom right [credits]
-		  [1170, 780, 1361, 795], // bottom right [credits url small]
+		  [1075, 690, 1361, 742], // botttom right [credits2]
+		  [1075, 716, 1361, 768], // botttom right [credits]
+		  [1075, 743, 1361, 795], // bottom right [credits3]
 		  [876, 45, 1367, 80] // top right [url]
 		  ]
 const POSLOGO = [53, 15] // [53, 15, 803, 125]
@@ -37,7 +38,7 @@ ctx.rect(0, 0, SIZE[0], SIZE[1]);
 ctx.fillStyle = 'limegreen';
 ctx.fill();
 
-let f = new FontFace("DFGothic-SU", "url('assets/fonts/DFGothic-SU-WIN-RKSJ-H-01.ttf')");
+let f = new FontFace("DFGothic-SU", "url('assets/fonts/DFGothic-SU-WIN-RKSJ-H.woff2')");
 
 f.load().then(function(font) {
 	document.fonts.add(font);
@@ -181,6 +182,12 @@ function numbers(data) {
 	};
 }
 
+var font_color1 = "#ffffff";
+var font_color2 = "#ffffff";
+var font_shadow1 = "#000000";
+var font_shadow2 = "#000000";
+var the_font = 'assets/fonts/DFGothic-SU-WIN-RKSJ-H-01.ttf';
+
 function text(data) {
 
 	// fitText(
@@ -192,6 +199,17 @@ function text(data) {
 	// 	"center",
 	// 	"middle"
 	// );
+
+	// fitText(ctx, box,       text,            fontdir, guess = 30, align = "left", alignv = "top", fill = 'rgb(255, 255, 255)', shadow = 'rgba(0,0,0,0)', shadowOffset = [0.55, 0.55], forcedFont = null, outlineThickness = 0, outlineColor = null)
+	fitText(ctx, POSTXT[0], data["toptext"], the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
+
+	fitText(ctx, POSTXT[1], data["bottomtext"], the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
+
+	fitText(ctx, POSTXT[2], "Design by:  @Elenriqu3", the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	fitText(ctx, POSTXT[3], "Generator by: @Riokaru", the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	fitText(ctx, POSTXT[4], "   Fork by: @stick_twt", the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
+
+	fitText(ctx, POSTXT[5], data["url"], the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
 	
 	var image = new Image();
 	image.src = `assets/pajarito.png`;
@@ -265,10 +283,12 @@ function text(data) {
 					ctx,
 					twitter_box,
 					data.players[i]["twitter"],
-					'assets/fonts/DFGothic-SU-WIN-RKSJ-H-01.ttf',
+					the_font,
 					54,
 					"center",
-					"middle"
+					"middle",
+					font_color1,
+					font_shadow1
 				);
 			}
 		
@@ -293,10 +313,12 @@ function text(data) {
 				ctx, 
 				name_box, 
 				name, 
-				'assets/fonts/DFGothic-SU-WIN-RKSJ-H-01.ttf',
+				the_font,
 				Math.round(size[0] * 0.26),
 				"center",
-				"bottom"
+				"bottom",
+				font_color1,
+				font_shadow1
 			);
 		}	
 	}
@@ -333,6 +355,6 @@ function text(data) {
 		// }
 	// });
 
-	
+
 
 }

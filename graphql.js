@@ -7,7 +7,10 @@ query SetsQuery($slug: String) {
 	  numEntrants
 	  state
 	  startAt
-	  videogame {id}
+	  videogame {
+		id
+		displayName
+	  }
 	  tournament { name city slug shortSlug}
 
 	  standings(query: {
@@ -144,8 +147,18 @@ async function eventData(slug) {
     }
 
     const event = eventData["event"];
-    const gid = parseInt(event["videogame"]["id"], 10);
-    const game = gid === 1 || gid === 2 || gid === 3 || gid === 4 || gid === 5 || gid === 1386 ? "ssbu" : "roa";
+    var game = event["videogame"]["displayName"];
+
+	switch (game) {
+		case "Ultimate":
+			game = "Super Smash Bros. Ultimate"
+			break;
+		case "Melee":
+			game = "Super Smash Bros. Melee"
+			break;
+		default:
+			break;
+	}
 
     const btext = [];
     if (event["startAt"]) {
@@ -159,14 +172,7 @@ async function eventData(slug) {
     btext.push(event["numEntrants"] + " Participants");
     const btextResult = btext.join(" - ");
 
-    const ttexts = [event["tournament"]["name"], " - " + event["name"], " - Top 8"];
-    let ttext = "";
-
-    for (const t of ttexts) {
-        if (ttext.length + t.length < 50) {
-            ttext += t;
-        }
-    }
+    const ttext = event["tournament"]["name"].split(" - ")[0] + " - " + game;
 
     const link = event["tournament"]["shortSlug"] ? `https://start.gg/${event["tournament"]["shortSlug"]}` : `start.gg/${event["tournament"]["slug"]}`;
 
