@@ -117,12 +117,10 @@ function go() {
 					tag = player.tag.split(" | ")[1];
 				}
 
-				if(data["game"] == "ultimate") {
-					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-						image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
-					} else {
-						image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_")}-0.png`;
-					}
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
+				} else {
+					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_")}-0.png`;
 				}
 		
 				var offsetX = 0.5;
