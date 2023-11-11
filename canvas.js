@@ -164,7 +164,7 @@ function secondaries(data) {
 			}
 
 			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
-				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${PLAYER_OVERRIDES[tag].characters[data["game"]][element]}.png`;
+				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${parseInt(PLAYER_OVERRIDES[tag].characters[data["game"]][element])}.png`;
 			} else {
 				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
 			}
