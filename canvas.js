@@ -110,9 +110,9 @@ eventData("tournament/p-neke-popoff-56-illuminating-dullbulb-s-secrets/event/ult
 
 			if(data["game"] == "ultimate") {
 				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar] + 1}.png`;
+					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
 				} else {
-					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_")}-1.png`;
+					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_")}-0.png`;
 				}
 			}
 	
