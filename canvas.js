@@ -46,7 +46,7 @@ eventData("tournament/p-neke-popoff-56-illuminating-dullbulb-s-secrets/event/ult
 	for (let i = 0; i < 8; i++) {
 
 		const player = data.players[i];
-		const mainChar = Object.keys(player.chars)[0];
+		const mainChar = player.chars[0][0];
 
 		var image = new Image();
 		image.src = `assets/ssbu/murals/${mainChar.replace(" ", "_")}-3.png`;
@@ -77,8 +77,8 @@ function secondaries(data) {
 		const player = data.players[i];
 		var char_offset = 0;
 
-		for (let j = 1; j < Object.keys(player.chars).length; j++) {
-			const element = Object.keys(player.chars)[j];
+		for (let j = 1; j < player.chars.length; j++) {
+			const element = player.chars[j][0];
 			const currentI = i;
 			const current_char_offset = char_offset;
 			image = new Image();

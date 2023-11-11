@@ -132,13 +132,13 @@ async function eventData(slug) {
 		if(freq["wins"][name] == undefined) {
 			players.push({
 				"tag": name,
-				"chars": freq[name],
+				"chars": Object.entries(freq[name]).sort((a, b) => b[1] - a[1]),
 				"twitter": twi,
 			});
 		} else {
 			players.push({
 				"tag": name,
-				"chars": freq["wins"][name],
+				"chars": Object.entries(freq["wins"][name]).sort((a, b) => b[1] - a[1]),
 				"twitter": twi,
 			});
 		}
