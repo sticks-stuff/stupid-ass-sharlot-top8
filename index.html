@@ -11,8 +11,13 @@
 	</head>
 
 	<body>
-		<input id="startgglink"><button onclick="go()">go</button>
+		<input id="startgglink">
 		<br>
+		<input type="radio" name="style" checked value="pop"> PoP<br>
+		<input type="radio" name="style" value="resplat"> Resplat<br>
+		<input type="radio" name="style" value="ranbats"> Ranbats
+		<br>
+		<button onclick="go()">go</button>
 		<br>
 		<canvas id="canvas"></canvas>
 		<script src="oauth.js"></script>

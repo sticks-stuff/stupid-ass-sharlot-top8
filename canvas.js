@@ -25,11 +25,14 @@ const SIZELOGO = [750, 110]
 
 const STUPID_OFFSETS = {
 	Shulk: [0.5, 0.25], 
-	Byleth: [0.5, 0.25]
+	Byleth: [0.5, 0.25],
+	Terry: [0.5, 0],
+	Zelda: [0.5, 0]
 }
 
-const PRIMARY_COLOR = "#682f77"
-const SECONDARY_COLOR = "#ff3d8b"
+var PRIMARY_COLOR = "#682f77"
+var SECONDARY_COLOR = "#ff3d8b"
+var BACKGROUND_IMAGE = 'assets/pop_background.png'
 
 var canvas = document.getElementById('canvas');
 canvas.width = SIZE[0];
@@ -91,11 +94,41 @@ document.getElementById("startgglink").click();
 
 function go() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	var radioButtons = document.querySelectorAll('input[name="style"]');
+	let style;
+	for (var radioButton of radioButtons) {
+		if (radioButton.checked) {
+			style = radioButton.value;
+			break;
+		}
+	}
+
+	switch (style) {
+		case "pop":
+			PRIMARY_COLOR = "#682f77";
+			SECONDARY_COLOR = "#ff3d8b";
+			BACKGROUND_IMAGE = 'assets/pop_background.png';
+			break;
+		case "resplat":
+			PRIMARY_COLOR = "rgb(48, 47, 123)";
+			SECONDARY_COLOR = "rgb(219, 36, 38)";
+			BACKGROUND_IMAGE = 'assets/respawn_platform_poster_medium.png';
+			break;
+		case "ranbats":
+			PRIMARY_COLOR = "#D93033";
+			SECONDARY_COLOR = "#F7F8F0";
+			BACKGROUND_IMAGE = 'assets/welly_ranbats.jpg';
+			break;
+		default:
+			break;
+	}
+
 	console.log(Array.from(document.getElementById("startgglink").value.matchAll(startGGre), m => m[3]));
 	eventData(Array.from(document.getElementById("startgglink").value.matchAll(startGGre), m => m[3])).then(data => {
 		console.log(data);
 		var base_image = new Image();
-		base_image.src = 'assets/pop_background.png';
+		base_image.src = BACKGROUND_IMAGE;
 		base_image.onload = () => {
 			drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
 			ctx.beginPath();
@@ -105,7 +138,7 @@ function go() {
 
 			var imagesToLoad = 0;
 
-			for (let i = 0; i < 8; i++) {
+			for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 		
 				const player = data.players[i];
 				console.log(data.players[i])
@@ -117,16 +150,28 @@ function go() {
 					tag = player.tag.split(" | ")[1];
 				}
 
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
-				} else {
-					image.src = `assets/${data["game"]}/renders/${mainChar.replace(" ", "_")}-0.png`;
-				}
-		
 				var offsetX = 0.5;
 				var offsetY = 0.5;
+
+				if(data["game"] == "melee") {
+					offsetY = 0;
+					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar] + 1}_CSP_HD.png`;
+					} else {
+						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_1_CSP_HD.png`;
+					}
+				} else {
+					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
+					} else {
+						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_')}-0.png`;
+					}
+				}
+		
+				
 		
 				if(mainChar in STUPID_OFFSETS) {
+					console.log(mainChar)
 					offsetX = STUPID_OFFSETS[mainChar][0];
 					offsetY = STUPID_OFFSETS[mainChar][1];
 				}
@@ -134,13 +179,13 @@ function go() {
 				image.onload = (e) => {
 					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY); 
 					imagesToLoad++;
-					if(imagesToLoad == 7) {
+					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
 						secondaries(data);
 					}
 				}
 				image.onerror = function(){
 					imagesToLoad++;
-					if(imagesToLoad == 7) {
+					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
 						secondaries(data);
 					}
 				}
@@ -151,11 +196,12 @@ function go() {
 }
 
 var SMALL_ICON = 32;
-var LARGE_ICON = 32;
+var MED_ICON = 48;
+var LARGE_ICON = 64;
 
 function secondaries(data) {
 	var totalImagesToMake = 0;
-	for (let i = 0; i < 8; i++) {
+	for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 		const player = data.players[i];
 		for (let j = 1; j < player.chars.length; j++) {
 			if(player.chars[j][0]) {
@@ -164,7 +210,7 @@ function secondaries(data) {
 		}
 	}
 	var totalImagesMade = 0;
-	for (let i = 0; i < 8; i++) {
+	for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 
 		const player = data.players[i];
 		var char_offset = 0;
@@ -187,13 +233,19 @@ function secondaries(data) {
 				} else {
 					image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
 				}
+			} else if(data["game"] == "melee") {
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
+					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}_Standard_${parseInt(PLAYER_OVERRIDES[tag].characters[data["game"]][element]) + 1}_STC_HD.png`;
+				} else {
+					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}_Standard_1_STC_HD.png`;
+				}
 			} else {
 				SMALL_ICON = 48;
 				LARGE_ICON = 96;
 				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
-					image.src = `assets/${data["game"]}/stock_icons/${element.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][element]}.png`;
+					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][element]}.png`;
 				} else {
-					image.src = `assets/${data["game"]}/stock_icons/${element.replace(" ", "_")}-0.png`;
+					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_')}-0.png`;
 				}
 			}
 
@@ -216,6 +268,7 @@ function secondaries(data) {
 					iconSize = LARGE_ICON;
 				} else if (size == MED) {
 					right_margin = 8;
+					iconSize = MED_ICON;
 				} else {
 					right_margin = 6;
 				}
