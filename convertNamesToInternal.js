@@ -60,7 +60,7 @@ function convertNamesToInternal(character) {
 			return 'miiswordsman';
 		case 'mii gunner':
 			return 'miigunner';
-		case 'pacman':
+		case 'pac-man':
 			return 'pacman';
 		case 'robin':
 			return 'reflet';
@@ -94,7 +94,7 @@ function convertNamesToInternal(character) {
 			return 'pickel';
 		case 'sephiroth':
 			return 'edge';
-		case 'pyra':
+		case 'pyra & mythra':
 			return 'eflame';
 		case 'mythra':
 			return 'elight';
