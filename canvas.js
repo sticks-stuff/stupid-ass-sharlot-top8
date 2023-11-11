@@ -103,6 +103,8 @@ function go() {
 			ctx.fillStyle = '#0000004D'; //darken
 			ctx.fill();
 
+			var imagesToLoad = 0;
+
 			for (let i = 0; i < 8; i++) {
 		
 				const player = data.players[i];
@@ -131,10 +133,13 @@ function go() {
 					offsetY = STUPID_OFFSETS[mainChar][1];
 				}
 		
-				image.onload = i == 7 ? (e) => {
+				image.onload = (e) => {
 					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY); 
-					secondaries(data);
-				} : (e) => drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY);
+					imagesToLoad++;
+					if(imagesToLoad == 7) {
+						secondaries(data);
+					}
+				}
 			}
 		};
 
