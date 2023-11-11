@@ -1,0 +1,1 @@
+this is some of the worst javascript ive ever written

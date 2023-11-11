@@ -76,7 +76,6 @@ async function eventData(slug) {
     const eventData = data["data"];
 
     try {
-		console.log("here");
         if (eventData["event"] === null) return null;
 
         for (const node of eventData["event"]["sets"]['nodes']) {
