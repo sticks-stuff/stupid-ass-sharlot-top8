@@ -1,6 +1,6 @@
 var query = 
 `
-query SetsQuery($slug: String) {
+query SetsQuery($slug: String, $page: Int) {
 	event(slug: $slug) {
 	  id
 	  name
@@ -16,7 +16,7 @@ query SetsQuery($slug: String) {
 
 	  standings(query: {
 		page: 1
-		perPage: 8
+		perPage: 20
 		sortBy: "standing"
 	  }){
 		nodes{
@@ -34,7 +34,15 @@ query SetsQuery($slug: String) {
 		}
 	  }
 	
-	  sets(page: 1, perPage: 999, sortType: RECENT) {
+	  sets(page: $page, perPage: 40, sortType: RECENT) {
+		pageInfo {
+			total
+			totalPages
+			page
+			perPage
+			sortBy
+			filter
+		}
 		nodes {
 		  games {
 			winnerId	
@@ -55,7 +63,7 @@ query SetsQuery($slug: String) {
 }
 `
 
-async function eventQuery(slug) {
+async function eventQuery(slug, page) {
 	let response = await fetch("https://api.start.gg/gql/alpha", {
 		method: "POST",
 		headers: {
@@ -65,7 +73,7 @@ async function eventQuery(slug) {
 		},
 		body: JSON.stringify({
 			query,
-			variables: { slug },
+			variables: { slug: `${slug}`, page },
 		}),
 	});
 	let data = await response.json()
@@ -73,10 +81,18 @@ async function eventQuery(slug) {
 }
 
 async function eventData(slug) {
+	console.log(slug)
     const freq = {};
     freq["wins"] = {};
-    const data = await eventQuery(slug);
-	console.log(data);
+	var page = 1;
+	var data = await eventQuery(slug, page);
+	while(page != data["data"]["event"]["sets"]["pageInfo"]["totalPages"]) {
+		console.log(page);
+		page++;
+		var newData = await eventQuery(slug, page);
+		data["data"]["event"]["sets"]["nodes"] = data["data"]["event"]["sets"]["nodes"].concat(newData["data"]["event"]["sets"]["nodes"])
+		console.log(data);
+	}
     const eventData = data["data"];
 
     try {
@@ -132,13 +148,13 @@ async function eventData(slug) {
             }
         }
 
-		if(freq["wins"][name] == undefined) {
+		if(freq["wins"][name] == undefined && freq[name]) {
 			players.push({
 				"tag": name,
 				"chars": Object.entries(freq[name]).sort((a, b) => b[1] - a[1]),
 				"twitter": twi,
 			});
-		} else {
+		} else if (freq[name]) {
 			players.push({
 				"tag": name,
 				"chars": Object.entries(freq["wins"][name]).sort((a, b) => b[1] - a[1]),
