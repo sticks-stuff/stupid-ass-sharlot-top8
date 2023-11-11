@@ -1,5 +1,5 @@
 const scopes = 'user.identity';
-const REDIRECT_URI = 'http://127.0.0.1:5500/'
+const REDIRECT_URI = 'https://sticks-stuff.github.io/stupid-ass-sharlot-top8'
 const CLIENT_ID = 69;
 const CLIENT_SECRET = "8e1a8efc0d81a30239b408c60ebed4c9d06391060c380ced2c30ac52870c9e79";
 
@@ -29,7 +29,7 @@ if(code && !accessToken) {
 		body: JSON.stringify(data),
 		headers: headers
 	}).then(res => res.json()).then(json => {
-		window.location.href = `http://127.0.0.1:5500?access_token=${json.access_token}`; 
+		window.location.href = `${REDIRECT_URI}?access_token=${json.access_token}`; 
 		run();
 	}).catch(e => {
 		console.log(e);
