@@ -95,7 +95,7 @@ function convertNamesToInternal(character) {
 		case 'sephiroth':
 			return 'edge';
 		case 'pyra & mythra':
-			return 'eflame';
+			return 'pyramythra';
 		case 'mythra':
 			return 'elight';
 		case 'kazuya':
