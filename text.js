@@ -192,7 +192,8 @@ async function fitText(ctx, box, text, fontdir, guess = 30, align = "left", alig
 
 		posX += (width / 2);
 	} else if (align === "right") {
-		posX += width - textWidth;
+		ctx.textAlign = "right";
+		posX += width;
 	}
 
 	if (alignv === "bottom") {
