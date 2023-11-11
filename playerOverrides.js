@@ -23,9 +23,11 @@ const PLAYER_OVERRIDES = {
                 "Mr. Game & Watch": 1
             },
             pplus: {
-                "Marth": 5,
+                "Marth": 6,
                 "Mr. Game & Watch": 7,
-                "Ice Climbers": 11
+                "Ice Climbers": 11,
+                "Fox": 19,
+                "Falco": 9
             }
         }
     },
@@ -66,7 +68,7 @@ const PLAYER_OVERRIDES = {
                 "Ganondorf": 3
             },
             pplus: {
-                "Ganondorf": 16
+                "Ganondorf": 17
             }
         }
     },
@@ -163,7 +165,7 @@ const PLAYER_OVERRIDES = {
             pplus: {
                 "Peach": 2,
                 "Captain Falcon": 4,
-                "Mario": 2
+                "Mario": 15
             }
         }
     },
@@ -257,7 +259,7 @@ const PLAYER_OVERRIDES = {
         twitter: "jvne_m",
         characters: {
             pplus: {
-                "Captain Falcon": 15
+                "Captain Falcon": 13
             }
         }
     },

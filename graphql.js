@@ -166,6 +166,9 @@ async function eventData(slug) {
     const event = eventData["event"];
     var displayGame = event["videogame"]["name"];
     var game = event["videogame"]["displayName"].toLowerCase();
+	if(game == "project+") {
+		game = "pplus"; //+ is a weird character in objects
+	}
 
     const btext = [];
     if (event["startAt"]) {

@@ -138,13 +138,20 @@ function go() {
 						secondaries(data);
 					}
 				}
+				image.onerror = function(){
+					imagesToLoad++;
+					if(imagesToLoad == 7) {
+						secondaries(data);
+					}
+				}
 			}
 		};
 
 	})
 }
 
-
+var SMALL_ICON = 32;
+var LARGE_ICON = 32;
 
 function secondaries(data) {
 	var totalImagesToMake = 0;
@@ -174,16 +181,27 @@ function secondaries(data) {
 				tag = player.tag.split(" | ")[1];
 			}
 
-			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
-				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${parseInt(PLAYER_OVERRIDES[tag].characters[data["game"]][element])}.png`;
+			if(data["game"] == "ultimate") {
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
+					image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${parseInt(PLAYER_OVERRIDES[tag].characters[data["game"]][element])}.png`;
+				} else {
+					image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
+				}
 			} else {
-				image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
+				SMALL_ICON = 48;
+				LARGE_ICON = 96;
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
+					image.src = `assets/${data["game"]}/stock_icons/${element.replace(" ", "_").replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][element]}.png`;
+				} else {
+					image.src = `assets/${data["game"]}/stock_icons/${element.replace(" ", "_")}-0.png`;
+				}
 			}
+
 
 			image.onload = (e) => {
 				var size;
 				var right_margin;
-				var iconSize = 32;
+				var iconSize = SMALL_ICON;
 
 				if (currentI == 0) {
 					size = BIG
@@ -195,7 +213,7 @@ function secondaries(data) {
 
 				if(size == BIG) {
 					right_margin = 14;
-					iconSize = 64;
+					iconSize = LARGE_ICON;
 				} else if (size == MED) {
 					right_margin = 8;
 				} else {
@@ -203,11 +221,17 @@ function secondaries(data) {
 				}
 
 				drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + current_char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
+				totalImagesMade++;
 				if(totalImagesMade == (totalImagesToMake - 1)) {
 					overlay(data);
 				}
-				totalImagesMade++;
 			};
+			image.onerror = function(){
+				totalImagesMade++;
+				if(totalImagesMade == (totalImagesToMake - 1)) {
+					overlay(data);
+				}
+			}
 			char_offset++;
 		}
 	}
