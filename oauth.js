@@ -1,5 +1,5 @@
 const scopes = 'user.identity';
-const REDIRECT_URI = 'https://sticks-stuff.github.io/stupid-ass-sharlot-top8'
+const REDIRECT_URI = 'https://stupid-ass-sharlot-top8.pages.dev/'
 const CLIENT_ID = 69;
 const CLIENT_SECRET = "8e1a8efc0d81a30239b408c60ebed4c9d06391060c380ced2c30ac52870c9e79";
 
