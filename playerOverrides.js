@@ -172,6 +172,9 @@ const PLAYER_OVERRIDES = {
             },
             pplus: {
                 "Link": 6
+            },
+            ultimate: {
+                "Link": "Pink_Champion_Mod"
             }
         }
     },
