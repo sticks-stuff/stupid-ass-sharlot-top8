@@ -30,8 +30,8 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     x += posOffsetX;
 
     // img.height += posOffsetY;
-    // h += posOffsetY;
-    // y -= posOffsetY;
+    y -= posOffsetY;
+    h += posOffsetY;
 
     var iw = img.width,
         ih = img.height,

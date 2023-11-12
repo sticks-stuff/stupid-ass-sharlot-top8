@@ -29,16 +29,20 @@ const STUPID_OFFSETS = {
 	Terry: [0.5, 0],
 	Falco: [0, 0],
 	Bayonetta: [0, 0],
+	Ganondorf: [0.5, 0],
+	Lucas: [1, 0],
 	Zelda: [0.5, 0]
 }
 
 const POSITION_OFFSETS = {
 	Falco: [30, 0],
-	// Ganondorf: [0, -30]
+	Ganondorf: [0, -5],
+	Lucas: [-5, 0],
 }
 
 const CROPS = {
 	Bayonetta: [1000, -200],
+	Lucas: [-200, 0],
 	Bowser: [0, -300]
 }
 
