@@ -27,7 +27,18 @@ const STUPID_OFFSETS = {
 	Shulk: [0.5, 0.25], 
 	Byleth: [0.5, 0.25],
 	Terry: [0.5, 0],
+	Falco: [0, 0],
+	Bayonetta: [0, 0],
 	Zelda: [0.5, 0]
+}
+
+const POSITION_OFFSETS = {
+	Falco: [30, 0],
+	// Ganondorf: [0, -30]
+}
+
+const CROPS = {
+	Bayonetta: [1000, 0]
 }
 
 var PRIMARY_COLOR = "#682f77"
@@ -150,9 +161,6 @@ function go() {
 					tag = player.tag.split(" | ")[1];
 				}
 
-				var offsetX = 0.5;
-				var offsetY = 0.5;
-
 				if(data["game"] == "melee") {
 					offsetY = 0;
 					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
@@ -169,15 +177,33 @@ function go() {
 				}
 		
 				
-		
-				if(mainChar in STUPID_OFFSETS) {
-					console.log(mainChar)
-					offsetX = STUPID_OFFSETS[mainChar][0];
-					offsetY = STUPID_OFFSETS[mainChar][1];
-				}
+				
 		
 				image.onload = (e) => {
-					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY); 
+					var offsetX = 0.5;
+					var offsetY = 0.5;
+					var posOffsetX = 0;
+					var posOffsetY = 0;
+					var cropX = 0;
+					var cropY = 0;
+					var flips = false;
+
+					if(mainChar in STUPID_OFFSETS) {
+						console.log(mainChar)
+						offsetX = STUPID_OFFSETS[mainChar][0];
+						offsetY = STUPID_OFFSETS[mainChar][1];
+					}
+					if(mainChar in POSITION_OFFSETS) {
+						posOffsetX = POSITION_OFFSETS[mainChar][0];
+						posOffsetY = POSITION_OFFSETS[mainChar][1];
+					}
+					if(mainChar in CROPS) {
+						cropX = CROPS[mainChar][0];
+						cropY = CROPS[mainChar][1];
+					}
+
+					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips); 
+					ctx.restore();
 					imagesToLoad++;
 					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
 						secondaries(data);

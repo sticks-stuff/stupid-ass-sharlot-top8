@@ -35,7 +35,7 @@ const PLAYER_OVERRIDES = {
         twitter: "AlastairBL_",
         characters: {
             ultimate: {
-                "Sora": 1,
+                "Sora": "Anti-Sora",
                 "Cloud": 1,
                 "Joker": 1
             },

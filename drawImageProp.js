@@ -5,7 +5,7 @@
  *
  * If image and context are only arguments rectangle will equal canvas
 */
-function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
+function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false) {
 
     if (arguments.length === 2) {
         x = y = 0;
@@ -23,6 +23,16 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
     if (offsetX > 1) offsetX = 1;
     if (offsetY > 1) offsetY = 1;
 
+    img.width -= cropX;
+    img.height -= cropY;
+    
+    w -= posOffsetX;
+    x += posOffsetX;
+
+    // img.height += posOffsetY;
+    // h += posOffsetY;
+    // y -= posOffsetY;
+
     var iw = img.width,
         ih = img.height,
         r = Math.min(w / iw, h / ih),
@@ -37,8 +47,8 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
     nh *= ar;
 
     // calc source rectangle
-    cw = iw / (nw / w);
-    ch = ih / (nh / h);
+    cw = (iw / (nw / w));
+    ch = (ih / (nh / h));
 
     cx = (iw - cw) * offsetX;
     cy = (ih - ch) * offsetY;
