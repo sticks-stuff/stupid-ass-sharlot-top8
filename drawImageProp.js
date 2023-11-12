@@ -60,5 +60,12 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     if (ch > ih) ch = ih;
 
     // fill image in dest. rectangle
+    if (flips) {
+        ctx.translate(x + w/2, y + w/2);
+        ctx.scale(-1, 1);
+        ctx.translate(-(x + w/2), -(y + w/2));
+    }
+
     ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 }

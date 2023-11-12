@@ -38,8 +38,15 @@ const POSITION_OFFSETS = {
 }
 
 const CROPS = {
-	Bayonetta: [1000, 0]
+	Bayonetta: [1000, -200],
+	Bowser: [0, -300]
 }
+
+const FLIPS = [
+	"Fox",
+	"Incineroar",
+	"Bayonetta"
+]
 
 var PRIMARY_COLOR = "#682f77"
 var SECONDARY_COLOR = "#ff3d8b"
@@ -201,9 +208,11 @@ function go() {
 						cropX = CROPS[mainChar][0];
 						cropY = CROPS[mainChar][1];
 					}
+					if(FLIPS.includes(mainChar)) {
+						flips = true;
+					}
 
 					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips); 
-					ctx.restore();
 					imagesToLoad++;
 					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
 						secondaries(data);
