@@ -24,33 +24,41 @@ const POSLOGO = [53, 15] // [53, 15, 803, 125]
 const SIZELOGO = [750, 110]
 
 const STUPID_OFFSETS = {
-	Shulk: [0.5, 0.25], 
-	Byleth: [0.5, 0.25],
-	Terry: [0.5, 0],
-	Falco: [0, 0],
-	Bayonetta: [0, 0],
-	Ganondorf: [0.5, 0],
-	Lucas: [1, 0],
-	Zelda: [0.5, 0]
+	ultimate: {
+		Shulk: [0.5, 0.25], 
+		Byleth: [0.5, 0.25],
+		Terry: [0.5, 0],
+		Falco: [0, 0],
+		Bayonetta: [0, 0],
+		Ganondorf: [0.5, 0],
+		Lucas: [1, 0],
+		Zelda: [0.5, 0]
+	}
 }
 
 const POSITION_OFFSETS = {
-	Falco: [30, 0],
-	Ganondorf: [0, -5],
-	Lucas: [-5, 0],
+	ultimate: {
+		Falco: [30, 0],
+		Ganondorf: [0, -5],
+		Lucas: [-5, 0]
+	}
 }
 
 const CROPS = {
-	Bayonetta: [1000, -200],
-	Lucas: [-200, 0],
-	Bowser: [0, -300]
+	ultimate: {
+		Bayonetta: [1000, -200],
+		Lucas: [-200, 0],
+		Bowser: [0, -300]
+	}
 }
 
-const FLIPS = [
-	"Fox",
-	"Incineroar",
-	"Bayonetta"
-]
+const FLIPS = {
+	ultimate: [
+		"Fox",
+		"Incineroar",
+		"Bayonetta"
+	]
+}
 
 var PRIMARY_COLOR = "#682f77"
 var SECONDARY_COLOR = "#ff3d8b"
@@ -146,8 +154,10 @@ function go() {
 			break;
 	}
 
-	console.log(Array.from(document.getElementById("startgglink").value.matchAll(startGGre), m => m[3]));
-	eventData(Array.from(document.getElementById("startgglink").value.matchAll(startGGre), m => m[3])).then(data => {
+	var input = document.getElementById("startgglink").value.replace("events", "event");
+	console.log(input.matchAll(startGGre), m => m[3]);
+
+	eventData(Array.from(input.matchAll(startGGre), m => m[3])).then(data => {
 		console.log(data);
 		var base_image = new Image();
 		base_image.src = BACKGROUND_IMAGE;
@@ -172,20 +182,20 @@ function go() {
 					tag = player.tag.split(" | ")[1];
 				}
 
-				if(data["game"] == "melee") {
-					offsetY = 0;
-					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar] + 1}_CSP_HD.png`;
-					} else {
-						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_1_CSP_HD.png`;
-					}
-				} else {
+				// if(data["game"] == "melee") {
+				// 	offsetY = 0;
+				// 	if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+				// 		image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar] + 1}_CSP_HD.png`;
+				// 	} else {
+				// 		image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_1_CSP_HD.png`;
+				// 	}
+				// } else {
 					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
 						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
 					} else {
 						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_')}-0.png`;
 					}
-				}
+				// }
 		
 				
 				
@@ -199,21 +209,27 @@ function go() {
 					var cropY = 0;
 					var flips = false;
 
-					if(mainChar in STUPID_OFFSETS) {
+					if(data["game"] == "melee") {
+						offsetY = 0;
+					}
+
+					if(STUPID_OFFSETS?.[data["game"]]?.[mainChar]) {
 						console.log(mainChar)
-						offsetX = STUPID_OFFSETS[mainChar][0];
-						offsetY = STUPID_OFFSETS[mainChar][1];
+						offsetX = STUPID_OFFSETS[data["game"]][mainChar][0];
+						offsetY = STUPID_OFFSETS[data["game"]][mainChar][1];
 					}
-					if(mainChar in POSITION_OFFSETS) {
-						posOffsetX = POSITION_OFFSETS[mainChar][0];
-						posOffsetY = POSITION_OFFSETS[mainChar][1];
+					if(POSITION_OFFSETS?.[data["game"]]?.[mainChar]) {
+						posOffsetX = POSITION_OFFSETS[data["game"]][mainChar][0];
+						posOffsetY = POSITION_OFFSETS[data["game"]][mainChar][1];
 					}
-					if(mainChar in CROPS) {
-						cropX = CROPS[mainChar][0];
-						cropY = CROPS[mainChar][1];
+					if(CROPS?.[data["game"]]?.[mainChar]) {
+						cropX = CROPS[data["game"]][mainChar][0];
+						cropY = CROPS[data["game"]][mainChar][1];
 					}
-					if(FLIPS.includes(mainChar)) {
-						flips = true;
+					if(FLIPS?.[data["game"]]) {
+						if(FLIPS?.[data["game"]].includes(mainChar)) {
+							flips = true;
+						}
 					}
 
 					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, true); 
