@@ -182,24 +182,12 @@ function go() {
 					tag = player.tag.split(" | ")[1];
 				}
 
-				// if(data["game"] == "melee") {
-				// 	offsetY = 0;
-				// 	if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-				// 		image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar] + 1}_CSP_HD.png`;
-				// 	} else {
-				// 		image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}_Standard_1_CSP_HD.png`;
-				// 	}
-				// } else {
-					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
-					} else {
-						image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_')}-0.png`;
-					}
-				// }
-		
-				
-				
-		
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+					image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
+				} else {
+					image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_')}-0.png`;
+				}
+
 				image.onload = (e) => {
 					var offsetX = 0.5;
 					var offsetY = 0.5;
