@@ -44,6 +44,9 @@ const PLAYER_OVERRIDES = {
             },
             pplus: {
                 "Marth": 5
+            },
+            roa: {
+                "Clairen": "AlastairBL"
             }
         }
     },
@@ -106,6 +109,9 @@ const PLAYER_OVERRIDES = {
             },
             pplus: {
                 "Bowser": 4
+            },
+            roa: {
+                "Kragg": "icyk"
             }
         }
     },
@@ -121,6 +127,10 @@ const PLAYER_OVERRIDES = {
         twitter: "SpaceGlaceon",
         characters: {
             ultimate: {
+                "Clairen": "Glaceon",
+                "Olympia": "luna"
+            },
+            roa: {
                 "Kazuya": 3,
                 "Wolf": 7
             }
@@ -166,6 +176,9 @@ const PLAYER_OVERRIDES = {
                 "Peach": 2,
                 "Captain Falcon": 4,
                 "Mario": 15
+            },
+            roa: {
+                "Forsburn": "unladen"
             }
         }
     },
@@ -241,6 +254,11 @@ const PLAYER_OVERRIDES = {
             },
             pplus: {
                 "Zelda": 2
+            },
+            roa: {
+                "Absa": "tauriiabsa",
+                "Ori": "torii",
+                "Pomme": "tauriipomme"
             }
         }
     },
@@ -253,7 +271,12 @@ const PLAYER_OVERRIDES = {
         }
     },
     "Eggus": {
-        twitter: "EggusTime"
+        twitter: "EggusTime",
+        characters: {
+            roa: {
+                "Etalus": "eggus"
+            }
+        }
     },
     "The Doll Room.": {
         twitter: "jvne_m",
@@ -269,6 +292,53 @@ const PLAYER_OVERRIDES = {
             melee: {
                 "Fox": 1,
                 "Sheik": 4
+            }
+        }
+    },
+    "Gullgum": {
+        twitter: "Gullgum",
+        characters: {
+            roa: {
+                "Wrastor": "coolest_player"
+            }
+        }
+    },
+    "Lilypad": {
+        twitter: "Lilypad268",
+        characters: {
+            roa: {
+                "Hodan": "lilypad"
+            }
+        }
+    },
+    "pastelle~x64": {
+        twitter: "pastelle_x64",
+        characters: {
+            roa: {
+                "Hodan": "pastellex64"
+            }
+        }
+    },
+    "Shnurgle": {
+        twitter: "Shnurgle123",
+        characters: {
+            roa: {
+                "Maypul": "shnurg2"
+            }
+        }
+    },
+    "Shnurgle": {
+        twitter: "Shnurgle123",
+        characters: {
+            roa: {
+                "Maypul": "shnurg2"
+            }
+        }
+    },
+    "Yberrie": {
+        characters: {
+            roa: {
+                "Ori": "yberrie"
             }
         }
     }

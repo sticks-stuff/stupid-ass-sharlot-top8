@@ -182,6 +182,10 @@ function go() {
 					tag = player.tag.split(" | ")[1];
 				}
 
+				if(data["game"] == "roa") {
+					ctx.imageSmoothingEnabled = false;
+				}
+
 				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
 					image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
 				} else {
@@ -276,12 +280,8 @@ function secondaries(data) {
 				} else {
 					image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
 				}
-			} else if(data["game"] == "melee") {
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
-					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}_Standard_${parseInt(PLAYER_OVERRIDES[tag].characters[data["game"]][element]) + 1}_STC_HD.png`;
-				} else {
-					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}_Standard_1_STC_HD.png`;
-				}
+			} else if(data["game"] == "roa") {
+				image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
 			} else {
 				SMALL_ICON = 48;
 				LARGE_ICON = 96;
@@ -318,13 +318,16 @@ function secondaries(data) {
 
 				drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + current_char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
 				totalImagesMade++;
-				if(totalImagesMade == (totalImagesToMake - 1)) {
+				console.log({totalImagesMade})
+				console.log({totalImagesToMake})
+				if(totalImagesMade >= (totalImagesToMake - 1)) {
 					overlay(data);
 				}
 			};
 			image.onerror = function(){
 				totalImagesMade++;
-				if(totalImagesMade == (totalImagesToMake - 1)) {
+				if(totalImagesMade >= (totalImagesToMake - 1)) {
+					ctx.imageSmoothingEnabled = true;
 					overlay(data);
 				}
 			}

@@ -171,6 +171,10 @@ async function eventData(slug) {
 		game = "pplus"; //+ is a weird character in objects
 	}
 
+	if(game == "rivals of aether") {
+		game = "roa"; //lol
+	}
+
     const btext = [];
     if (event["startAt"]) {
         const fecha = new Date(event["startAt"] * 1000).toLocaleDateString();
