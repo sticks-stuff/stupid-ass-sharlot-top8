@@ -77,6 +77,7 @@ async function eventQuery(slug, page) {
 		}),
 	});
 	let data = await response.json()
+	console.log({data});
 	return data;
 }
 
@@ -154,7 +155,7 @@ async function eventData(slug) {
 				"chars": Object.entries(freq[name]).sort((a, b) => b[1] - a[1]),
 				"twitter": twi,
 			});
-		} else if (freq[name]) {
+		} else if (freq["wins"][name]) {
 			players.push({
 				"tag": name,
 				"chars": Object.entries(freq["wins"][name]).sort((a, b) => b[1] - a[1]),
