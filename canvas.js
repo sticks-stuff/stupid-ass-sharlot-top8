@@ -120,8 +120,6 @@ var ctx = canvas.getContext('2d');
 
 const startGGre = /https:\/\/(www\.)?(smash|start)\.gg\/(tournament\/[^\/]+\/event\/[^\/]+)/g;
 
-document.getElementById("startgglink").click();
-
 function go() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -158,6 +156,7 @@ function go() {
 	console.log(input.matchAll(startGGre), m => m[3]);
 
 	eventData(Array.from(input.matchAll(startGGre), m => m[3])).then(data => {
+		sendToForm(data);
 		console.log(data);
 		var base_image = new Image();
 		base_image.src = BACKGROUND_IMAGE;
@@ -416,7 +415,7 @@ function text(data) {
 
 	image.onload = (e) => {
 		var pajarito = e.target;
-		for (let i = 0; i < 8; i++) {
+		for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 			let size;
 		
 			if (i === 0) {

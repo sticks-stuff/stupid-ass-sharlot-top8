@@ -26,16 +26,16 @@ for(i = 1; i <= 8; i++) {
 		Player ${i}
 		<br>
 		<label for="player${i}name">name: </label>
-		<input type="text" name="player${i}name">
+		<input type="text" id="player${i}name" name="player${i}name">
 		<br>
 		<label for="player${i}twt">twitter: </label>
-		<input type="text" name="player${i}twt">
+		<input type="text" id="player${i}twt" name="player${i}twt">
 		<br>
 		<label for="player${i}char">main char: </label>
-		<select name="player${i}char" id="player${i}char"></select>
+		<select name="player${i}char" id="player${i}char" id="player${i}char"></select>
 		<br>
 		<label for="player${i}alt">main char alt: </label>
-		<select name="player${i}alt" id="player${i}alt"></select>
+		<select name="player${i}alt" id="player${i}alt" id="player${i}alt"></select>
 		<br>
 		<button onclick="addSecondaryChar(${i})">add secondary character</button>
 		<div id="player${i}secondary">
@@ -124,8 +124,6 @@ function updateChars() {
 
 function updateAlts(char, alt) {
 	alt.innerHTML = "";
-	var option = new Option("none", "none");
-	alt.appendChild(option);
 	var game = document.getElementById('game').value;
 	if(json[game][char]) {
 		for (const [key, value] of Object.entries(json[game][char])) {
@@ -133,4 +131,55 @@ function updateAlts(char, alt) {
 			alt.appendChild(option);
 		}
 	}
+}
+
+function sendToForm() {
+	var input = document.getElementById("startgglink").value.replace("events", "event");
+	console.log(input.matchAll(startGGre), m => m[3]);
+
+	eventData(Array.from(input.matchAll(startGGre), m => m[3])).then(data => {
+		console.log(data);
+		document.getElementById("game").value = data["game"];
+		updateChars();
+
+		for (let i = 0; i < Math.min(data.players.length, 8); i++) {
+			const player = data.players[i];
+
+			var tag = player.tag;
+			if(player.tag.includes(" | ")) {
+				tag = player.tag.split(" | ")[1];
+			}
+			document.getElementById(`player${i + 1}name`).value = tag;
+
+			var twitter = ""
+			if(PLAYER_OVERRIDES[tag]?.twitter) {
+				twitter = "@" + PLAYER_OVERRIDES[tag]?.twitter;
+			} else {
+				twitter = data.players[i]["twitter"];
+			}
+			document.getElementById(`player${i + 1}twt`).value = twitter;
+
+			var mainChar = player.chars[0][0].split(' ').join('_').replace("&", "_");
+			document.getElementById(`player${i + 1}char`).value = mainChar;
+			updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
+			
+			if(tag.includes(" | ")) {
+				tag = tag.split(" | ")[1];
+			}
+
+			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
+				document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar];
+			}
+
+			for (let j = 1; j < player.chars.length; j++) {
+				var secondary = player.chars[j][0].split(' ').join('_').replace("&", "_");
+				addSecondaryChar(i + 1);
+				document.getElementById(`player${i + 1}secondary${j - 1}char`).value = secondary;
+				updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[secondary]) {
+					document.getElementById(`player${i + 1}secondary${j - 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[secondary];
+				}
+			}
+		}
+	});
 }

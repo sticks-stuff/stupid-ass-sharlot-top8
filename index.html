@@ -11,14 +11,15 @@
 	</head>
 
 	<body>
-		<input id="startgglink">
+		<input autocomplete="on" id="startgglink" style="width:500px" placeholder="https://www.start.gg/tournament/xxxxx/event/xxxxx/brackets/xxxx/xxxxx">
+		<button onclick="sendToForm()">load</button>
 		<br>
 
 		<label for="games">game: </label>
 		<select name="game" id="game"></select>
 		<br>
 
-		<div id="playerFormContainer">
+		<div id="playerFormContainer" style="display: flex; flex: 1;">
 
 		</div>
 
@@ -26,7 +27,6 @@
 		<input type="radio" name="style" value="resplat"> Resplat<br>
 		<input type="radio" name="style" value="ranbats"> Ranbats
 		<br>
-		<button onclick="go()">go</button>
 		<br>
 		<canvas id="canvas"></canvas>
 		<script src="oauth.js"></script>

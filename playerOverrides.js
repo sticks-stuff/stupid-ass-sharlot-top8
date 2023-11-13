@@ -40,7 +40,8 @@ const PLAYER_OVERRIDES = {
                 "Joker": 1
             },
             melee: {
-                "Marth": 1
+                "Marth": 1,
+                "Fox": 1
             },
             pplus: {
                 "Marth": 5
