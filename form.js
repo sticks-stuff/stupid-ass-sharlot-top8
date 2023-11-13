@@ -146,9 +146,6 @@ function sendToForm() {
 			const player = data.players[i];
 
 			var tag = player.tag;
-			if(player.tag.includes(" | ")) {
-				tag = player.tag.split(" | ")[1];
-			}
 			document.getElementById(`player${i + 1}name`).value = tag;
 
 			var twitter = ""
