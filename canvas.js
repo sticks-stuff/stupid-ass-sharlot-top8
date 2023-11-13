@@ -216,7 +216,7 @@ function go() {
 						flips = true;
 					}
 
-					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips); 
+					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, true); 
 					imagesToLoad++;
 					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
 						secondaries(data);
@@ -335,8 +335,8 @@ function createCanvas(width, height) {
 }
 
 function overlay(data) {
-	var canvas1 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");;
-	var canvas2 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");;
+	var canvas1 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
+	var canvas2 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
 	
 	var marco = new Image();
 	marco.src = 'assets/marco.png';

@@ -5,7 +5,7 @@
  *
  * If image and context are only arguments rectangle will equal canvas
 */
-function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false) {
+function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false) {
 
     if (arguments.length === 2) {
         x = y = 0;
@@ -23,32 +23,33 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     if (offsetX > 1) offsetX = 1;
     if (offsetY > 1) offsetY = 1;
 
-    img.width -= cropX;
-    img.height -= cropY;
+    var imgWidth = img.width - cropX;
+    var imgHeight = img.height - cropY;
     
-    w -= posOffsetX;
-    x += posOffsetX;
+    var w2 = w - posOffsetX;
+    // w -= posOffsetX;
+    var x2  = x + posOffsetX;
 
     // img.height += posOffsetY;
-    y -= posOffsetY;
-    h += posOffsetY;
+    var y2 = y - posOffsetY;
+    var h2 = h + posOffsetY;
 
-    var iw = img.width,
-        ih = img.height,
-        r = Math.min(w / iw, h / ih),
+    var iw = imgWidth,
+        ih = imgHeight,
+        r = Math.min(w2 / iw, h / ih),
         nw = iw * r,   // new prop. width
         nh = ih * r,   // new prop. height
         cx, cy, cw, ch, ar = 1;
 
     // decide which gap to fill    
-    if (nw < w) ar = w / nw;                             
-    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;  // updated
+    if (nw < w2) ar = w2 / nw;                             
+    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h2 / nh;  // updated
     nw *= ar;
     nh *= ar;
 
     // calc source rectangle
-    cw = (iw / (nw / w));
-    ch = (ih / (nh / h));
+    cw = (iw / (nw / w2));
+    ch = (ih / (nh / h2));
 
     cx = (iw - cw) * offsetX;
     cy = (ih - ch) * offsetY;
@@ -60,12 +61,39 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     if (ch > ih) ch = ih;
 
     // fill image in dest. rectangle
-    if (flips) {
-        ctx.translate(x + w/2, y + w/2);
-        ctx.scale(-1, 1);
-        ctx.translate(-(x + w/2), -(y + w/2));
+
+    if(shadow) {
+        var shadowCanvas = createCanvas(w2, h2).getContext("2d");
+        shadowCanvas.beginPath();
+		shadowCanvas.rect(0, 0, w2, h2);
+		shadowCanvas.fillStyle = PRIMARY_COLOR;
+		shadowCanvas.fill();
+        shadowCanvas.globalCompositeOperation = "destination-in";
+        // shadowCanvas.drawImage(img, cx, cy, cw, ch, x, y, w, h)
+        var shadowOffset = w*0.03;
+        if (flips) {
+            shadowCanvas.translate(shadowOffset + w2/2, shadowOffset + w2/2);
+            shadowCanvas.scale(-1, 1);
+            shadowCanvas.translate(-(shadowOffset + w2/2), -(shadowOffset + w2/2));
+        }
+        console.log(w*0.03);
+        shadowCanvas.drawImage(img, cx, cy, cw, ch, shadowOffset, shadowOffset, w2, h2);
+        // drawImageProp(shadowCanvas, img, x, y, w, h, offsetX, offsetY, posOffsetX + (w*0.3), posOffsetY, cropX + (w*0.3), cropY + (w*0.3), flips, false);
+        // drawImageProp(shadowCanvas, img, x + w*0.03, y + w*0.03, w - w*0.03, h - w*0.03, offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, false);
+        // ctx.drawImage(shadowCanvas.canvas, 0, 0);
+        ctx.drawImage(shadowCanvas.canvas, x2, y2);
+        // ctx.drawImage(shadowCanvas.canvas, w*0.03, w*0.03);
+        // ctx.setTransform(1, 0, 0, 1, 0, 0);
+        // drawImageProp(ctx, shadowCanvas.canvas, x + w*0.03, y + w*0.03, w, h, offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, false);
     }
 
-    ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
+    
+    if (flips) {
+        ctx.translate(x2 + w2/2, y2 + w2/2);
+        ctx.scale(-1, 1);
+        ctx.translate(-(x2 + w2/2), -(y2 + w2/2));
+    }
+
+    ctx.drawImage(img, cx, cy, cw, ch, x2, y2, w2, h2);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
