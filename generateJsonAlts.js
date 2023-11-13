@@ -25,14 +25,13 @@ var finalJSON = {};
 getFiles("assets/").then(e => {
 	for (let i = 0; i < e.length; i++) {
 		var element = e[i];
-		element = path.relative('/', element);
+		element = path.relative('.', element);
 		element = element.replaceAll('\\', '/');
-		element = element.split("stupid-ass-sharlot-top8/assets/")[1];
 		element = element.split("/");
 		if(element.length <= 1) continue;
-		if(element[1] != "renders") continue;
-		var char = element[2].split("-")[0];
-		var altName = element[2].split("-")[1];
+		if(element[2] != "renders") continue;
+		var char = element[3].split("-")[0];
+		var altName = element[3].split("-")[1];
 		if(altName == undefined) {
 			console.error(element)
 		}
