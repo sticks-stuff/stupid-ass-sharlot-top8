@@ -13,6 +13,15 @@
 	<body>
 		<input id="startgglink">
 		<br>
+
+		<label for="games">game: </label>
+		<select name="game" id="game"></select>
+		<br>
+
+		<div id="playerFormContainer">
+
+		</div>
+
 		<input type="radio" name="style" checked value="pop"> PoP<br>
 		<input type="radio" name="style" value="resplat"> Resplat<br>
 		<input type="radio" name="style" value="ranbats"> Ranbats
@@ -21,6 +30,7 @@
 		<br>
 		<canvas id="canvas"></canvas>
 		<script src="oauth.js"></script>
+		<script src="form.js"></script>
 		<script src="drawImageProp.js"></script>
 		<script src="convertNamesToInternal.js"></script>
 		<script src="playerOverrides.js"></script>
