@@ -28,10 +28,11 @@ getFiles("assets/").then(e => {
 		element = path.relative('.', element);
 		element = element.replaceAll('\\', '/');
 		element = element.split("/");
+		element.shift();
 		if(element.length <= 1) continue;
-		if(element[2] != "renders") continue;
-		var char = element[3].split("-")[0];
-		var altName = element[3].split("-")[1];
+		if(element[1] != "renders") continue;
+		var char = element[2].split("-")[0];
+		var altName = element[2].split("-")[1];
 		if(altName == undefined) {
 			console.error(element)
 		}
