@@ -140,13 +140,17 @@ function sendToForm() {
 	eventData(Array.from(input.matchAll(startGGre), m => m[3])).then(data => {
 		console.log(data);
 		document.getElementById("game").value = data["game"];
+		document.getElementById("toptext").value = data["toptext"];
+		document.getElementById("bottomtext").value = data["bottomtext"];
+		document.getElementById("url").value = data["url"];
 		updateChars();
 
 		for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 			const player = data.players[i];
 
 			var tag = player.tag;
-			document.getElementById(`player${i + 1}name`).value = tag;
+			
+			document.getElementById(`player${i + 1}name`).value = tag.replace(". ", ".").replace(" | ", "|");;
 
 			var twitter = ""
 			if(PLAYER_OVERRIDES[tag]?.twitter) {

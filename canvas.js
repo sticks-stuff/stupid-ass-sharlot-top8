@@ -155,142 +155,127 @@ function go() {
 	var input = document.getElementById("startgglink").value.replace("events", "event");
 	console.log(input.matchAll(startGGre), m => m[3]);
 
-	eventData(Array.from(input.matchAll(startGGre), m => m[3])).then(data => {
-		sendToForm(data);
-		console.log(data);
-		var base_image = new Image();
-		base_image.src = BACKGROUND_IMAGE;
-		base_image.onload = () => {
-			drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
-			ctx.beginPath();
-			ctx.rect(0, 0, SIZE[0], SIZE[1]);
-			ctx.fillStyle = '#0000004D'; //darken
-			ctx.fill();
+	var base_image = new Image();
+	base_image.src = BACKGROUND_IMAGE;
+	base_image.onload = () => {
+		drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
+		ctx.beginPath();
+		ctx.rect(0, 0, SIZE[0], SIZE[1]);
+		ctx.fillStyle = '#0000004D'; //darken
+		ctx.fill();
 
-			var imagesToLoad = 0;
+		var imagesToLoad = 0;
 
-			for (let i = 0; i < Math.min(data.players.length, 8); i++) {
-		
-				const player = data.players[i];
-				console.log(data.players[i])
-				const mainChar = player.chars[0][0];
-		
-				var image = new Image();
-				var tag = player.tag;
-				if(player.tag.includes(" | ")) {
-					tag = player.tag.split(" | ")[1];
+		for (let i = 0; i < 8; i++) {
+			const mainChar = document.getElementById(`player${i + 1}char`).value;
+
+			if(mainChar == "none") {
+				imagesToLoad++;
+				if(imagesToLoad == 7) {
+					secondaries();
+				}
+				continue;
+			}
+	
+			var image = new Image();
+			var game = document.getElementById("game").value;
+
+			if(game == "roa") {
+				ctx.imageSmoothingEnabled = false;
+			}
+
+
+			image.src = `assets/${game}/renders/${mainChar}-${document.getElementById(`player${i + 1}alt`).value}.png`;
+
+			image.onload = (e) => {
+				var offsetX = 0.5;
+				var offsetY = 0.5;
+				var posOffsetX = 0;
+				var posOffsetY = 0;
+				var cropX = 0;
+				var cropY = 0;
+				var flips = false;
+
+				if(game == "melee") {
+					offsetY = 0;
 				}
 
-				if(data["game"] == "roa") {
-					ctx.imageSmoothingEnabled = false;
+				if(STUPID_OFFSETS?.[game]?.[mainChar]) {
+					console.log(mainChar)
+					offsetX = STUPID_OFFSETS[game][mainChar][0];
+					offsetY = STUPID_OFFSETS[game][mainChar][1];
+				}
+				if(POSITION_OFFSETS?.[game]?.[mainChar]) {
+					posOffsetX = POSITION_OFFSETS[game][mainChar][0];
+					posOffsetY = POSITION_OFFSETS[game][mainChar][1];
+				}
+				if(CROPS?.[game]?.[mainChar]) {
+					cropX = CROPS[game][mainChar][0];
+					cropY = CROPS[game][mainChar][1];
+				}
+				if(FLIPS?.[game]) {
+					if(FLIPS?.[game].includes(mainChar)) {
+						flips = true;
+					}
 				}
 
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-					image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][mainChar]}.png`;
-				} else {
-					image.src = `assets/${data["game"]}/renders/${mainChar.split(' ').join('_')}-0.png`;
-				}
-
-				image.onload = (e) => {
-					var offsetX = 0.5;
-					var offsetY = 0.5;
-					var posOffsetX = 0;
-					var posOffsetY = 0;
-					var cropX = 0;
-					var cropY = 0;
-					var flips = false;
-
-					if(data["game"] == "melee") {
-						offsetY = 0;
-					}
-
-					if(STUPID_OFFSETS?.[data["game"]]?.[mainChar]) {
-						console.log(mainChar)
-						offsetX = STUPID_OFFSETS[data["game"]][mainChar][0];
-						offsetY = STUPID_OFFSETS[data["game"]][mainChar][1];
-					}
-					if(POSITION_OFFSETS?.[data["game"]]?.[mainChar]) {
-						posOffsetX = POSITION_OFFSETS[data["game"]][mainChar][0];
-						posOffsetY = POSITION_OFFSETS[data["game"]][mainChar][1];
-					}
-					if(CROPS?.[data["game"]]?.[mainChar]) {
-						cropX = CROPS[data["game"]][mainChar][0];
-						cropY = CROPS[data["game"]][mainChar][1];
-					}
-					if(FLIPS?.[data["game"]]) {
-						if(FLIPS?.[data["game"]].includes(mainChar)) {
-							flips = true;
-						}
-					}
-
-					drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, true); 
-					imagesToLoad++;
-					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
-						secondaries(data);
-					}
-				}
-				image.onerror = function(){
-					imagesToLoad++;
-					if(imagesToLoad == (Math.min(data.players.length, 8) - 1)) {
-						secondaries(data);
-					}
+				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, true); 
+				imagesToLoad++;
+				if(imagesToLoad == 7) {
+					secondaries();
 				}
 			}
-		};
+			image.onerror = function(){
+				imagesToLoad++;
+				if(imagesToLoad == 7) {
+					secondaries();
+				}
+			}
+		}
+	};
 
-	})
 }
 
 var SMALL_ICON = 32;
 var MED_ICON = 48;
 var LARGE_ICON = 64;
 
-function secondaries(data) {
+function secondaries() {
 	var totalImagesToMake = 0;
-	for (let i = 0; i < Math.min(data.players.length, 8); i++) {
-		const player = data.players[i];
-		for (let j = 1; j < player.chars.length; j++) {
-			if(player.chars[j][0]) {
+	for (let i = 0; i < 8; i++) {
+		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
+			if(document.getElementById(`player${i + 1}secondary${j}char`).value != "none") {
 				totalImagesToMake++;
 			}
 		}
 	}
 	var totalImagesMade = 0;
-	for (let i = 0; i < Math.min(data.players.length, 8); i++) {
-
-		const player = data.players[i];
+	for (let i = 0; i < 8; i++) {
 		var char_offset = 0;
 
-		for (let j = 1; j < player.chars.length; j++) {
-			const element = player.chars[j][0];
+		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
+			const element = document.getElementById(`player${i + 1}secondary${j}char`).value;
 			const currentI = i;
 			const current_char_offset = char_offset;
 			image = new Image();
 
 			var image = new Image();
-			var tag = player.tag;
-			if(player.tag.includes(" | ")) {
-				tag = player.tag.split(" | ")[1];
-			}
+			var game = document.getElementById("game").value;
 
-			if(data["game"] == "ultimate") {
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
-					image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${parseInt(PLAYER_OVERRIDES[tag].characters[data["game"]][element])}.png`;
-				} else {
-					image.src = `assets/${data["game"]}/stock_icons/chara_2_${convertNamesToInternal(element)}_00.png`;
-				}
-			} else if(data["game"] == "roa") {
-				image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
+
+			if(game == "ultimate") {
+				image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+			} else if(game == "roa") {
+				image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
 			} else {
 				SMALL_ICON = 48;
 				LARGE_ICON = 96;
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[element]) {
-					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-${PLAYER_OVERRIDES[tag].characters[data["game"]][element]}.png`;
-				} else {
-					image.src = `assets/${data["game"]}/stock_icons/${element.split(' ').join('_')}-0.png`;
-				}
+				image.src = `assets/${game}/stock_icons/${element.split(' ').join('_')}-${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
 			}
 
+			if(game == "roa") {
+				ctx.imageSmoothingEnabled = false;
+			}
 
 			image.onload = (e) => {
 				var size;
@@ -320,14 +305,14 @@ function secondaries(data) {
 				console.log({totalImagesMade})
 				console.log({totalImagesToMake})
 				if(totalImagesMade >= (totalImagesToMake - 1)) {
-					overlay(data);
+					overlay();
 				}
 			};
 			image.onerror = function(){
 				totalImagesMade++;
 				if(totalImagesMade >= (totalImagesToMake - 1)) {
 					ctx.imageSmoothingEnabled = true;
-					overlay(data);
+					overlay();
 				}
 			}
 			char_offset++;
@@ -340,7 +325,7 @@ function createCanvas(width, height) {
     return Object.assign(document.createElement("canvas"), {width, height});
 }
 
-function overlay(data) {
+function overlay() {
 	var canvas1 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
 	var canvas2 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
 	
@@ -367,17 +352,17 @@ function overlay(data) {
 			ctx.drawImage(canvas1.canvas, 0, 0);
 			ctx.drawImage(canvas2.canvas, 0, 0);
 			// ctx.drawImage(polo, 0, 0);
-			numbers(data);
+			numbers();
 		}
 	};
 }
 
-function numbers(data) {
+function numbers() {
 	var base_image = new Image();
 	base_image.src = 'assets/numeros.png';
 	base_image.onload = () => {
 		ctx.drawImage(base_image, 0, 0);
-		text(data);
+		text();
 	};
 }
 
@@ -387,7 +372,7 @@ var font_shadow1 = "#000000";
 var font_shadow2 = "#000000";
 var the_font = 'assets/fonts/DFGothic-with_macron_O.woff2';
 
-function text(data) {
+function text() {
 
 	// fitText(
 	// 	ctx,
@@ -400,22 +385,22 @@ function text(data) {
 	// );
 
 	// fitText(ctx, box,       text,            fontdir, guess = 30, align = "left", alignv = "top", fill = 'rgb(255, 255, 255)', shadow = 'rgba(0,0,0,0)', shadowOffset = [0.55, 0.55], forcedFont = null, outlineThickness = 0, outlineColor = null)
-	fitText(ctx, POSTXT[0], data["toptext"], the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	fitText(ctx, POSTXT[0], document.getElementById("toptext").value, the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
 
-	fitText(ctx, POSTXT[1], data["bottomtext"], the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	fitText(ctx, POSTXT[1], document.getElementById("bottomtext").value, the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
 
 	fitText(ctx, POSTXT[2], "Design by:  @Elenriqu3", the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
 	fitText(ctx, POSTXT[3], "Generator by: @Riokaru", the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
 	fitText(ctx, POSTXT[4], "   Fork by: @stick_twt", the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
 
-	fitText(ctx, POSTXT[5], data["url"], the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	fitText(ctx, POSTXT[5], document.getElementById("url").value, the_font, 30, align="right", alignv="middle", fill=font_color2, shadow=font_shadow2)
 	
 	var image = new Image();
 	image.src = `assets/pajarito.png`;
 
 	image.onload = (e) => {
 		var pajarito = e.target;
-		for (let i = 0; i < Math.min(data.players.length, 8); i++) {
+		for (let i = 0; i < 8; i++) {
 			let size;
 		
 			if (i === 0) {
@@ -425,20 +410,8 @@ function text(data) {
 			} else {
 				size = SMA;
 			}
-		
-			var tag = data.players[i].tag;
-			if(data.players[i].tag.includes(" | ")) {
-				tag = data.players[i].tag.split(" | ")[1];
-			}
 
-			if (data.players[i]["twitter"] || PLAYER_OVERRIDES[tag]?.twitter) {
-				let color;
-		
-				// if (customcolor) {
-				// 	color = customcolor;
-				// } else {
-					// color = "rgba(255, 40, 56, 255)";
-				// }
+			if (document.getElementById(`player${i + 1}twt`).value != "") {
 		
 				// Drawing twitter box
 				ctx.fillStyle = PRIMARY_COLOR;
@@ -483,17 +456,11 @@ function text(data) {
 				// ctx.font = ffont; // Assuming ffont is the font for Twitter handle
 				// ctx.fillStyle = font_color1;
 				// ctx.shadowColor = font_shadow1;
-				var twitter;
-				
-				if(PLAYER_OVERRIDES[tag]?.twitter) {
-					twitter = "@" + PLAYER_OVERRIDES[tag]?.twitter;
-				} else {
-					twitter = data.players[i]["twitter"];
-				}
+
 				fitText(
 					ctx,
 					twitter_box,
-					twitter,
+					document.getElementById(`player${i + 1}twt`).value,
 					the_font,
 					54,
 					"center",
@@ -503,7 +470,6 @@ function text(data) {
 				);
 			}
 		
-			const name = data.players[i]["tag"].replace(". ", ".").replace(" | ", "|");
 			// const name = data.players[i]["tag"];
 
 			var name_box;
@@ -523,7 +489,7 @@ function text(data) {
 			fitText(
 				ctx, 
 				name_box, 
-				name, 
+				document.getElementById(`player${i + 1}name`).value, 
 				the_font,
 				Math.round(size[0] * 0.26),
 				"center",
