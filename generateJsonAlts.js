@@ -32,7 +32,7 @@ getFiles("assets/").then(e => {
 		if(element.length <= 1) continue;
 		if(element[1] != "renders") continue;
 		var char = element[2].split("-")[0];
-		var altName = element[2].split("-")[1];
+		var altName = element[2].substring(element[2].indexOf('-') + 1);
 		if(altName == undefined) {
 			console.error(element)
 		}
