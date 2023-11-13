@@ -121,6 +121,7 @@ var ctx = canvas.getContext('2d');
 const startGGre = /https:\/\/(www\.)?(smash|start)\.gg\/(tournament\/[^\/]+\/event\/[^\/]+)/g;
 
 function go() {
+	ctx.imageSmoothingEnabled = true;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	var radioButtons = document.querySelectorAll('input[name="style"]');
