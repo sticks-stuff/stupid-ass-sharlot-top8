@@ -172,13 +172,17 @@ function sendToForm() {
 				document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar];
 			}
 
+			// for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
+			// 	removeSecondaryChar(i + 1, j);
+			// }
+
 			for (let j = 1; j < player.chars.length; j++) {
 				var secondary = player.chars[j][0].split(' ').join('_').replace("&", "_");
 				addSecondaryChar(i + 1);
 				document.getElementById(`player${i + 1}secondary${j - 1}char`).value = secondary;
 				updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[secondary]) {
-					document.getElementById(`player${i + 1}secondary${j - 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[secondary];
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]]) {
+					document.getElementById(`player${i + 1}secondary${j - 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]];
 				}
 			}
 		}

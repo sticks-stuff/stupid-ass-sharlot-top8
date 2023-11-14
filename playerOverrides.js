@@ -19,7 +19,7 @@ const PLAYER_OVERRIDES = {
                 "Marth": 4,
                 "Fox": 2,
                 "Falco": 2,
-                "Dr Mario": 1,
+                "Dr. Mario": 1,
                 "Mr. Game & Watch": 2
             },
             pplus: {
