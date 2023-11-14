@@ -157,7 +157,11 @@ function go() {
 	console.log(input.matchAll(startGGre), m => m[3]);
 
 	var base_image = new Image();
-	base_image.src = BACKGROUND_IMAGE;
+	if(document.getElementById("backgroundImage").files[0] != null) {
+		base_image.src = URL.createObjectURL(document.getElementById("backgroundImage").files[0]);
+	} else {
+		base_image.src = BACKGROUND_IMAGE;
+	}
 	base_image.onload = () => {
 		drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
 		ctx.beginPath();

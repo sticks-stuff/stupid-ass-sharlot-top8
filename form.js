@@ -168,8 +168,8 @@ function sendToForm() {
 				tag = tag.split(" | ")[1];
 			}
 
-			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar]) {
-				document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[mainChar];
+			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
+				document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
 			}
 
 			// for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
