@@ -149,8 +149,14 @@ function sendToForm() {
 			const player = data.players[i];
 
 			var tag = player.tag;
+
+			console.log({tag})
 			
-			document.getElementById(`player${i + 1}name`).value = tag.replace(". ", ".").replace(" | ", "|");;
+			document.getElementById(`player${i + 1}name`).value = tag.replace(". ", ".").replace(" | ", "|");
+			
+			if(tag.includes(" | ")) {
+				tag = tag.split(" | ")[1];
+			}
 
 			var twitter = ""
 			if(PLAYER_OVERRIDES[tag]?.twitter) {
@@ -163,10 +169,6 @@ function sendToForm() {
 			var mainChar = player.chars[0][0].split(' ').join('_').replace("&", "_");
 			document.getElementById(`player${i + 1}char`).value = mainChar;
 			updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
-			
-			if(tag.includes(" | ")) {
-				tag = tag.split(" | ")[1];
-			}
 
 			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
 				document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
