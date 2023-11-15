@@ -31,8 +31,14 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     var x2  = x + posOffsetX;
 
     // img.height += posOffsetY;
-    var y2 = y - posOffsetY;
-    var h2 = h + posOffsetY;
+    var y2 = Math.max(y + posOffsetY, y);
+    // var h2 = h + posOffsetY;
+    var h2 = Math.min(h - posOffsetY, h + posOffsetY, h);
+    // var h2 = h;
+
+    // ctx.rect(x2, y2, w2, h2);
+    // ctx.strokeStyle = 'red';
+    // ctx.stroke();
 
     var iw = imgWidth,
         ih = imgHeight,
@@ -43,7 +49,7 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
 
     // decide which gap to fill    
     if (nw < w2) ar = w2 / nw;                             
-    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h2 / nh;  // updated
+    if (Math.abs(ar - 1) < 1e-14 && nh < h2) ar = h2 / nh;  // updated
     nw *= ar;
     nh *= ar;
 

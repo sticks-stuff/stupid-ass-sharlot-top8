@@ -32,7 +32,11 @@ const STUPID_OFFSETS = {
 		Bayonetta: [0, 0],
 		Ganondorf: [0.5, 0],
 		Lucas: [1, 0],
-		Zelda: [0.5, 0]
+		Zelda: [0.5, 0],
+		Link: [0.5, 0.25],
+		Diddy_Kong: [0, 0.5],
+		Donkey_Kong: [0.5, 1],
+		Daisy: [0.5, 0]
 	}
 }
 
@@ -40,6 +44,8 @@ const POSITION_OFFSETS = {
 	ultimate: {
 		Falco: [30, 0],
 		Ganondorf: [0, -5],
+		Donkey_Kong: [0, -25],
+		// Diddy_Kong: [50, 0],
 		Lucas: [-5, 0]
 	}
 }
@@ -48,6 +54,7 @@ const CROPS = {
 	ultimate: {
 		Bayonetta: [1000, -200],
 		Lucas: [-200, 0],
+		// Donkey_Kong: [0, 50],
 		Bowser: [0, -300]
 	}
 }
@@ -176,7 +183,7 @@ function go() {
 
 			if(mainChar == "none") {
 				imagesToLoad++;
-				if(imagesToLoad == 7) {
+				if(imagesToLoad >= 8) {
 					secondaries();
 				}
 				continue;
@@ -200,9 +207,12 @@ function go() {
 				var cropX = 0;
 				var cropY = 0;
 				var flips = false;
+				
+				var shadows = true;
 
 				if(game == "melee") {
 					offsetY = 0;
+					shadows = false;
 				}
 
 				if(STUPID_OFFSETS?.[game]?.[mainChar]) {
@@ -210,7 +220,14 @@ function go() {
 					offsetX = STUPID_OFFSETS[game][mainChar][0];
 					offsetY = STUPID_OFFSETS[game][mainChar][1];
 				}
+				if(POSITION_OFFSETS[game]) {
+					console.log({mainChar})
+					if(POSITION_OFFSETS[game][mainChar]) {
+						console.log(POSITION_OFFSETS[game][mainChar])
+					}
+				}
 				if(POSITION_OFFSETS?.[game]?.[mainChar]) {
+					console.log("POSITION_OFFSETS" + mainChar)
 					posOffsetX = POSITION_OFFSETS[game][mainChar][0];
 					posOffsetY = POSITION_OFFSETS[game][mainChar][1];
 				}
@@ -224,15 +241,16 @@ function go() {
 					}
 				}
 
-				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, true); 
+				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
 				imagesToLoad++;
-				if(imagesToLoad == 7) {
+				console.log({imagesToLoad})
+				if(imagesToLoad >= 8) {
 					secondaries();
 				}
 			}
 			image.onerror = function(){
 				imagesToLoad++;
-				if(imagesToLoad == 7) {
+				if(imagesToLoad >= 8) {
 					secondaries();
 				}
 			}
@@ -246,6 +264,7 @@ var MED_ICON = 48;
 var LARGE_ICON = 64;
 
 function secondaries() {
+	console.log("here")
 	var totalImagesToMake = 0;
 	for (let i = 0; i < 8; i++) {
 		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
@@ -254,7 +273,11 @@ function secondaries() {
 			}
 		}
 	}
+	console.log(totalImagesToMake)
 	var totalImagesMade = 0;
+	if(totalImagesToMake == 0) {
+		overlay();
+	}
 	for (let i = 0; i < 8; i++) {
 		var char_offset = 0;
 
