@@ -166,7 +166,7 @@ function sendToForm() {
 			}
 			document.getElementById(`player${i + 1}twt`).value = twitter;
 
-			var mainChar = player.chars[0][0].split(' ').join('_').replace("&", "_");
+			var mainChar = player.chars[0][0].split(' ').join('_').replace("&", "_").replace("-", "_");
 			document.getElementById(`player${i + 1}char`).value = mainChar;
 			updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
 
