@@ -342,5 +342,12 @@ const PLAYER_OVERRIDES = {
                 "Ori": "yberrie"
             }
         }
-    }
+    },
+    "Fishgame": {
+        characters: {
+            roa: {
+                "Hodan": "fish"
+            }
+        }
+    },
 }
