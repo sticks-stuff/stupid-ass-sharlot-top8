@@ -343,4 +343,11 @@ const PLAYER_OVERRIDES = {
             }
         }
     }
+    "Fishgame": {
+        characters: {
+            roa: {
+                "Hodan": "fish"
+            }
+        }
+    }
 }
