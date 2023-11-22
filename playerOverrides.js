@@ -26,7 +26,7 @@ const PLAYER_OVERRIDES = {
                 "Marth": 6,
                 "Mr. Game & Watch": 7,
                 "Ice Climbers": 11,
-                "Fox": 19,
+                "Fox": 'Shades_Purple',
                 "Falco": 9
             }
         }
@@ -174,7 +174,7 @@ const PLAYER_OVERRIDES = {
                 "Captain Falcon": 5
             },
             pplus: {
-                "Peach": 2,
+                "Peach": 3,
                 "Captain Falcon": 4,
                 "Mario": 15
             },

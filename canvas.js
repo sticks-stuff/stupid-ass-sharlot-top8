@@ -298,7 +298,11 @@ function secondaries() {
 			} else {
 				SMALL_ICON = 48;
 				LARGE_ICON = 96;
+				if(game == "pplus") {
+					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
+				} else {
 				image.src = `assets/${game}/stock_icons/${element.split(' ').join('_')}-${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+				}
 			}
 
 			if(game == "roa") {
