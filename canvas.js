@@ -156,6 +156,59 @@ function styleChanged() {
 	}
 }
 
+function handleImageOnload(i, imagesToLoad) {
+    return (e) => {
+		var offsetX = 0.5;
+		var offsetY = 0.5;
+		var posOffsetX = 0;
+		var posOffsetY = 0;
+		var cropX = 0;
+		var cropY = 0;
+		var flips = false;
+		
+		var shadows = true;
+
+		if(game == "melee") {
+			offsetY = 0;
+			shadows = false;
+		}
+
+		if(STUPID_OFFSETS?.[game]?.[mainChar]) {
+			console.log(mainChar)
+			offsetX = STUPID_OFFSETS[game][mainChar][0];
+			offsetY = STUPID_OFFSETS[game][mainChar][1];
+		}
+		if(POSITION_OFFSETS[game]) {
+			console.log({mainChar})
+			if(POSITION_OFFSETS[game][mainChar]) {
+				console.log(POSITION_OFFSETS[game][mainChar])
+			}
+		}
+		if(POSITION_OFFSETS?.[game]?.[mainChar]) {
+			console.log("POSITION_OFFSETS" + mainChar)
+			posOffsetX = POSITION_OFFSETS[game][mainChar][0];
+			posOffsetY = POSITION_OFFSETS[game][mainChar][1];
+		}
+		if(CROPS?.[game]?.[mainChar]) {
+			cropX = CROPS[game][mainChar][0];
+			cropY = CROPS[game][mainChar][1];
+		}
+		if(FLIPS?.[game]) {
+			if(FLIPS?.[game].includes(mainChar)) {
+				flips = true;
+			}
+		}
+
+		drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
+		console.log({i});
+		imagesToLoad.num++;
+		console.log({imagesToLoad})
+		if(imagesToLoad.num >= 8) {
+			secondaries();
+		}
+    };
+}
+
 function go() {
 	ctx.imageSmoothingEnabled = true;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -179,13 +232,13 @@ function go() {
 		ctx.fillStyle = '#0000004D'; //darken
 		ctx.fill();
 
-		var imagesToLoad = 0;
+		var imagesToLoad = { num: 0 };
 
 		for (let i = 0; i < 8; i++) {
 			const mainChar = document.getElementById(`player${i + 1}char`).value;
 
 			if(mainChar == "none") {
-				imagesToLoad++;
+				imagesToLoad.num++;
 				if(imagesToLoad >= 8) {
 					secondaries();
 				}
@@ -199,64 +252,32 @@ function go() {
 				ctx.imageSmoothingEnabled = false;
 			}
 
-
-			image.src = `assets/${game}/renders/${mainChar}-${document.getElementById(`player${i + 1}alt`).value}.png`;
-
-			image.onload = (e) => {
-				var offsetX = 0.5;
-				var offsetY = 0.5;
-				var posOffsetX = 0;
-				var posOffsetY = 0;
-				var cropX = 0;
-				var cropY = 0;
-				var flips = false;
-				
-				var shadows = true;
-
-				if(game == "melee") {
-					offsetY = 0;
-					shadows = false;
-				}
-
-				if(STUPID_OFFSETS?.[game]?.[mainChar]) {
-					console.log(mainChar)
-					offsetX = STUPID_OFFSETS[game][mainChar][0];
-					offsetY = STUPID_OFFSETS[game][mainChar][1];
-				}
-				if(POSITION_OFFSETS[game]) {
-					console.log({mainChar})
-					if(POSITION_OFFSETS[game][mainChar]) {
-						console.log(POSITION_OFFSETS[game][mainChar])
+			var charImgInput = document.getElementById(`player${i + 1}charImg`);
+			if (mainChar == "custom") {
+				var reader = new FileReader();
+				reader.onload = function(e) {
+					var image = new Image();
+					image.src = e.target.result;
+					image.onload = handleImageOnload(i, imagesToLoad);
+					image.onerror = function(){
+						imagesToLoad.num++;
+						if(imagesToLoad.num >= 8) {
+							secondaries();
+						}
+					}
+				};
+				reader.readAsDataURL(charImgInput.files[0]);
+			} else {
+				image.src = `assets/${game}/renders/${mainChar}-${document.getElementById(`player${i + 1}alt`).value}.png`;
+				image.onload = handleImageOnload(i, imagesToLoad);
+				image.onerror = function(){
+					imagesToLoad.num++;
+					if(imagesToLoad.num >= 8) {
+						secondaries();
 					}
 				}
-				if(POSITION_OFFSETS?.[game]?.[mainChar]) {
-					console.log("POSITION_OFFSETS" + mainChar)
-					posOffsetX = POSITION_OFFSETS[game][mainChar][0];
-					posOffsetY = POSITION_OFFSETS[game][mainChar][1];
-				}
-				if(CROPS?.[game]?.[mainChar]) {
-					cropX = CROPS[game][mainChar][0];
-					cropY = CROPS[game][mainChar][1];
-				}
-				if(FLIPS?.[game]) {
-					if(FLIPS?.[game].includes(mainChar)) {
-						flips = true;
-					}
-				}
+			}
 
-				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
-				imagesToLoad++;
-				console.log({imagesToLoad})
-				if(imagesToLoad >= 8) {
-					secondaries();
-				}
-			}
-			image.onerror = function(){
-				imagesToLoad++;
-				if(imagesToLoad >= 8) {
-					secondaries();
-				}
-			}
 		}
 	};
 
@@ -266,19 +287,51 @@ var SMALL_ICON = 32;
 var MED_ICON = 48;
 var LARGE_ICON = 64;
 
+function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
+	return (e) => {
+		console.log({char_offset})
+		var size;
+		var right_margin;
+		var iconSize = SMALL_ICON;
+
+		if (i == 0) {
+			size = BIG
+		} else if (i < 4) {
+			size = MED
+		} else {
+			size = SMA
+		}
+
+		if(size == BIG) {
+			right_margin = 14;
+			iconSize = LARGE_ICON;
+		} else if (size == MED) {
+			right_margin = 8;
+			iconSize = MED_ICON;
+		} else {
+			right_margin = 6;
+		}
+
+		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
+		totalImages.made++;
+		console.log({totalImages})
+		if(totalImages.made >= (totalImages.toMake - 1)) {
+			overlay();
+		}
+	};
+}
+
 function secondaries() {
 	console.log("here")
-	var totalImagesToMake = 0;
+	var totalImages = { made: 0, toMake: 0 };
 	for (let i = 0; i < 8; i++) {
 		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
 			if(document.getElementById(`player${i + 1}secondary${j}char`).value != "none") {
-				totalImagesToMake++;
+				totalImages.toMake++;
 			}
 		}
 	}
-	console.log(totalImagesToMake)
-	var totalImagesMade = 0;
-	if(totalImagesToMake == 0) {
+	if(totalImages.toMake == 0) {
 		overlay();
 	}
 	for (let i = 0; i < 8; i++) {
@@ -286,71 +339,60 @@ function secondaries() {
 
 		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
 			const element = document.getElementById(`player${i + 1}secondary${j}char`).value;
-			const currentI = i;
-			const current_char_offset = char_offset;
 			image = new Image();
 
 			var image = new Image();
 			var game = document.getElementById("game").value;
 
-
-			if(game == "ultimate") {
-				image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
-			} else if(game == "roa") {
-				image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
-			} else {
-				SMALL_ICON = 48;
-				LARGE_ICON = 96;
-				if(game == "pplus") {
-					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
-				} else {
-				image.src = `assets/${game}/stock_icons/${element.split(' ').join('_')}-${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
-				}
-			}
+			var charImgInput = document.getElementById(`player${i + 1}secondary${j}charImg`);
 
 			if(game == "roa") {
 				ctx.imageSmoothingEnabled = false;
 			}
 
-			image.onload = (e) => {
-				var size;
-				var right_margin;
-				var iconSize = SMALL_ICON;
-
-				if (currentI == 0) {
-					size = BIG
-				} else if (currentI < 4) {
-					size = MED
+			if (element == "custom") {
+				var reader = new FileReader();
+				const current_char_offset = char_offset;
+				reader.onload = function(e) {
+					var image = new Image();
+					image.src = e.target.result;
+					image.onload = handleSecondaryImageOnLoad(i, current_char_offset, totalImages);
+					image.onerror = function(){
+						totalImages.made++;
+						if(totalImages.made >= (totalImages.toMake - 1)) {
+							ctx.imageSmoothingEnabled = true;
+							overlay();
+						}
+					}
+				};
+				char_offset++;
+				reader.readAsDataURL(charImgInput.files[0]);
+			} else {
+				if(game == "ultimate") {
+					image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+				} else if(game == "roa") {
+					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
 				} else {
-					size = SMA
+					SMALL_ICON = 48;
+					LARGE_ICON = 96;
+					if(game == "pplus") {
+						image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
+					} else {
+						image.src = `assets/${game}/stock_icons/${element.split(' ').join('_')}-${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+					}
 				}
-
-				if(size == BIG) {
-					right_margin = 14;
-					iconSize = LARGE_ICON;
-				} else if (size == MED) {
-					right_margin = 8;
-					iconSize = MED_ICON;
-				} else {
-					right_margin = 6;
+				image.onload = handleSecondaryImageOnLoad(i, char_offset, totalImages);
+	
+				image.onerror = function(){
+					totalImages.made++;
+					if(totalImages.made >= (totalImages.toMake - 1)) {
+						ctx.imageSmoothingEnabled = true;
+						overlay();
+					}
 				}
-
-				drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + current_char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
-				totalImagesMade++;
-				console.log({totalImagesMade})
-				console.log({totalImagesToMake})
-				if(totalImagesMade >= (totalImagesToMake - 1)) {
-					overlay();
-				}
-			};
-			image.onerror = function(){
-				totalImagesMade++;
-				if(totalImagesMade >= (totalImagesToMake - 1)) {
-					ctx.imageSmoothingEnabled = true;
-					overlay();
-				}
+				char_offset++;
 			}
-			char_offset++;
+
 		}
 	}
 }

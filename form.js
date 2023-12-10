@@ -1,5 +1,19 @@
 // this sucks LMAO
 
+function imgChanged(charDropdownId) {
+    var charDropdown = document.getElementById(charDropdownId + "char");
+	var customOption = document.getElementById(charDropdownId + 'custom');
+	if (!customOption) {
+        customOption = document.createElement('option');
+        customOption.value = 'custom';
+        customOption.text = 'Custom';
+        customOption.id = charDropdownId + 'custom';
+        document.getElementById(charDropdownId + "char").add(customOption);
+    }
+    charDropdown.value = 'custom';
+	updateAlts("custom", document.getElementById(charDropdownId + "alt"));
+}
+
 var json = {};
 (async function () {
 
@@ -37,6 +51,9 @@ for(i = 1; i <= 8; i++) {
 		<label for="player${i}alt">main char alt: </label>
 		<select name="player${i}alt" id="player${i}alt" id="player${i}alt"></select>
 		<br>
+		<label for="player${i}charImg">custom: </label>
+		<input type="file" id="player${i}charImg" name="player${i}charImg" accept="image/*" onchange="imgChanged('player${i}')">
+		<br>
 		<button onclick="addSecondaryChar(${i})">add secondary character</button>
 		<div id="player${i}secondary">
 		</div>
@@ -58,6 +75,8 @@ function addSecondaryChar(i) {
 	div.innerHTML = `
 		<select name="player${i}secondary${secondaryCount}char" id="player${i}secondary${secondaryCount}char"></select>
 		<select name="player${i}secondary${secondaryCount}alt" id="player${i}secondary${secondaryCount}alt"></select>
+		<label for="player${i}secondary${secondaryCount}charImg">custom: </label>
+        <input type="file" id="player${i}secondary${secondaryCount}charImg" name="player${i}secondary${secondaryCount}charImg" accept="image/*" onchange="imgChanged('player${i}secondary${secondaryCount}')">
 		<button onclick="removeSecondaryChar(${i}, ${secondaryCount})">remove</button>
 	`;
 	document.getElementById("player" + i + "secondary").appendChild(div);
@@ -73,6 +92,13 @@ function addSecondaryChar(i) {
 	}
 	char.addEventListener('change', function() {
 		updateAlts(document.getElementById("player" + i + "secondary" + secondaryCount + "char").value, document.getElementById("player" + i + "secondary" + secondaryCount + "alt"));
+		if (char.value != 'custom') {
+            document.getElementById("player" + i + "secondary" + secondaryCount + "charImg").value = '';
+			var customOption = document.getElementById("player" + i + 'custom');
+			if (customOption) {
+				charDropdown.removeChild(customOption);
+			}
+        }
 	});
 
 	var alt = document.getElementById("player" + i + "secondary" + secondaryCount + "alt");
@@ -117,6 +143,13 @@ function updateChars() {
 		}
 		char.addEventListener('change', function() {
 			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
+			if (document.getElementById("player" + i + "char").value != 'custom') {
+				document.getElementById("player" + i + "charImg").value = '';
+				var customOption = document.getElementById("player" + i + 'custom');
+				if (customOption) {
+					charDropdown.removeChild(customOption);
+				}
+			}
 		});
 		updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
 	}
