@@ -1,10 +1,10 @@
 function convertNamesToInternal(character) {
 	switch (character.toLowerCase()) {
-		case 'donkey kong':
+		case 'donkey_kong':
 			return 'donkey';
-		case 'dark samus':
+		case 'dark_samus':
 			return 'samusd';
-		case 'captain falcon':
+		case 'captain_falcon':
 			return 'captain';
 		case 'jigglypuff':
 			return 'purin';
@@ -12,89 +12,89 @@ function convertNamesToInternal(character) {
 			return 'peach';
 		case 'bowser':
 			return 'koopa';
-		case 'ice climbers':
+		case 'ice_climbers':
 			return 'ice_climber';
-		case 'dr. mario':
+		case 'dr._mario':
 			return 'mariod';
-		case 'young link':
+		case 'young_link':
 			return 'younglink';
 		case 'ganondorf':
 			return 'ganon';
 		case 'mewtwo':
 			return 'mewtwo';
-		case 'mr.game & watch':
+		case 'mr.game___watch':
 			return 'gamewatch';
-		case 'meta knight':
+		case 'meta_knight':
 			return 'metaknight';
-		case 'dark pit':
+		case 'dark_pit':
 			return 'pitb';
-		case 'zero suit samus':
+		case 'zero_suit_samus':
 			return 'szerosuit';
-		case 'pokemon trainer':
+		case 'pokemon_trainer':
 			return 'ptrainer';
-		case 'diddy kong':
+		case 'diddy_kong':
 			return 'diddy';
-		case 'king dedede':
+		case 'king_dedede':
 			return 'dedede';
 		case 'olimar':
 			return 'pikmin';
 		case 'r.o.b.':
 			return 'robot';
-		case 'toon link':
+		case 'toon_link':
 			return 'toonlink';
 		case 'villager':
 			return 'murabito';
-		case 'mega man':
+		case 'mega_man':
 			return 'rockman';
-		case 'wii fit trainer':
+		case 'wii_fit_trainer':
 			return 'wiifit';
-		case 'rosalina & luma':
+		case 'rosalina___luma':
 			return 'rosetta';
-		case 'little mac':
+		case 'little_mac':
 			return 'littlemac';
 		case 'greninja':
 			return 'gekkouga';
 		case 'mii brawler':
 			return 'miifighter';
-		case 'mii swordfighter':
+		case 'mii_swordfighter':
 			return 'miiswordsman';
-		case 'mii gunner':
+		case 'mii_gunner':
 			return 'miigunner';
 		case 'pac-man':
 			return 'pacman';
 		case 'robin':
 			return 'reflet';
-		case 'bowser jr.':
+		case 'bowser_jr.':
 			return 'koopajr';
-		case 'duck hunt':
+		case 'duck_hunt':
 			return 'duckhunt';
 		case 'corrin':
 			return 'kamui';
-		case 'king k. rool':
+		case 'king_k._rool':
 			return 'krool';
 		case 'isabelle':
 			return 'shizue';
 		case 'incineroar':
 			return 'gaogaen';
-		case 'piranha plant':
+		case 'piranha_plant':
 			return 'packun';
 		case 'joker':
 			return 'jack';
 		case 'hero':
 			return 'brave';
-		case 'banjo & kazooie':
+		case 'banjo___kazooie':
 			return 'buddy';
 		case 'terry':
 			return 'dolly';
 		case 'byleth':
 			return 'master';
-		case 'min min':
+		case 'min_min':
 			return 'tantan';
 		case 'steve':
 			return 'pickel';
 		case 'sephiroth':
 			return 'edge';
-		case 'pyra & mythra':
+		case 'pyra___mythra':
 			return 'pyramythra';
 		case 'mythra':
 			return 'elight';
