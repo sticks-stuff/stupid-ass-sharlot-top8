@@ -127,38 +127,41 @@ var ctx = canvas.getContext('2d');
 
 const startGGre = /https:\/\/(www\.)?(smash|start)\.gg\/(tournament\/[^\/]+\/event\/[^\/]+)/g;
 
-function go() {
-	ctx.imageSmoothingEnabled = true;
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+function styleChanged() {
 	var radioButtons = document.querySelectorAll('input[name="style"]');
-	let style;
 	for (var radioButton of radioButtons) {
 		if (radioButton.checked) {
 			style = radioButton.value;
 			break;
 		}
 	}
-
 	switch (style) {
 		case "pop":
-			PRIMARY_COLOR = "#682f77";
-			SECONDARY_COLOR = "#ff3d8b";
+			document.getElementById("primaryColor").value = "#682f77";
+			document.getElementById("secondaryColor").value = "#ff3d8b";
 			BACKGROUND_IMAGE = 'assets/pop_background.png';
 			break;
 		case "resplat":
-			PRIMARY_COLOR = "rgb(48, 47, 123)";
-			SECONDARY_COLOR = "rgb(219, 36, 38)";
+			document.getElementById("primaryColor").value = "#302f7b";
+			document.getElementById("secondaryColor").value = "#db2426";
 			BACKGROUND_IMAGE = 'assets/respawn_platform_poster_medium.png';
 			break;
 		case "ranbats":
-			PRIMARY_COLOR = "#D93033";
-			SECONDARY_COLOR = "#F7F8F0";
+			document.getElementById("primaryColor").value = "#D93033";
+			document.getElementById("secondaryColor").value = "#F7F8F0";
 			BACKGROUND_IMAGE = 'assets/welly_ranbats.jpg';
 			break;
 		default:
 			break;
 	}
+}
+
+function go() {
+	ctx.imageSmoothingEnabled = true;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	PRIMARY_COLOR = document.getElementById("primaryColor").value;
+	SECONDARY_COLOR = document.getElementById("secondaryColor").value;
 
 	var input = document.getElementById("startgglink").value.replace("events", "event");
 	console.log(input.matchAll(startGGre), m => m[3]);

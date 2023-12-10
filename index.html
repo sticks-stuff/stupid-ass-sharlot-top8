@@ -23,12 +23,18 @@
 
 		</div>
 		
-		<input type="radio" name="style" checked value="pop"> PoP<br>
-		<input type="radio" name="style" value="resplat"> Resplat<br>
-		<input type="radio" name="style" value="ranbats"> Ranbats
+		<input type="radio" name="style" checked value="pop" onchange="styleChanged()"> PoP<br>
+		<input type="radio" name="style" value="resplat" onchange="styleChanged()"> Resplat<br>
+		<input type="radio" name="style" value="ranbats" onchange="styleChanged()"> Ranbats
 		<br>
 		<label for="backgroundImage">custom background image</label>
 		<input type="file" id="backgroundImage">
+		<br>
+		<label for="primaryColor">Primary Color:</label>
+		<input type="color" id="primaryColor" name="primaryColor" value="#682f77">
+		<br>
+		<label for="secondaryColor">Secondary Color:</label>
+		<input type="color" id="secondaryColor" name="secondaryColor" value="#ff3d8b">
 		<br>
 		<input autocomplete="on" id="toptext" style="width:500px" placeholder="top text">
 		<br>
