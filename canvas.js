@@ -36,7 +36,8 @@ const STUPID_OFFSETS = {
 		Link: [0.5, 0.25],
 		Diddy_Kong: [0, 0.5],
 		Donkey_Kong: [0.5, 1],
-		Daisy: [0.5, 0]
+		Daisy: [0.5, 0],
+		Ike: [0.5, 0]
 	}
 }
 
@@ -165,8 +166,10 @@ function handleImageOnload(i, imagesToLoad) {
 		var cropX = 0;
 		var cropY = 0;
 		var flips = false;
-		
 		var shadows = true;
+		
+		var game = document.getElementById("game").value;
+		var mainChar = document.getElementById(`player${i + 1}char`).value;
 
 		if(game == "melee") {
 			offsetY = 0;
