@@ -3,7 +3,7 @@ const PLAYER_OVERRIDES = {
         twitter: "ss2342",
         characters: {
             ultimate: {
-                "Byleth": 2,
+                "Byleth": 4,
                 "Donkey Kong": 2
             }
         }
@@ -37,14 +37,14 @@ const PLAYER_OVERRIDES = {
             ultimate: {
                 "Sora": "Anti",
                 "Cloud": 1,
-                "Joker": 1
+                "Joker": 4
             },
             melee: {
                 "Marth": 1,
                 "Fox": 1
             },
             pplus: {
-                "Marth": 5
+                "Marth": "Hooded_1"
             },
             roa: {
                 "Clairen": "AlastairBL"
@@ -56,7 +56,7 @@ const PLAYER_OVERRIDES = {
         characters: {
             ultimate: {
                 "Fox": 4,
-                "Pichu": 5,
+                "Pichu": 3,
                 "Wolf": 6
             }
         }
@@ -72,7 +72,7 @@ const PLAYER_OVERRIDES = {
                 "Ganondorf": 3
             },
             pplus: {
-                "Ganondorf": 17
+                "Ganondorf": "Phantom_1"
             }
         }
     },
@@ -106,7 +106,9 @@ const PLAYER_OVERRIDES = {
                 "Bowser": 4
             },
             melee: {
-                "Ganondorf": 4
+                "Ganondorf": 4,
+                "Sheik": 3,
+                "Luigi": 3
             },
             pplus: {
                 "Bowser": 4
@@ -167,16 +169,17 @@ const PLAYER_OVERRIDES = {
         twitter: "UnladenSwellow",
         characters: {
             ultimate: {
-                "Daisy": 3
+                "Daisy": 6
             },
             melee: {
                 "Peach": 4,
                 "Captain Falcon": 5
             },
             pplus: {
-                "Peach": 3,
-                "Captain Falcon": 4,
-                "Mario": 15
+                "Peach": 1,
+                "Captain Falcon": 3,
+                "Mario": "Sunshine_Moons",
+                "Ganondorf": "OoT_0"
             },
             roa: {
                 "Forsburn": "unladen"
@@ -190,7 +193,7 @@ const PLAYER_OVERRIDES = {
                 "Marth": 3
             },
             pplus: {
-                "Link": 6
+                "Link": 7
             },
             ultimate: {
                 "Link": "Pink_Champion_Mod"
@@ -251,7 +254,10 @@ const PLAYER_OVERRIDES = {
             melee: {
                 "Peach": 3,
                 "Jigglypuff": 2,
-                "Samus": 2
+                "Samus": 2,
+                "Sheik": 2,
+                "Zelda": 2,
+                "Fox": 3
             },
             pplus: {
                 "Zelda": 2
@@ -283,7 +289,7 @@ const PLAYER_OVERRIDES = {
         twitter: "jvne_m",
         characters: {
             pplus: {
-                "Captain Falcon": 13
+                "Captain Falcon": 8
             }
         }
     },
