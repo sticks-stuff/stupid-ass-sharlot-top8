@@ -615,3 +615,10 @@ function text() {
 
 
 }
+
+function saveCanvas() {
+	var link = document.createElement('a');
+	link.setAttribute('download', `${document.getElementById("toptext").value}.png`);
+	link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+	link.click();
+}
