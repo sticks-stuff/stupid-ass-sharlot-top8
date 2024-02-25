@@ -306,7 +306,8 @@ const PLAYER_OVERRIDES = {
         twitter: "Gullgum",
         characters: {
             roa: {
-                "Wrastor": "coolest_player"
+                "Wrastor": "coolest_player",
+                "Clairen": "Gullgum"
             }
         }
     },
@@ -330,7 +331,7 @@ const PLAYER_OVERRIDES = {
         twitter: "Shnurgle123",
         characters: {
             roa: {
-                "Maypul": "shnurg2"
+                "Maypul": "Bedtime"
             }
         }
     },
@@ -338,7 +339,7 @@ const PLAYER_OVERRIDES = {
         twitter: "Shnurgle123",
         characters: {
             roa: {
-                "Maypul": "shnurg2"
+                "Maypul": "Bedtime"
             }
         }
     },
@@ -353,6 +354,20 @@ const PLAYER_OVERRIDES = {
         characters: {
             roa: {
                 "Hodan": "fish"
+            }
+        }
+    },
+    "Mackarp": {
+        characters: {
+            roa: {
+                "Clairen": "Valentines"
+            }
+        }
+    },
+    "BeCrab": {
+        characters: {
+            roa: {
+                "Mollo": "Pink"
             }
         }
     },
