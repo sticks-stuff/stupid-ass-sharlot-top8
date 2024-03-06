@@ -3,7 +3,7 @@ const PLAYER_OVERRIDES = {
         twitter: "ss2342",
         characters: {
             ultimate: {
-                "Byleth": 4,
+                "Byleth": 3,
                 "Donkey Kong": 2
             }
         }
@@ -76,6 +76,22 @@ const PLAYER_OVERRIDES = {
             }
         }
     },
+    "Cipherus": {
+        characters: {
+            ultimate: {
+                "Roy": 4
+            }
+        }
+    },
+    "Crayon Muncher": {
+        characters: {
+            ultimate: {
+                "Lucas": 1,
+                "Steve": 2,
+                "Kirby": 6
+            }
+        }
+    },
     "dingdongkid": {
         twitter: "dingdongkid",
         characters: {
@@ -103,7 +119,8 @@ const PLAYER_OVERRIDES = {
         twitter: "IcyKeswick",
         characters: {
             ultimate: {
-                "Bowser": 4
+                "Bowser": 4,
+                "Byleth": 4
             },
             melee: {
                 "Ganondorf": 4,
@@ -115,6 +132,13 @@ const PLAYER_OVERRIDES = {
             },
             roa: {
                 "Kragg": "icyk"
+            }
+        }
+    },
+    "JoyKong": {
+        characters: {
+            ultimate: {
+                "Cloud": 1
             }
         }
     },
@@ -139,24 +163,27 @@ const PLAYER_OVERRIDES = {
             }
         }
     },
+    "Mackarp": {
+        twitter: "Mackarp2",
+        characters: {
+            ultimate: {
+                "Jigglypuff": 4
+            }
+        }
+    },
     "mojobones": {
         twitter: "mojobones_"
     },
-    "Secret Asian": {
+    "OgiByeah": {
+        twitter: "OgiByeah",
         characters: {
             ultimate: {
-                "Cloud": 1
+                "Kazuya": 7
             }
         }
     },
-    "Smithereen": {
-        characters: {
-            ultimate: {
-                "Lucas": 1,
-                "Steve": 2,
-                "Kirby": 6
-            }
-        }
+    "Smoo": {
+        twitter: "SmooSSBM"
     },
     "TapJumper": {
         characters: {
@@ -169,7 +196,7 @@ const PLAYER_OVERRIDES = {
         twitter: "UnladenSwellow",
         characters: {
             ultimate: {
-                "Daisy": 6
+                "Daisy": 3
             },
             melee: {
                 "Peach": 4,
@@ -209,7 +236,10 @@ const PLAYER_OVERRIDES = {
             },
             melee: {
                 "Falco": 1
-            }
+            },
+            pplus: {
+                "R.O.B.": "Kart_0"
+            },
         }
     },
     "Phases": {
@@ -240,11 +270,19 @@ const PLAYER_OVERRIDES = {
         characters: {
             ultimate: {
                 "Diddy Kong": 3
+            },
+            pplus: {
+                "Sheik": 4
             }
         }
     },
     "Phinn": {
-        twitter: "Phinn_SSB"
+        twitter: "Phinn_SSB",
+        characters: {
+            ultimate: {
+                "Shulk": 1
+            },
+        }
     },
     "Taurii": {
         characters: {
@@ -308,6 +346,9 @@ const PLAYER_OVERRIDES = {
             roa: {
                 "Wrastor": "coolest_player",
                 "Clairen": "Gullgum"
+            },
+            pplus: {
+                "Mario": "Sunshine_Leaves"
             }
         }
     },
@@ -316,6 +357,9 @@ const PLAYER_OVERRIDES = {
         characters: {
             roa: {
                 "Hodan": "lilypad"
+            },
+            pplus: {
+                "Ivysaur": "Substitute_0"
             }
         }
     },
