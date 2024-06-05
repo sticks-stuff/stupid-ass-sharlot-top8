@@ -23,8 +23,10 @@ const headers = {
 	'Content-Type': 'application/json',
 };
 
+console.log(data)
+
 if(code && !accessToken) {
-	fetch('https://corsproxy.io/?https://api.start.gg/oauth/access_token', { 
+	fetch('https://test-cors-proxy.stickman391.workers.dev/corsproxy/?apiurl=https://api.start.gg/oauth/access_token', { 
 		method: 'POST',
 		body: JSON.stringify(data),
 		headers: headers
