@@ -83,7 +83,7 @@ const PLAYER_OVERRIDES = {
             }
         }
     },
-    "Crayon Muncher": {
+    "Smithereens": {
         characters: {
             ultimate: {
                 "Lucas": 1,
@@ -120,7 +120,8 @@ const PLAYER_OVERRIDES = {
         characters: {
             ultimate: {
                 "Bowser": 4,
-                "Byleth": 4
+                "Byleth": 4,
+                "Dark Pit": 3
             },
             melee: {
                 "Ganondorf": 4,
@@ -168,6 +169,9 @@ const PLAYER_OVERRIDES = {
         characters: {
             ultimate: {
                 "Jigglypuff": 4
+            },
+            pplus: {
+                "Jigglypuff": "Nurse_Joy",
             }
         }
     },
@@ -196,7 +200,7 @@ const PLAYER_OVERRIDES = {
         twitter: "UnladenSwellow",
         characters: {
             ultimate: {
-                "Daisy": 3
+                "Daisy": 6
             },
             melee: {
                 "Peach": 4,
@@ -280,7 +284,8 @@ const PLAYER_OVERRIDES = {
         twitter: "Phinn_SSB",
         characters: {
             ultimate: {
-                "Shulk": 1
+                "Shulk": 1,
+                "Sonic": 3
             },
         }
     },
@@ -368,14 +373,6 @@ const PLAYER_OVERRIDES = {
         characters: {
             roa: {
                 "Hodan": "pastellex64"
-            }
-        }
-    },
-    "Shnurgle": {
-        twitter: "Shnurgle123",
-        characters: {
-            roa: {
-                "Maypul": "Bedtime"
             }
         }
     },
