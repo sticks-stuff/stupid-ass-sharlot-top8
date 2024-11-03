@@ -171,7 +171,7 @@ function handleImageOnload(i, imagesToLoad) {
 		var game = document.getElementById("game").value;
 		var mainChar = document.getElementById(`player${i + 1}char`).value;
 
-		if(game == "melee") {
+		if(game == "ssbm") {
 			offsetY = 0;
 			shadows = false;
 		}
@@ -228,7 +228,7 @@ function go() {
 	} else {
 		base_image.src = BACKGROUND_IMAGE;
 	}
-	base_image.onload = () => {
+	base_image.onload = async () => {
 		drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
 		ctx.beginPath();
 		ctx.rect(0, 0, SIZE[0], SIZE[1]);
@@ -238,7 +238,7 @@ function go() {
 		var imagesToLoad = { num: 0 };
 
 		for (let i = 0; i < 8; i++) {
-			const mainChar = document.getElementById(`player${i + 1}char`).value;
+			var mainChar = document.getElementById(`player${i + 1}char`).value;
 
 			if(mainChar == "none") {
 				imagesToLoad.num++;
@@ -250,6 +250,7 @@ function go() {
 	
 			var image = new Image();
 			var game = document.getElementById("game").value;
+			var pack = document.getElementById("pack").value;
 
 			if(game == "roa") {
 				ctx.imageSmoothingEnabled = false;
@@ -271,7 +272,16 @@ function go() {
 				};
 				reader.readAsDataURL(charImgInput.files[0]);
 			} else {
-				image.src = `assets/${game}/renders/${mainChar}-${document.getElementById(`player${i + 1}alt`).value}.png`;
+				const fetchPackConfig = await fetch(`./StreamHelperAssets/${game}/${pack}/config.json`);
+				var packConfig = await fetchPackConfig.json();
+				const fetchGameConfig = await fetch(`./StreamHelperAssets/${game}/base_files/config.json`);
+				gameConfig = await fetchGameConfig.json();
+
+				console.log(mainChar);
+
+				mainChar = gameConfig.character_to_codename[mainChar].codename;
+
+				image.src = `StreamHelperAssets/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
 				image.onload = handleImageOnload(i, imagesToLoad);
 				image.onerror = function(){
 					imagesToLoad.num++;
@@ -324,7 +334,7 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 	};
 }
 
-function secondaries() {
+async function secondaries() {
 	console.log("here")
 	var totalImages = { made: 0, toMake: 0 };
 	for (let i = 0; i < 8; i++) {
@@ -341,11 +351,20 @@ function secondaries() {
 		var char_offset = 0;
 
 		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
-			const element = document.getElementById(`player${i + 1}secondary${j}char`).value;
+			var element = document.getElementById(`player${i + 1}secondary${j}char`).value;
+			if(element == "none") {
+				totalImages.made++;
+				if(totalImages.made >= (totalImages.toMake - 1)) {
+					ctx.imageSmoothingEnabled = true;
+					overlay();
+				}
+				continue;
+			}
 			image = new Image();
 
 			var image = new Image();
 			var game = document.getElementById("game").value;
+			var pack = document.getElementById("pack").value;
 
 			var charImgInput = document.getElementById(`player${i + 1}secondary${j}charImg`);
 
@@ -371,21 +390,29 @@ function secondaries() {
 				char_offset++;
 				reader.readAsDataURL(charImgInput.files[0]);
 			} else {
-				if(game == "ultimate") {
-					image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
-				} else if(game == "roa") {
-					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
-				} else if(game == "roa2") {
-					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //same for roa2
-				} else {
+				// if(game == "ultimate") {
+				// 	image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+				// } else if(game == "roa") {
+				// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
+				// } else if(game == "roa2") {
+				// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //same for roa2
+				// } else {
 					SMALL_ICON = 48;
 					LARGE_ICON = 96;
-					if(game == "pplus") {
-						image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
-					} else {
-						image.src = `assets/${game}/stock_icons/${element.split(' ').join('_')}-${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
-					}
-				}
+					// if(game == "pplus") {
+						// image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
+					// } else {		
+						const fetchPackConfig = await fetch(`./StreamHelperAssets/${game}/base_files/icon/config.json`);
+						var packConfig = await fetchPackConfig.json();
+						const fetchGameConfig = await fetch(`./StreamHelperAssets/${game}/base_files/config.json`);
+						gameConfig = await fetchGameConfig.json();
+
+						console.log(element)
+						element = gameConfig.character_to_codename[element].codename;
+
+						image.src = `StreamHelperAssets/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+					// }
+				// }
 				image.onload = handleSecondaryImageOnLoad(i, char_offset, totalImages);
 	
 				image.onerror = function(){

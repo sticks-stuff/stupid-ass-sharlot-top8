@@ -130,3 +130,5 @@ dist
 .pnp.*
 .vscode/*
 alts.json
+StreamHelperAssets/
+paths.json

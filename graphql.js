@@ -81,7 +81,10 @@ async function eventQuery(slug, page) {
 	return data;
 }
 
+
 async function eventData(slug) {
+	const fetchJson = await fetch('paths.json');
+	const paths = await fetchJson.json();
 	console.log(slug)
     const freq = {};
     freq["wins"] = {};
@@ -166,17 +169,11 @@ async function eventData(slug) {
 
     const event = eventData["event"];
     var displayGame = event["videogame"]["name"];
-    var game = event["videogame"]["displayName"].toLowerCase();
-	if(game == "project+") {
-		game = "pplus"; //+ is a weird character in objects
-	}
+    var game = event["videogame"]["id"];
 
-	if(game == "rivals of aether") {
-		game = "roa"; //lol
-	}
-
-	if(game == "rivals of aether ii") {
-		game = "roa2"; //lol
+	const matchingGame = Object.values(paths).find(path => path.smashgg_game_id === game);
+	if (matchingGame) {
+		game = Object.keys(paths).find(key => paths[key] === matchingGame);
 	}
 
     const btext = [];
