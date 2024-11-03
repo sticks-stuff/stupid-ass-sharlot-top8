@@ -272,16 +272,16 @@ function go() {
 				};
 				reader.readAsDataURL(charImgInput.files[0]);
 			} else {
-				const fetchPackConfig = await fetch(`./StreamHelperAssets/${game}/${pack}/config.json`);
+				const fetchPackConfig = await fetch(`./StreamHelperAssets/games/${game}/${pack}/config.json`);
 				var packConfig = await fetchPackConfig.json();
-				const fetchGameConfig = await fetch(`./StreamHelperAssets/${game}/base_files/config.json`);
+				const fetchGameConfig = await fetch(`./StreamHelperAssets/games/${game}/base_files/config.json`);
 				gameConfig = await fetchGameConfig.json();
 
 				console.log(mainChar);
 
 				mainChar = gameConfig.character_to_codename[mainChar].codename;
 
-				image.src = `StreamHelperAssets/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
+				image.src = `StreamHelperAssets/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
 				image.onload = handleImageOnload(i, imagesToLoad);
 				image.onerror = function(){
 					imagesToLoad.num++;
@@ -402,15 +402,23 @@ async function secondaries() {
 					// if(game == "pplus") {
 						// image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
 					// } else {		
-						const fetchPackConfig = await fetch(`./StreamHelperAssets/${game}/base_files/icon/config.json`);
+						const fetchPackConfig = await fetch(`./StreamHelperAssets/games/${game}/base_files/icon/config.json`);
 						var packConfig = await fetchPackConfig.json();
-						const fetchGameConfig = await fetch(`./StreamHelperAssets/${game}/base_files/config.json`);
+						const fetchGameConfig = await fetch(`./StreamHelperAssets/games/${game}/base_files/config.json`);
 						gameConfig = await fetchGameConfig.json();
 
 						console.log(element)
 						element = gameConfig.character_to_codename[element].codename;
 
-						image.src = `StreamHelperAssets/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+						const response = await fetch(`StreamHelperAssets/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`);
+						if (response.ok) {
+							image.src = `StreamHelperAssets/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+						} else {
+							const fetchJson = await fetch('paths.json');
+							json = await fetchJson.json();
+							image.src = `StreamHelperAssets/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
+						}
+						
 					// }
 				// }
 				image.onload = handleSecondaryImageOnLoad(i, char_offset, totalImages);

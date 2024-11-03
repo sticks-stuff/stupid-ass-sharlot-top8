@@ -74,7 +74,7 @@ var gameConfig = {};
 
 async function loadGameConfig() {
     var game = document.getElementById('game').value;
-    const fetchConfig = await fetch(`./StreamHelperAssets/${game}/base_files/config.json`);
+    const fetchConfig = await fetch(`./StreamHelperAssets/games/${game}/base_files/config.json`);
     gameConfig = await fetchConfig.json();
 }
 
