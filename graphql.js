@@ -175,6 +175,10 @@ async function eventData(slug) {
 		game = "roa"; //lol
 	}
 
+	if(game == "rivals of aether ii") {
+		game = "roa2"; //lol
+	}
+
     const btext = [];
     if (event["startAt"]) {
         const fecha = new Date(event["startAt"] * 1000).toLocaleDateString();

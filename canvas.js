@@ -375,6 +375,8 @@ function secondaries() {
 					image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
 				} else if(game == "roa") {
 					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
+				} else if(game == "roa2") {
+					image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //same for roa2
 				} else {
 					SMALL_ICON = 48;
 					LARGE_ICON = 96;
