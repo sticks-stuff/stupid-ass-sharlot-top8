@@ -230,7 +230,7 @@ function go() {
 		base_image.src = BACKGROUND_IMAGE;
 	}
 	base_image.onload = async () => {
-		drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
+		await drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
 		ctx.beginPath();
 		ctx.rect(0, 0, SIZE[0], SIZE[1]);
 		ctx.fillStyle = '#0000004D'; //darken
@@ -282,7 +282,8 @@ function go() {
 
 				mainChar = gameConfig.character_to_codename[mainChar].codename;
 
-				image.src = `https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
+				image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
+				image.crossOrigin = 'anonymous';
 				image.onload = handleImageOnload(i, imagesToLoad);
 				image.onerror = function(){
 					imagesToLoad.num++;
@@ -411,13 +412,15 @@ async function secondaries() {
 						console.log(element)
 						element = gameConfig.character_to_codename[element].codename;
 
-						const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`);
+						const response = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`);
 						if (response.ok) {
-							image.src = `https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+							image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+							image.crossOrigin = 'anonymous';
 						} else {
 							const fetchJson = await fetch('paths.json');
 							json = await fetchJson.json();
-							image.src = `https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
+							image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
+							image.crossOrigin = 'anonymous';
 						}
 						
 					// }
