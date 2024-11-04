@@ -160,7 +160,8 @@ function styleChanged() {
 function handleImageOnload(i, imagesToLoad) {
     return (e) => {
 		var offsetX = 0.5;
-		var offsetY = 0.5;
+		// var offsetY = 0.5;
+		var offsetY = 0;
 		var posOffsetX = 0;
 		var posOffsetY = 0;
 		var cropX = 0;
