@@ -74,7 +74,7 @@ var gameConfig = {};
 
 async function loadGameConfig() {
     var game = document.getElementById('game').value;
-    const fetchConfig = await fetch(`./StreamHelperAssets/games/${game}/base_files/config.json`);
+    const fetchConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
     gameConfig = await fetchConfig.json();
 }
 
@@ -143,6 +143,7 @@ function updatePacks() {
 			pack.appendChild(option);
 		}
 	}
+	pack.value = "full";
 }
 
 function updateChars() {
@@ -183,14 +184,19 @@ function updateChars() {
 }
 
 function updateAlts(char, alt) {
+	console.log("updating alts", char, alt);
 	alt.innerHTML = "";
 	var game = document.getElementById('game').value;
 	var pack = document.getElementById('pack').value;
 	if (gameConfig.character_to_codename[char]) {
 		char = gameConfig.character_to_codename[char].codename;
 	}
+	console.log(char)
 	if(json[game][pack][char]) {
+		console.log(json[game][pack]);
+		console.log({pack});
 		for (const [key, value] of Object.entries(json[game][pack][char])) {
+			console.log(value.split(".")[0]);
 			var option = new Option(value.split(".")[0], value);
 			alt.appendChild(option);
 		}
@@ -234,10 +240,17 @@ function sendToForm() {
 			document.getElementById(`player${i + 1}twt`).value = twitter;
 
 			var mainChar = player.chars[0][0];
-			for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-				if (value.smashgg_name === mainChar) {
-					secondary = key;
-					break;
+			console.log(`Adding ${mainChar} character for player ${i + 1} with tag ${tag}`);
+			if (gameConfig.character_to_codename[mainChar] == undefined) {
+				for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
+					if (value.smashgg_name === mainChar) {
+						mainChar = key;
+						break;
+					}
+					if (value.codename === mainChar) {
+						mainChar = key;
+						break;
+					}
 				}
 			}
 			document.getElementById(`player${i + 1}char`).value = mainChar;
@@ -255,6 +268,10 @@ function sendToForm() {
 				var secondary = player.chars[j][0];
 				for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
                     if (value.smashgg_name === secondary) {
+                        secondary = key;
+                        break;
+                    }
+					if (value.codename === secondary) {
                         secondary = key;
                         break;
                     }
