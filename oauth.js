@@ -50,6 +50,10 @@ async function requestAccessToken() {
         'scope': scopes
     };
     const tokenResponse = await fetchToken(data);
+	if (tokenResponse.access_token == undefined) {
+		console.error(tokenResponse);
+		return;
+	}
     setCookie('access_token', tokenResponse.access_token, tokenResponse.expires_in / 86400);
     setCookie('refresh_token', tokenResponse.refresh_token, 30); // Assuming refresh token is valid for 30 days
     setCookie('expires_in', Date.now() + tokenResponse.expires_in * 1000, tokenResponse.expires_in / 86400);
@@ -74,10 +78,7 @@ async function getAccessToken() {
 
     return accessToken;
 }
-
+var accessToken;
 (async () => {
-    const accessToken = await getAccessToken();
-    if (accessToken) {
-        run();
-    }
+	accessToken = await getAccessToken();
 })();
