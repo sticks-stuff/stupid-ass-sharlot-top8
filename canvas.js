@@ -424,6 +424,7 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 		} else {
 			right_margin = 6;
 		}
+		if (stepsCompleted.handleSecondaryImageOnLoad) return;
 
 		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
 		totalImages.made++;
@@ -478,6 +479,7 @@ async function secondaries() {
 				var reader = new FileReader();
 				const current_char_offset = char_offset;
 				reader.onload = function(e) {
+					if (stepsCompleted.secondaries) return;
 					var image = new Image();
 					image.src = e.target.result;
 					image.onload = handleSecondaryImageOnLoad(i, current_char_offset, totalImages);
@@ -556,6 +558,7 @@ function overlay() {
 	var marco = new Image();
 	marco.src = 'assets/marco.png';
 	marco.onload = (e) => {
+		if (stepsCompleted.overlay) return;
 		canvas1.beginPath();
 		canvas1.rect(0, 0, SIZE[0], SIZE[1]);
 		canvas1.fillStyle = PRIMARY_COLOR;
@@ -566,6 +569,7 @@ function overlay() {
 		var polo = new Image();
 		polo.src = 'assets/polo.png';
 		polo.onload = (e) => {
+			if (stepsCompleted.overlay) return;
 			canvas2.beginPath();
 			canvas2.rect(0, 0, SIZE[0], SIZE[1]);
 			canvas2.fillStyle = SECONDARY_COLOR;
@@ -587,6 +591,7 @@ function numbers() {
 	var base_image = new Image();
 	base_image.src = 'assets/numeros.png';
 	base_image.onload = () => {
+		if (stepsCompleted.numbers) return;
 		ctx.drawImage(base_image, 0, 0);
 		stepsCompleted.numbers = true;
 		text();
