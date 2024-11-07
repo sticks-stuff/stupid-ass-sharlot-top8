@@ -7,7 +7,36 @@
 */
 pica = window.pica();
 
-function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false) {
+async function resizeInCanvas(image, width, height) {
+	// Only resize if image is being downscaled
+	if (width >= image.width || height >= image.height) {
+	  return image.src;
+	}
+  
+	// Initialize the canvas and its size
+	const canvas = document.createElement("canvas");
+	const ctx = canvas.getContext("2d");
+  
+	// Set width and height
+	canvas.width = width;
+	canvas.height = height;
+  
+	// Use pica to resize the image
+	const result = await pica.resize(image, canvas, {
+		quality: 3,
+		alpha: true
+	});
+  
+	// Export to a data-uri
+	const dataURI = await pica.toBlob(result, 'image/webp', 0.90);
+  
+	canvas.remove();
+  
+	// Do something with the result, like overwrite original
+	return URL.createObjectURL(dataURI);
+}
+
+function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0) {
 
     if (arguments.length === 2) {
         x = y = 0;
@@ -52,6 +81,11 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
 
     cx = (iw - cw) * offsetX;
     cy = (ih - ch) * offsetY;
+
+    if (offsetPixelX != 0 || offsetPixelY != 0) {
+        cx = offsetPixelX;
+        cy = offsetPixelY;
+    }
 
     // make sure source rectangle is valid
     if (cx < 0) cx = 0;
@@ -105,7 +139,7 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     })
 }
 
-async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false) {
+async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0) {
 
     if (arguments.length === 2) {
         x = y = 0;
@@ -145,11 +179,17 @@ async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX 
     nh *= ar;
 
     // calc source rectangle
+
     cw = (iw / (nw / w2));
     ch = (ih / (nh / h2));
 
     cx = (iw - cw) * offsetX;
     cy = (ih - ch) * offsetY;
+
+    if (offsetPixelX != 0 || offsetPixelY != 0) {
+        cx += offsetPixelX;
+        cy += offsetPixelY;
+    }
 
     // make sure source rectangle is valid
     if (cx < 0) cx = 0;

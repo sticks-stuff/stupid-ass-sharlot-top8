@@ -23,51 +23,6 @@ const POSTXT = [[53, 45, 803, 80], // top left
 const POSLOGO = [53, 15] // [53, 15, 803, 125]
 const SIZELOGO = [750, 110]
 
-const STUPID_OFFSETS = {
-	ultimate: {
-		Shulk: [0.5, 0.25], 
-		Byleth: [0.5, 0.25],
-		Terry: [0.5, 0],
-		Falco: [0, 0],
-		Bayonetta: [0, 0],
-		Ganondorf: [0.5, 0],
-		Lucas: [1, 0],
-		Zelda: [0.5, 0],
-		Link: [0.5, 0.25],
-		Diddy_Kong: [0, 0.5],
-		Donkey_Kong: [0.5, 1],
-		Daisy: [0.5, 0],
-		Ike: [0.5, 0]
-	}
-}
-
-const POSITION_OFFSETS = {
-	ultimate: {
-		Falco: [30, 0],
-		Ganondorf: [0, -5],
-		Donkey_Kong: [0, -25],
-		// Diddy_Kong: [50, 0],
-		Lucas: [-5, 0]
-	}
-}
-
-const CROPS = {
-	ultimate: {
-		Bayonetta: [1000, -200],
-		Lucas: [-200, 0],
-		// Donkey_Kong: [0, 50],
-		Bowser: [0, -300]
-	}
-}
-
-const FLIPS = {
-	ultimate: [
-		"Fox",
-		"Incineroar",
-		"Bayonetta"
-	]
-}
-
 var PRIMARY_COLOR = "#682f77"
 var SECONDARY_COLOR = "#ff3d8b"
 var BACKGROUND_IMAGE = 'assets/pop_background.png'
@@ -157,59 +112,182 @@ function styleChanged() {
 	}
 }
 
-function handleImageOnload(i, imagesToLoad) {
-    return (e) => {
-		var offsetX = 0.5;
-		// var offsetY = 0.5;
-		var offsetY = 0;
-		var posOffsetX = 0;
-		var posOffsetY = 0;
-		var cropX = 0;
-		var cropY = 0;
-		var flips = false;
-		var shadows = true;
-		
-		var game = document.getElementById("game").value;
-		var mainChar = document.getElementById(`player${i + 1}char`).value;
+function handleImageOnload(i, imagesToLoad, img) {
+    return async (e) => {
+        var offsetX = 0.5;
+        var offsetY = 0;
+        var posOffsetX = 0;
+        var posOffsetY = 0;
+        var cropX = 0;
+        var cropY = 0;
+        var flips = false;
+        var shadows = true;
+		var customZoom = 1.2;
+        var customCenter = [0.5, 0.4];
 
-		if(game == "ssbm") {
-			offsetY = 0;
-			shadows = false;
-		}
+        var game = document.getElementById("game").value;
+        var mainChar = document.getElementById(`player${i + 1}char`).value;
+        var pack = document.getElementById("pack").value;
 
-		if(STUPID_OFFSETS?.[game]?.[mainChar]) {
-			console.log(mainChar)
-			offsetX = STUPID_OFFSETS[game][mainChar][0];
-			offsetY = STUPID_OFFSETS[game][mainChar][1];
-		}
-		if(POSITION_OFFSETS[game]) {
-			console.log({mainChar})
-			if(POSITION_OFFSETS[game][mainChar]) {
-				console.log(POSITION_OFFSETS[game][mainChar])
+        try {
+            const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+            const config = await response.json();
+            mainChar = gameConfig.character_to_codename[mainChar].codename;
+            const eyesight = config.eyesights[mainChar]["0"];
+
+            let proportional_zoom = 1;
+            if (config.average_size) {
+                proportional_zoom = 0;
+                proportional_zoom = Math.max(
+                    proportional_zoom,
+                    (SIZE_SQUARE[i] / config.average_size.x) * 1.2
+                );
+                proportional_zoom = Math.max(
+                    proportional_zoom,
+                    (SIZE_SQUARE[i] / config.average_size.y) * 1.2
+                );
+            }
+
+            const zoom_x = SIZE_SQUARE[i] / img.naturalWidth;
+            const zoom_y = SIZE_SQUARE[i] / img.naturalHeight;
+
+            let minZoom = 1;
+            const rescalingFactor = config.rescaling_factor || 1;
+            const uncropped_edge = config.uncropped_edge || [];
+
+            if (!uncropped_edge || uncropped_edge.length == 0) {
+                if (zoom_x > zoom_y) {
+                    minZoom = zoom_x * rescalingFactor;
+                } else {
+                    minZoom = zoom_y * rescalingFactor;
+                }
+            } else {
+                if (
+                    uncropped_edge.includes("u") &&
+                    uncropped_edge.includes("d") &&
+                    uncropped_edge.includes("l") &&
+                    uncropped_edge.includes("r")
+                ) {
+                    minZoom = customZoom * proportional_zoom * rescalingFactor;
+                } else if (
+                    !uncropped_edge.includes("l") &&
+                    !uncropped_edge.includes("r")
+                ) {
+                    minZoom = zoom_x * rescalingFactor;
+                } else if (
+                    !uncropped_edge.includes("u") &&
+                    !uncropped_edge.includes("d")
+                ) {
+                    minZoom = zoom_y * rescalingFactor;
+                } else {
+                    minZoom = customZoom * proportional_zoom * rescalingFactor;
+                }
+            }
+
+            const zoom = Math.max(minZoom, customZoom * minZoom);
+
+            let xx = -eyesight.x * zoom + SIZE_SQUARE[i] / 2;
+            let maxMoveX = SIZE_SQUARE[i] - img.naturalWidth * zoom;
+
+            if (!uncropped_edge || !uncropped_edge.includes("l")) {
+                if (xx > 0) xx = 0;
+            }
+            if (!uncropped_edge || !uncropped_edge.includes("r")) {
+                if (xx < maxMoveX) xx = maxMoveX;
+            }
+
+            let yy;
+            if (!customCenter) {
+                yy = -eyesight.y * zoom + SIZE_SQUARE[i] / 2;
+				console.log("Did not use custom center value: ", yy);
+            } else {
+                yy = -eyesight.y * zoom + SIZE_SQUARE[i] * customCenter[1];
+				console.log("Used custom center value: ", yy);
+            }
+			console.log("Initial yy value:", yy);
+
+            let maxMoveY = SIZE_SQUARE[i] - img.naturalHeight * zoom;
+
+            if (!uncropped_edge || !uncropped_edge.includes("u")) {
+                if (yy > 0) yy = 0;
+            }
+            if (!uncropped_edge || !uncropped_edge.includes("d")) {
+                if (yy < maxMoveY) yy = maxMoveY;
+            }
+
+			console.log("Final yy value:", yy);
+			
+			// const offsetX = 0.5 - (xx + img.naturalWidth / 2) / img.naturalWidth;
+			// const offsetY = 0.5 - (yy + img.naturalHeight / 2) / img.naturalHeight;
+
+			console.log(offsetX, offsetY);
+			console.log("asjkdhaskhjd " + (yy * (img.naturalHeight / SIZE_SQUARE[i])))
+
+			console.log(img.src);
+			console.log({offsetX})
+			console.log({offsetY})
+			// cropX = (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(xx) * (img.naturalWidth / SIZE_SQUARE[i]));
+			cropX = (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(xx) * (img.naturalWidth / SIZE_SQUARE[i]));
+			cropY = (((img.naturalHeight * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(yy) * (img.naturalHeight / SIZE_SQUARE[i]));
+			if (img.src.includes("Johnny")) {
+				// xx -= 400;
 			}
-		}
-		if(POSITION_OFFSETS?.[game]?.[mainChar]) {
-			console.log("POSITION_OFFSETS" + mainChar)
-			posOffsetX = POSITION_OFFSETS[game][mainChar][0];
-			posOffsetY = POSITION_OFFSETS[game][mainChar][1];
-		}
-		if(CROPS?.[game]?.[mainChar]) {
-			cropX = CROPS[game][mainChar][0];
-			cropY = CROPS[game][mainChar][1];
-		}
-		if(FLIPS?.[game]) {
-			if(FLIPS?.[game].includes(mainChar)) {
-				flips = true;
-			}
-		}
+			// offsetX = (xx + img.naturalWidth / 2) / img.naturalWidth;
+			// offsetY = (yy + img.naturalHeight / 2) / img.naturalHeight;
 
-		drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
-		console.log({i});
-		imagesToLoad.num++;
-		console.log({imagesToLoad})
-		if(imagesToLoad.num >= 8) {
-			secondaries();
-		}
+			resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom).then((resized) => {
+				console.log("here")
+				var char = document.createElement("div");
+				char.style.width = SIZE_SQUARE[i] + "px";
+				char.style.height = SIZE_SQUARE[i] + "px";
+				char.style.backgroundPosition = `${xx}px ${yy}px`;
+				char.style.backgroundSize = `${img.naturalWidth * zoom}px ${img.naturalHeight * zoom}px`;
+				char.style.backgroundImage = `url(${resized})`;
+				char.style.backgroundRepeat = "no-repeat";
+				
+				var offScreenContainer = document.createElement("div");
+				offScreenContainer.style.position = "absolute";
+				offScreenContainer.style.left = "-9999px";
+				offScreenContainer.appendChild(char);
+				document.body.appendChild(offScreenContainer);
+
+				console.log("here2")
+				html2canvas(char, {backgroundColor:null}).then(function(canvas) {
+					ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
+					char.remove();
+					imagesToLoad.num++;
+					if (imagesToLoad.num >= 8) {
+						secondaries();
+					}
+				});
+			})
+
+			// drawImageProp(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0, 0, posOffsetX, posOffsetY, cropX, cropY, flips, shadows, -xx, -yy);
+
+            // drawImageProp(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0.5, 0.5, posOffsetX, posOffsetY, (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom), ((img.naturalHeight * zoom) - SIZE_SQUARE[i]) / zoom, flips, shadows, -xx, -yy);
+			// drawImageWithBackgroundProperties(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], xx, yy, img.naturalWidth * zoom, img.naturalHeight * zoom);
+
+            console.log("Variables calculated: ", {
+                imgSrc: img.src,
+                zoom: zoom,
+                uncroppedEdge: uncropped_edge,
+                rescalingFactor: rescalingFactor,
+                minZoom: minZoom,
+                proportionalZoom: proportional_zoom,
+                zoomX: zoom_x,
+                zoomY: zoom_y,
+                eyesight: eyesight,
+                xx: xx,
+                yy: yy,
+                naturalWidth: img.naturalWidth,
+                naturalHeight: img.naturalHeight,
+                width: img.width,
+                height: img.height,
+                img: img,
+            });
+        } catch (error) {
+            console.error("Error fetching eyesight data:", error);
+        }
     };
 }
 
@@ -284,7 +362,7 @@ function go() {
 
 				image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
 				image.crossOrigin = 'anonymous';
-				image.onload = handleImageOnload(i, imagesToLoad);
+				image.onload = handleImageOnload(i, imagesToLoad, image);
 				image.onerror = function(){
 					imagesToLoad.num++;
 					if(imagesToLoad.num >= 8) {
