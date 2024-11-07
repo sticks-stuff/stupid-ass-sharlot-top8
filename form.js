@@ -16,6 +16,7 @@ function imgChanged(charDropdownId) {
 
 var json = {};
 var gameConfig = {};
+var packConfig = {};
 
 (async function () {
 
@@ -26,7 +27,7 @@ var gameConfig = {};
 
 	console.log(json);
 	for (const [key, value] of Object.entries(json)) {
-		var option = new Option(key, key);
+		var option = new Option(value["name"], key);
 		game.appendChild(option);
 	}
 
@@ -78,6 +79,31 @@ async function loadGameConfig() {
     gameConfig = await fetchConfig.json();
 }
 
+async function loadPackConfig() {
+    const game = document.getElementById('game').value;
+    const pack = document.getElementById('pack').value;
+    if (pack === "") return;
+    const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+    const packConfig = await response.json();
+    return packConfig;
+}
+
+function updatePackInfo() {
+	document.getElementById("pack_version").innerHTML = "";
+	document.getElementById("pack_info").innerHTML = "";
+	document.getElementById("pack_credits").innerHTML = "";
+
+	if (document.getElementById('pack').value == "") {
+		return;
+	};
+    loadPackConfig().then(packConfig => {
+        document.getElementById("pack_version").innerHTML = "Version " + packConfig.version || "";
+        document.getElementById("pack_info").innerHTML = packConfig.description || "";
+        document.getElementById("pack_credits").innerHTML = packConfig.credits || "";
+    }).catch(error => {
+        console.error("Error loading pack config:", error);
+    });
+}
 var currentGame = "";
 
 function addSecondaryChar(i) {
@@ -132,19 +158,22 @@ function removeSecondaryChar(i, j) {
 	document.getElementById("player" + i + "secondary").removeChild(document.getElementById("player" + i + "secondary" + j));
 }
 
-function updatePacks() {
+async function updatePacks() {
 	var game = document.getElementById('game').value;
 	var pack = document.getElementById('pack');
 	pack.innerHTML = "";
+
 	if (json[game]) {
 		for (const [key, value] of Object.entries(json[game])) {
-			if(key == "smashgg_game_id" || key == "name" || key == "icon") continue;
-			var option = new Option(key, key);
+			if(key == "smashgg_game_id" || key == "name" || key.includes("icon")) continue;
+			var option = new Option(value["name"], key);
 			pack.appendChild(option);
 		}
 	}
 	pack.value = "full";
-	document.getElementById('pack').addEventListener('change', function() {
+	updatePackInfo();
+	document.getElementById('pack').addEventListener('change', async function() {
+		updatePackInfo();
 		for (let i = 1; i <= 8; i++) {
 			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
 			for (let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
