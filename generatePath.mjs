@@ -48,6 +48,9 @@ async function fetchJsonFromUrl(url) {
                 let configUrl = `${RAW_GITHUB_URL}games/${game[0]}/${pack[0]}/config.json`;
 
                 const config = await fetchJsonFromUrl(configUrl);
+                if (config["type"][0] == "stage_icon") {
+                    return;
+                }
 
                 const packFiles = files.filter(file => file.startsWith(`games/${game[0]}/${pack[0]}`));
                 const filteredFiles = packFiles
@@ -62,12 +65,12 @@ async function fetchJsonFromUrl(url) {
                         finalJSON[game[0]][pack[0]] = {};
                         console.log("new pack " + pack[0]);
                     }
-                    const char_name = file.split(config.postfix)[0];
+                    const char_name = file.split(config.postfix).slice(0, -1).join(config.postfix);
                     if (!finalJSON[game[0]][pack[0]][char_name]) {
                         finalJSON[game[0]][pack[0]][char_name] = [];
                         console.log("new char " + char_name);
                     }
-                    finalJSON[game[0]][pack[0]][char_name].push(file.split(config.postfix)[1]);
+                    finalJSON[game[0]][pack[0]][char_name].push(file.split(config.postfix).pop());
                 });
             } catch (error) {
                 console.error(`Error processing game: ${game[0]}, pack: ${pack[0]}`, error);
