@@ -123,7 +123,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
         var flips = false;
         var shadows = true;
 		var customZoom = 1.2;
-        var customCenter = [0.5, 0.4];
+        var customCenter = [0.5, 0.3];
 
         var game = document.getElementById("game").value;
 		var gameYoffset = 0;
