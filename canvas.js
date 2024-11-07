@@ -81,6 +81,14 @@ var ctx = canvas.getContext('2d');
 
 // overlay();
 
+var stepsCompleted = {
+    handleImageOnload: false,
+    secondaries: false,
+    overlay: false,
+    numbers: false,
+    text: false
+};
+
 const startGGre = /https:\/\/(www\.)?(smash|start)\.gg\/(tournament\/[^\/]+\/event\/[^\/]+)/g;
 
 function styleChanged() {
@@ -113,6 +121,7 @@ function styleChanged() {
 }
 
 function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
+	if (stepsCompleted.handleImageOnload) return;
     return async (e) => {
         var offsetX = 0.5;
         var offsetY = 0;
@@ -258,6 +267,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
 					char.remove();
 					imagesToLoad.num++;
 					if (imagesToLoad.num >= 8) {
+						stepsCompleted.handleImageOnload = true;
 						secondaries();
 					}
 				});
@@ -293,6 +303,14 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
 }
 
 function go() {
+	stepsCompleted = {
+		handleImageOnload: false,
+		secondaries: false,
+		overlay: false,
+		numbers: false,
+		text: false
+	};
+	
 	ctx.imageSmoothingEnabled = true;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -382,6 +400,7 @@ var MED_ICON = 48;
 var LARGE_ICON = 64;
 
 function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
+	if (stepsCompleted.handleSecondaryImageOnLoad) return;
 	return (e) => {
 		console.log({char_offset})
 		var size;
@@ -410,12 +429,14 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 		totalImages.made++;
 		console.log({totalImages})
 		if(totalImages.made >= (totalImages.toMake - 1)) {
+			stepsCompleted.handleSecondaryImageOnLoad = true;
 			overlay();
 		}
 	};
 }
 
 async function secondaries() {
+	if (stepsCompleted.secondaries) return;
 	console.log("here")
 	var totalImages = { made: 0, toMake: 0 };
 	for (let i = 0; i < 8; i++) {
@@ -464,6 +485,7 @@ async function secondaries() {
 						totalImages.made++;
 						if(totalImages.made >= (totalImages.toMake - 1)) {
 							ctx.imageSmoothingEnabled = true;
+							stepsCompleted.secondaries = true;
 							overlay();
 						}
 					}
@@ -510,6 +532,7 @@ async function secondaries() {
 					totalImages.made++;
 					if(totalImages.made >= (totalImages.toMake - 1)) {
 						ctx.imageSmoothingEnabled = true;
+						stepsCompleted.secondaries = true;
 						overlay();
 					}
 				}
@@ -526,6 +549,7 @@ function createCanvas(width, height) {
 }
 
 function overlay() {
+	if (stepsCompleted.overlay) return;
 	var canvas1 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
 	var canvas2 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
 	
@@ -552,16 +576,19 @@ function overlay() {
 			ctx.drawImage(canvas1.canvas, 0, 0);
 			ctx.drawImage(canvas2.canvas, 0, 0);
 			// ctx.drawImage(polo, 0, 0);
+			stepsCompleted.overlay = true;
 			numbers();
 		}
 	};
 }
 
 function numbers() {
+	if (stepsCompleted.numbers) return;
 	var base_image = new Image();
 	base_image.src = 'assets/numeros.png';
 	base_image.onload = () => {
 		ctx.drawImage(base_image, 0, 0);
+		stepsCompleted.numbers = true;
 		text();
 	};
 }
@@ -573,6 +600,7 @@ var font_shadow2 = "#000000";
 var the_font = 'assets/fonts/DFGothic-with_macron_O.woff2';
 
 function text() {
+	if (stepsCompleted.text) return;
 
 	// fitText(
 	// 	ctx,
@@ -732,8 +760,7 @@ function text() {
 		// }
 	// });
 
-
-
+	stepsCompleted.text = true;
 }
 
 function saveCanvas() {
