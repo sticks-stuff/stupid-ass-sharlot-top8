@@ -144,6 +144,14 @@ function updatePacks() {
 		}
 	}
 	pack.value = "full";
+	document.getElementById('pack').addEventListener('change', function() {
+		for (let i = 1; i <= 8; i++) {
+			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
+			for (let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
+				updateAlts(document.getElementById("player" + i + "secondary" + j + "char").value, document.getElementById("player" + i + "secondary" + j + "alt"));
+			}
+		}
+	});
 }
 
 function updateChars() {
