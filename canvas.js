@@ -112,7 +112,7 @@ function styleChanged() {
 	}
 }
 
-function handleImageOnload(i, imagesToLoad, img) {
+function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
     return async (e) => {
         var offsetX = 0.5;
         var offsetY = 0;
@@ -126,6 +126,7 @@ function handleImageOnload(i, imagesToLoad, img) {
         var customCenter = [0.5, 0.4];
 
         var game = document.getElementById("game").value;
+		var gameYoffset = 0;
         var mainChar = document.getElementById(`player${i + 1}char`).value;
         var pack = document.getElementById("pack").value;
 
@@ -147,12 +148,11 @@ function handleImageOnload(i, imagesToLoad, img) {
                     (SIZE_SQUARE[i] / config.average_size.y) * 1.2
                 );
             }
-
             const zoom_x = SIZE_SQUARE[i] / img.naturalWidth;
             const zoom_y = SIZE_SQUARE[i] / img.naturalHeight;
 
             let minZoom = 1;
-            const rescalingFactor = config.rescaling_factor || 1;
+			const rescalingFactor = config?.rescaling_factor?.char?.alt || 1;
             const uncropped_edge = config.uncropped_edge || [];
 
             if (!uncropped_edge || uncropped_edge.length == 0) {
@@ -240,6 +240,7 @@ function handleImageOnload(i, imagesToLoad, img) {
 				var char = document.createElement("div");
 				char.style.width = SIZE_SQUARE[i] + "px";
 				char.style.height = SIZE_SQUARE[i] + "px";
+				// char.style.backgroundPosition = `${xx}px ${yy - 30}px`;
 				char.style.backgroundPosition = `${xx}px ${yy}px`;
 				char.style.backgroundSize = `${img.naturalWidth * zoom}px ${img.naturalHeight * zoom}px`;
 				char.style.backgroundImage = `url(${resized})`;
@@ -252,7 +253,7 @@ function handleImageOnload(i, imagesToLoad, img) {
 				document.body.appendChild(offScreenContainer);
 
 				console.log("here2")
-				html2canvas(char, {backgroundColor:null}).then(function(canvas) {
+				html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(canvas) {
 					ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
 					char.remove();
 					imagesToLoad.num++;
@@ -362,7 +363,7 @@ function go() {
 
 				image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
 				image.crossOrigin = 'anonymous';
-				image.onload = handleImageOnload(i, imagesToLoad, image);
+				image.onload = handleImageOnload(i, imagesToLoad, image, mainChar, document.getElementById(`player${i + 1}alt`).value);
 				image.onerror = function(){
 					imagesToLoad.num++;
 					if(imagesToLoad.num >= 8) {
