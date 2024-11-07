@@ -48,7 +48,7 @@ async function fetchJsonFromUrl(url) {
                 let configUrl = `${RAW_GITHUB_URL}games/${game[0]}/${pack[0]}/config.json`;
 
                 const config = await fetchJsonFromUrl(configUrl);
-                if (config["type"][0] == "stage_icon") {
+                if (config["type"] && config["type"][0] == "stage_icon") {
                     return;
                 }
 
