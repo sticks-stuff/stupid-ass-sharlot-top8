@@ -140,6 +140,16 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
         var pack = document.getElementById("pack").value;
 
         try {
+			if (mainChar == "custom") {
+				offsetX = 0.5;
+				offsetY = 0.5;
+				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
+				imagesToLoad.num++;
+				if(imagesToLoad.num >= 8) {
+					secondaries();
+				}
+				return;
+			}
             const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
             const config = await response.json();
             mainChar = gameConfig.character_to_codename[mainChar].codename;
