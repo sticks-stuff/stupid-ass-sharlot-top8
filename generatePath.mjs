@@ -6,19 +6,28 @@ const RAW_GITHUB_URL = 'https://raw.githubusercontent.com/joaorb64/StreamHelperA
 const LOCAL_GITHUB_API_FILE = 'github_api_response.json';
 var finalJSON = {};
 
-async function fetchFilesFromGitHub() {
+async function fetchFilesFromGitHub(retries = 10) {
     if (fs.existsSync(LOCAL_GITHUB_API_FILE)) {
         const data = JSON.parse(fs.readFileSync(LOCAL_GITHUB_API_FILE, 'utf8'));
         return data.tree.map(file => file.path);
     } else {
-        const response = await fetch(GITHUB_API_URL, {
-            headers: {
-                'Accept': 'application/vnd.github+json'
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                const response = await fetch(GITHUB_API_URL, {
+                    headers: {
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+                const data = await response.json();
+                fs.writeFileSync(LOCAL_GITHUB_API_FILE, JSON.stringify(data, null, 4));
+                return data.tree.map(file => file.path);
+            } catch (error) {
+                if (attempt === retries) {
+                    throw error;
+                }
+                console.error(`Attempt ${attempt} failed. Retrying...`);
             }
-        });
-        const data = await response.json();
-        fs.writeFileSync(LOCAL_GITHUB_API_FILE, JSON.stringify(data, null, 4));
-        return data.tree.map(file => file.path);
+        }
     }
 }
 
