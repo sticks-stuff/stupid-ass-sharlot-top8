@@ -120,7 +120,57 @@ function styleChanged() {
 	}
 }
 
-function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
+var layerSecondaries = document.getElementById("layerSecondaries").checked;
+
+function layerSecondariesChanged() {
+	layerSecondaries = document.getElementById("layerSecondaries").checked;
+	console.log({layerSecondaries})
+}
+
+const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
+
+// Given a number of characters, returns an array os positions (0-1) for their eyesights
+// Used for "smart" positioning of multiple characters in a container without dividers
+function GenerateMulticharacterPositions(
+	character_number,
+	center = [0.5, 0.5],
+	radius = 0.3
+	) {
+	console.log({character_number});
+	let positions = [];
+
+	// For 1 character, just center it
+	if (character_number == 1) radius = 0;
+
+	let angle_rad = degrees_to_radians(90);
+
+	if (character_number == 2) angle_rad = degrees_to_radians(45);
+
+	let pendulum = 1;
+
+	for (let i = 0; i < character_number; i += 1) {
+		let j = i;
+		if (i > 1) {
+		if (i % 2 == 0) {
+			pendulum *= -1;
+		} else {
+			pendulum *= -1;
+			pendulum += 1;
+		}
+		j = pendulum;
+		}
+		angle = angle_rad + degrees_to_radians(360 / character_number) * j;
+		pos = [
+		center[0] + Math.cos(angle) * radius,
+		center[1] + Math.sin(angle) * radius,
+		];
+		positions.push(pos);
+	}
+
+	return positions;
+}
+
+function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSecondaries = false, secondaryNumber = 0) {
 	if (stepsCompleted.handleImageOnload) return;
     return async (e) => {
         var offsetX = 0.5;
@@ -134,9 +184,19 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
 		var customZoom = 1.2;
         var customCenter = [0.5, 0.3];
 
+		if (document.getElementById(`player${i + 1}secondary`).childElementCount > 0) {
+			if (layerSecondaries) {
+				if (!isSecondaries) {
+					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount + 1, [0.5, 0.5])[0];
+				} else {
+					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount, [0.5, 0.5])[document.getElementById(`player${i + 1}secondary`).childElementCount - secondaryNumber];
+				}
+			}
+		}
+
         var game = document.getElementById("game").value;
 		var gameYoffset = 0;
-        var mainChar = document.getElementById(`player${i + 1}char`).value;
+        var mainChar = char;
         var pack = document.getElementById("pack").value;
 
         try {
@@ -152,7 +212,6 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
 			}
             const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
             const config = await response.json();
-            mainChar = gameConfig.character_to_codename[mainChar].codename;
             const eyesight = config.eyesights[mainChar]["0"];
 
             let proportional_zoom = 1;
@@ -205,7 +264,12 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
 
             const zoom = Math.max(minZoom, customZoom * minZoom);
 
-            let xx = -eyesight.x * zoom + SIZE_SQUARE[i] / 2;
+            let xx;
+			if (!customCenter) {
+				xx = -eyesight.x * zoom + SIZE_SQUARE[i] / 2;
+			} else {
+				xx = -eyesight.x * zoom + SIZE_SQUARE[i] * customCenter[0];
+			}
             let maxMoveX = SIZE_SQUARE[i] - img.naturalWidth * zoom;
 
             if (!uncropped_edge || !uncropped_edge.includes("l")) {
@@ -275,10 +339,19 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
 				html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(canvas) {
 					ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
 					char.remove();
-					imagesToLoad.num++;
-					if (imagesToLoad.num >= 8) {
-						stepsCompleted.handleImageOnload = true;
-						secondaries();
+					if (isSecondaries) {
+						imagesToLoad.made++;
+						if(imagesToLoad.made >= imagesToLoad.toMake) {
+							ctx.imageSmoothingEnabled = true;
+							stepsCompleted.handleSecondaryImageOnLoad = true;
+							overlay();
+						}
+					} else {
+						imagesToLoad.num++;
+						if (imagesToLoad.num >= 8) {
+							stepsCompleted.handleImageOnload = true;
+							secondaries();
+						}
 					}
 				});
 			})
@@ -305,6 +378,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false) {
                 width: img.width,
                 height: img.height,
                 img: img,
+				customCenter: customCenter,
             });
         } catch (error) {
             console.error("Error fetching eyesight data:", error);
@@ -360,9 +434,6 @@ function go() {
 			var game = document.getElementById("game").value;
 			var pack = document.getElementById("pack").value;
 
-			if(game == "roa") {
-				ctx.imageSmoothingEnabled = false;
-			}
 
 			var charImgInput = document.getElementById(`player${i + 1}charImg`);
 			if (mainChar == "custom") {
@@ -439,7 +510,7 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
 		totalImages.made++;
 		console.log({totalImages})
-		if(totalImages.made >= (totalImages.toMake - 1)) {
+		if(totalImages.made >= totalImages.toMake) {
 			stepsCompleted.handleSecondaryImageOnLoad = true;
 			overlay();
 		}
@@ -467,7 +538,7 @@ async function secondaries() {
 			var element = document.getElementById(`player${i + 1}secondary${j}char`).value;
 			if(element == "none") {
 				totalImages.made++;
-				if(totalImages.made >= (totalImages.toMake - 1)) {
+				if(totalImages.made >= totalImages.toMake) {
 					ctx.imageSmoothingEnabled = true;
 					overlay();
 				}
@@ -481,75 +552,117 @@ async function secondaries() {
 
 			var charImgInput = document.getElementById(`player${i + 1}secondary${j}charImg`);
 
-			if(game == "roa") {
-				ctx.imageSmoothingEnabled = false;
-			}
+			if (layerSecondaries) {
+				stepsCompleted.handleImageOnload = false; // this sux
+				if (element == "custom") {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var image = new Image();
+						image.src = e.target.result;
+						image.onload = handleImageOnload(i, totalImages, image, false, false, true, j);
+						image.onerror = function(){
+							totalImages.made++;
+							if(totalImages.made >= totalImages.toMake) {
+								ctx.imageSmoothingEnabled = true;
+								stepsCompleted.secondaries = true;
+								overlay();
+							}
+						}
+					};
+					reader.readAsDataURL(charImgInput.files[0]);
+				} else {
+					const fetchPackConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+					var packConfig = await fetchPackConfig.json();
+					const fetchGameConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
+					gameConfig = await fetchGameConfig.json();
 
-			if (element == "custom") {
-				var reader = new FileReader();
-				const current_char_offset = char_offset;
-				reader.onload = function(e) {
-					if (stepsCompleted.secondaries) return;
-					var image = new Image();
-					image.src = e.target.result;
-					image.onload = handleSecondaryImageOnLoad(i, current_char_offset, totalImages);
+					console.log({element})
+					console.log({gameConfig})
+					element = gameConfig.character_to_codename[element].codename;
+
+					image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+					image.crossOrigin = 'anonymous';
+
+					console.log("here")
+					image.onload = handleImageOnload(i, totalImages, image, element, document.getElementById(`player${i + 1}secondary${j}alt`).value, true, j);
+					console.log("here2")
 					image.onerror = function(){
 						totalImages.made++;
-						if(totalImages.made >= (totalImages.toMake - 1)) {
+						if(totalImages.made >= totalImages.toMake) {
 							ctx.imageSmoothingEnabled = true;
 							stepsCompleted.secondaries = true;
 							overlay();
 						}
 					}
-				};
-				char_offset++;
-				reader.readAsDataURL(charImgInput.files[0]);
-			} else {
-				// if(game == "ultimate") {
-				// 	image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
-				// } else if(game == "roa") {
-				// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
-				// } else if(game == "roa2") {
-				// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //same for roa2
-				// } else {
-					SMALL_ICON = 48;
-					LARGE_ICON = 96;
-					// if(game == "pplus") {
-						// image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
-					// } else {		
-						const fetchPackConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/config.json`);
-						var packConfig = await fetchPackConfig.json();
-						const fetchGameConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
-						gameConfig = await fetchGameConfig.json();
-
-						console.log(element)
-						element = gameConfig.character_to_codename[element].codename;
-
-						const response = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`);
-						if (response.ok) {
-							image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
-							image.crossOrigin = 'anonymous';
-						} else {
-							const fetchJson = await fetch('paths.json');
-							json = await fetchJson.json();
-							image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
-							image.crossOrigin = 'anonymous';
-						}
-						
-					// }
-				// }
-				image.onload = handleSecondaryImageOnLoad(i, char_offset, totalImages);
-	
-				image.onerror = function(){
-					totalImages.made++;
-					if(totalImages.made >= (totalImages.toMake - 1)) {
-						ctx.imageSmoothingEnabled = true;
-						stepsCompleted.secondaries = true;
-						overlay();
-					}
 				}
-				char_offset++;
+			} else {
+				if (element == "custom") {
+					var reader = new FileReader();
+					const current_char_offset = char_offset;
+					reader.onload = function(e) {
+						if (stepsCompleted.secondaries) return;
+						var image = new Image();
+						image.src = e.target.result;
+						image.onload = handleSecondaryImageOnLoad(i, current_char_offset, totalImages);
+						image.onerror = function(){
+							totalImages.made++;
+							if(totalImages.made >= totalImages.toMake) {
+								ctx.imageSmoothingEnabled = true;
+								stepsCompleted.secondaries = true;
+								overlay();
+							}
+						}
+					};
+					char_offset++;
+					reader.readAsDataURL(charImgInput.files[0]);
+				} else {
+					// if(game == "ultimate") {
+					// 	image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+					// } else if(game == "roa") {
+					// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
+					// } else if(game == "roa2") {
+					// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //same for roa2
+					// } else {
+						SMALL_ICON = 48;
+						LARGE_ICON = 96;
+						// if(game == "pplus") {
+							// image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}-0.png`; //we dont have alts for stock icons for p+ yet
+						// } else {		
+							const fetchPackConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/config.json`);
+							var packConfig = await fetchPackConfig.json();
+							const fetchGameConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
+							gameConfig = await fetchGameConfig.json();
+	
+							console.log(element)
+							element = gameConfig.character_to_codename[element].codename;
+	
+							const response = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`);
+							if (response.ok) {
+								image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+								image.crossOrigin = 'anonymous';
+							} else {
+								const fetchJson = await fetch('paths.json');
+								json = await fetchJson.json();
+								image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
+								image.crossOrigin = 'anonymous';
+							}
+							
+						// }
+					// }
+					image.onload = handleSecondaryImageOnLoad(i, char_offset, totalImages);
+		
+					image.onerror = function(){
+						totalImages.made++;
+						if(totalImages.made >= totalImages.toMake) {
+							ctx.imageSmoothingEnabled = true;
+							stepsCompleted.secondaries = true;
+							overlay();
+						}
+					}
+					char_offset++;
+				}
 			}
+
 
 		}
 	}
