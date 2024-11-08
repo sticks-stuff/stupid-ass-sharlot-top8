@@ -152,19 +152,17 @@ async function eventData(slug) {
             }
         }
 
+		var player = {};
+		player["tag"] = name;
+		player["twitter"] = twi;
+
 		if(freq["wins"][name] == undefined && freq[name]) {
-			players.push({
-				"tag": name,
-				"chars": Object.entries(freq[name]).sort((a, b) => b[1] - a[1]),
-				"twitter": twi,
-			});
+			player["chars"] = Object.entries(freq[name]).sort((a, b) => b[1] - a[1]);
 		} else if (freq["wins"][name]) {
-			players.push({
-				"tag": name,
-				"chars": Object.entries(freq["wins"][name]).sort((a, b) => b[1] - a[1]),
-				"twitter": twi,
-			});
+			player["chars"] = Object.entries(freq["wins"][name]).sort((a, b) => b[1] - a[1]);
 		}
+
+		players.push(player);
     }
 
     const event = eventData["event"];

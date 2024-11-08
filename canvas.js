@@ -350,7 +350,7 @@ function go() {
 
 			if(mainChar == "none") {
 				imagesToLoad.num++;
-				if(imagesToLoad >= 8) {
+				if(imagesToLoad.num >= 8) {
 					secondaries();
 				}
 				continue;

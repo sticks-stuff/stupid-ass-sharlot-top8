@@ -276,50 +276,52 @@ function sendToForm() {
 			}
 			document.getElementById(`player${i + 1}twt`).value = twitter;
 
-			var mainChar = player.chars[0][0];
-			console.log(`Adding ${mainChar} character for player ${i + 1} with tag ${tag}`);
-			if (gameConfig.character_to_codename[mainChar] == undefined) {
-				for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-					if (value.smashgg_name === mainChar) {
-						mainChar = key;
-						break;
-					}
-					if (value.codename === mainChar) {
-						mainChar = key;
-						break;
+			if (player.chars) {
+				var mainChar = player.chars[0][0];
+				console.log(`Adding ${mainChar} character for player ${i + 1} with tag ${tag}`);
+				if (gameConfig.character_to_codename[mainChar] == undefined) {
+					for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
+						if (value.smashgg_name === mainChar) {
+							mainChar = key;
+							break;
+						}
+						if (value.codename === mainChar) {
+							mainChar = key;
+							break;
+						}
 					}
 				}
-			}
-			document.getElementById(`player${i + 1}char`).value = mainChar;
-			updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
-
-			if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
-				document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
-			}
-
-			// for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
-			// 	removeSecondaryChar(i + 1, j);
-			// }
-
-			for (let j = 1; j < player.chars.length; j++) {
-				var secondary = player.chars[j][0];
-				for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-                    if (value.smashgg_name === secondary) {
-                        secondary = key;
-                        break;
-                    }
-					if (value.codename === secondary) {
-                        secondary = key;
-                        break;
-                    }
-                }
-				addSecondaryChar(i + 1);
-				document.getElementById(`player${i + 1}secondary${j - 1}char`).value = secondary;
-				console.log(`Adding ${secondary} character for player ${i + 1} with tag ${tag}`);
-
-				updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
-				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]]) {
-					document.getElementById(`player${i + 1}secondary${j - 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]];
+				document.getElementById(`player${i + 1}char`).value = mainChar;
+				updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
+	
+				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
+					document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
+				}
+	
+				// for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
+				// 	removeSecondaryChar(i + 1, j);
+				// }
+	
+				for (let j = 1; j < player.chars.length; j++) {
+					var secondary = player.chars[j][0];
+					for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
+						if (value.smashgg_name === secondary) {
+							secondary = key;
+							break;
+						}
+						if (value.codename === secondary) {
+							secondary = key;
+							break;
+						}
+					}
+					addSecondaryChar(i + 1);
+					document.getElementById(`player${i + 1}secondary${j - 1}char`).value = secondary;
+					console.log(`Adding ${secondary} character for player ${i + 1} with tag ${tag}`);
+	
+					updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
+					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]]) {
+						document.getElementById(`player${i + 1}secondary${j - 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]];
+					}
 				}
 			}
 		}
