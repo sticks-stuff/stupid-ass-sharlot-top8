@@ -200,7 +200,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
         var pack = document.getElementById("pack").value;
 
         try {
-			if (mainChar == "custom") {
+			if (mainChar == "custom" || mainChar == false) {
 				offsetX = 0.5;
 				offsetY = 0.5;
 				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
