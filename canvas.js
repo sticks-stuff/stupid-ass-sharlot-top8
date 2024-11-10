@@ -189,7 +189,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				if (!isSecondaries) {
 					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount + 1, [0.5, 0.5])[0];
 				} else {
-					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount, [0.5, 0.5])[document.getElementById(`player${i + 1}secondary`).childElementCount - secondaryNumber];
+					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount, [0.5, 0.5])[secondaryNumber];
 				}
 			}
 		}
@@ -208,178 +208,178 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				if(imagesToLoad.num >= 8) {
 					secondaries();
 				}
-				return;
-			}
-            const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
-            const config = await response.json();
-            const eyesight = config.eyesights[mainChar]["0"];
-
-            let proportional_zoom = 1;
-            if (config.average_size) {
-                proportional_zoom = 0;
-                proportional_zoom = Math.max(
-                    proportional_zoom,
-                    (SIZE_SQUARE[i] / config.average_size.x) * 1.2
-                );
-                proportional_zoom = Math.max(
-                    proportional_zoom,
-                    (SIZE_SQUARE[i] / config.average_size.y) * 1.2
-                );
-            }
-            const zoom_x = SIZE_SQUARE[i] / img.naturalWidth;
-            const zoom_y = SIZE_SQUARE[i] / img.naturalHeight;
-
-            let minZoom = 1;
-			const rescalingFactor = config?.rescaling_factor?.char?.alt || 1;
-            const uncropped_edge = config.uncropped_edge || [];
-
-            if (!uncropped_edge || uncropped_edge.length == 0) {
-                if (zoom_x > zoom_y) {
-                    minZoom = zoom_x * rescalingFactor;
-                } else {
-                    minZoom = zoom_y * rescalingFactor;
-                }
-            } else {
-                if (
-                    uncropped_edge.includes("u") &&
-                    uncropped_edge.includes("d") &&
-                    uncropped_edge.includes("l") &&
-                    uncropped_edge.includes("r")
-                ) {
-                    minZoom = customZoom * proportional_zoom * rescalingFactor;
-                } else if (
-                    !uncropped_edge.includes("l") &&
-                    !uncropped_edge.includes("r")
-                ) {
-                    minZoom = zoom_x * rescalingFactor;
-                } else if (
-                    !uncropped_edge.includes("u") &&
-                    !uncropped_edge.includes("d")
-                ) {
-                    minZoom = zoom_y * rescalingFactor;
-                } else {
-                    minZoom = customZoom * proportional_zoom * rescalingFactor;
-                }
-            }
-
-            const zoom = Math.max(minZoom, customZoom * minZoom);
-
-            let xx;
-			if (!customCenter) {
-				xx = -eyesight.x * zoom + SIZE_SQUARE[i] / 2;
 			} else {
-				xx = -eyesight.x * zoom + SIZE_SQUARE[i] * customCenter[0];
-			}
-            let maxMoveX = SIZE_SQUARE[i] - img.naturalWidth * zoom;
-
-            if (!uncropped_edge || !uncropped_edge.includes("l")) {
-                if (xx > 0) xx = 0;
-            }
-            if (!uncropped_edge || !uncropped_edge.includes("r")) {
-                if (xx < maxMoveX) xx = maxMoveX;
-            }
-
-            let yy;
-            if (!customCenter) {
-                yy = -eyesight.y * zoom + SIZE_SQUARE[i] / 2;
-				console.log("Did not use custom center value: ", yy);
-            } else {
-                yy = -eyesight.y * zoom + SIZE_SQUARE[i] * customCenter[1];
-				console.log("Used custom center value: ", yy);
-            }
-			console.log("Initial yy value:", yy);
-
-            let maxMoveY = SIZE_SQUARE[i] - img.naturalHeight * zoom;
-
-            if (!uncropped_edge || !uncropped_edge.includes("u")) {
-                if (yy > 0) yy = 0;
-            }
-            if (!uncropped_edge || !uncropped_edge.includes("d")) {
-                if (yy < maxMoveY) yy = maxMoveY;
-            }
-
-			console.log("Final yy value:", yy);
-			
-			// const offsetX = 0.5 - (xx + img.naturalWidth / 2) / img.naturalWidth;
-			// const offsetY = 0.5 - (yy + img.naturalHeight / 2) / img.naturalHeight;
-
-			console.log(offsetX, offsetY);
-			console.log("asjkdhaskhjd " + (yy * (img.naturalHeight / SIZE_SQUARE[i])))
-
-			console.log(img.src);
-			console.log({offsetX})
-			console.log({offsetY})
-			// cropX = (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(xx) * (img.naturalWidth / SIZE_SQUARE[i]));
-			cropX = (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(xx) * (img.naturalWidth / SIZE_SQUARE[i]));
-			cropY = (((img.naturalHeight * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(yy) * (img.naturalHeight / SIZE_SQUARE[i]));
-			if (img.src.includes("Johnny")) {
-				// xx -= 400;
-			}
-			// offsetX = (xx + img.naturalWidth / 2) / img.naturalWidth;
-			// offsetY = (yy + img.naturalHeight / 2) / img.naturalHeight;
-
-			resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom).then((resized) => {
-				console.log("here")
-				var char = document.createElement("div");
-				char.style.width = SIZE_SQUARE[i] + "px";
-				char.style.height = SIZE_SQUARE[i] + "px";
-				// char.style.backgroundPosition = `${xx}px ${yy - 30}px`;
-				char.style.backgroundPosition = `${xx}px ${yy}px`;
-				char.style.backgroundSize = `${img.naturalWidth * zoom}px ${img.naturalHeight * zoom}px`;
-				char.style.backgroundImage = `url(${resized})`;
-				char.style.backgroundRepeat = "no-repeat";
-				
-				var offScreenContainer = document.createElement("div");
-				offScreenContainer.style.position = "absolute";
-				offScreenContainer.style.left = "-9999px";
-				offScreenContainer.appendChild(char);
-				document.body.appendChild(offScreenContainer);
-
-				console.log("here2")
-				html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(canvas) {
-					ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
-					char.remove();
-					if (isSecondaries) {
-						imagesToLoad.made++;
-						if(imagesToLoad.made >= imagesToLoad.toMake) {
-							ctx.imageSmoothingEnabled = true;
-							stepsCompleted.handleSecondaryImageOnLoad = true;
-							overlay();
-						}
+				const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+				const config = await response.json();
+				const eyesight = config.eyesights[mainChar]["0"];
+	
+				let proportional_zoom = 1;
+				if (config.average_size) {
+					proportional_zoom = 0;
+					proportional_zoom = Math.max(
+						proportional_zoom,
+						(SIZE_SQUARE[i] / config.average_size.x) * 1.2
+					);
+					proportional_zoom = Math.max(
+						proportional_zoom,
+						(SIZE_SQUARE[i] / config.average_size.y) * 1.2
+					);
+				}
+				const zoom_x = SIZE_SQUARE[i] / img.naturalWidth;
+				const zoom_y = SIZE_SQUARE[i] / img.naturalHeight;
+	
+				let minZoom = 1;
+				const rescalingFactor = config?.rescaling_factor?.char?.alt || 1;
+				const uncropped_edge = config.uncropped_edge || [];
+	
+				if (!uncropped_edge || uncropped_edge.length == 0) {
+					if (zoom_x > zoom_y) {
+						minZoom = zoom_x * rescalingFactor;
 					} else {
-						imagesToLoad.num++;
-						if (imagesToLoad.num >= 8) {
-							stepsCompleted.handleImageOnload = true;
-							secondaries();
-						}
+						minZoom = zoom_y * rescalingFactor;
 					}
+				} else {
+					if (
+						uncropped_edge.includes("u") &&
+						uncropped_edge.includes("d") &&
+						uncropped_edge.includes("l") &&
+						uncropped_edge.includes("r")
+					) {
+						minZoom = customZoom * proportional_zoom * rescalingFactor;
+					} else if (
+						!uncropped_edge.includes("l") &&
+						!uncropped_edge.includes("r")
+					) {
+						minZoom = zoom_x * rescalingFactor;
+					} else if (
+						!uncropped_edge.includes("u") &&
+						!uncropped_edge.includes("d")
+					) {
+						minZoom = zoom_y * rescalingFactor;
+					} else {
+						minZoom = customZoom * proportional_zoom * rescalingFactor;
+					}
+				}
+	
+				const zoom = Math.max(minZoom, customZoom * minZoom);
+	
+				let xx;
+				if (!customCenter) {
+					xx = -eyesight.x * zoom + SIZE_SQUARE[i] / 2;
+				} else {
+					xx = -eyesight.x * zoom + SIZE_SQUARE[i] * customCenter[0];
+				}
+				let maxMoveX = SIZE_SQUARE[i] - img.naturalWidth * zoom;
+	
+				if (!uncropped_edge || !uncropped_edge.includes("l")) {
+					if (xx > 0) xx = 0;
+				}
+				if (!uncropped_edge || !uncropped_edge.includes("r")) {
+					if (xx < maxMoveX) xx = maxMoveX;
+				}
+	
+				let yy;
+				if (!customCenter) {
+					yy = -eyesight.y * zoom + SIZE_SQUARE[i] / 2;
+					console.log("Did not use custom center value: ", yy);
+				} else {
+					yy = -eyesight.y * zoom + SIZE_SQUARE[i] * customCenter[1];
+					console.log("Used custom center value: ", yy);
+				}
+				console.log("Initial yy value:", yy);
+	
+				let maxMoveY = SIZE_SQUARE[i] - img.naturalHeight * zoom;
+	
+				if (!uncropped_edge || !uncropped_edge.includes("u")) {
+					if (yy > 0) yy = 0;
+				}
+				if (!uncropped_edge || !uncropped_edge.includes("d")) {
+					if (yy < maxMoveY) yy = maxMoveY;
+				}
+	
+				console.log("Final yy value:", yy);
+				
+				// const offsetX = 0.5 - (xx + img.naturalWidth / 2) / img.naturalWidth;
+				// const offsetY = 0.5 - (yy + img.naturalHeight / 2) / img.naturalHeight;
+	
+				console.log(offsetX, offsetY);
+				console.log("asjkdhaskhjd " + (yy * (img.naturalHeight / SIZE_SQUARE[i])))
+	
+				console.log(img.src);
+				console.log({offsetX})
+				console.log({offsetY})
+				// cropX = (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(xx) * (img.naturalWidth / SIZE_SQUARE[i]));
+				cropX = (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(xx) * (img.naturalWidth / SIZE_SQUARE[i]));
+				cropY = (((img.naturalHeight * zoom) - SIZE_SQUARE[i]) / zoom) - (Math.abs(yy) * (img.naturalHeight / SIZE_SQUARE[i]));
+				if (img.src.includes("Johnny")) {
+					// xx -= 400;
+				}
+				// offsetX = (xx + img.naturalWidth / 2) / img.naturalWidth;
+				// offsetY = (yy + img.naturalHeight / 2) / img.naturalHeight;
+	
+				resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom).then((resized) => {
+					console.log("here")
+					var char = document.createElement("div");
+					char.style.width = SIZE_SQUARE[i] + "px";
+					char.style.height = SIZE_SQUARE[i] + "px";
+					// char.style.backgroundPosition = `${xx}px ${yy - 30}px`;
+					char.style.backgroundPosition = `${xx}px ${yy}px`;
+					char.style.backgroundSize = `${img.naturalWidth * zoom}px ${img.naturalHeight * zoom}px`;
+					char.style.backgroundImage = `url(${resized})`;
+					char.style.backgroundRepeat = "no-repeat";
+					
+					var offScreenContainer = document.createElement("div");
+					offScreenContainer.style.position = "absolute";
+					offScreenContainer.style.left = "-9999px";
+					offScreenContainer.appendChild(char);
+					document.body.appendChild(offScreenContainer);
+	
+					console.log("here2")
+					html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(canvas) {
+						ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
+						char.remove();
+						if (isSecondaries) {
+							imagesToLoad.made++;
+							if(imagesToLoad.made >= imagesToLoad.toMake) {
+								ctx.imageSmoothingEnabled = true;
+								stepsCompleted.handleSecondaryImageOnLoad = true;
+								overlay();
+							}
+						} else {
+							imagesToLoad.num++;
+							if (imagesToLoad.num >= 8) {
+								stepsCompleted.handleImageOnload = true;
+								secondaries();
+							}
+						}
+					});
+				})
+	
+				// drawImageProp(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0, 0, posOffsetX, posOffsetY, cropX, cropY, flips, shadows, -xx, -yy);
+	
+				// drawImageProp(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0.5, 0.5, posOffsetX, posOffsetY, (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom), ((img.naturalHeight * zoom) - SIZE_SQUARE[i]) / zoom, flips, shadows, -xx, -yy);
+				// drawImageWithBackgroundProperties(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], xx, yy, img.naturalWidth * zoom, img.naturalHeight * zoom);
+	
+				console.log("Variables calculated: ", {
+					imgSrc: img.src,
+					zoom: zoom,
+					uncroppedEdge: uncropped_edge,
+					rescalingFactor: rescalingFactor,
+					minZoom: minZoom,
+					proportionalZoom: proportional_zoom,
+					zoomX: zoom_x,
+					zoomY: zoom_y,
+					eyesight: eyesight,
+					xx: xx,
+					yy: yy,
+					naturalWidth: img.naturalWidth,
+					naturalHeight: img.naturalHeight,
+					width: img.width,
+					height: img.height,
+					img: img,
+					customCenter: customCenter,
 				});
-			})
-
-			// drawImageProp(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0, 0, posOffsetX, posOffsetY, cropX, cropY, flips, shadows, -xx, -yy);
-
-            // drawImageProp(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], 0.5, 0.5, posOffsetX, posOffsetY, (((img.naturalWidth * zoom) - SIZE_SQUARE[i]) / zoom), ((img.naturalHeight * zoom) - SIZE_SQUARE[i]) / zoom, flips, shadows, -xx, -yy);
-			// drawImageWithBackgroundProperties(ctx, img, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], xx, yy, img.naturalWidth * zoom, img.naturalHeight * zoom);
-
-            console.log("Variables calculated: ", {
-                imgSrc: img.src,
-                zoom: zoom,
-                uncroppedEdge: uncropped_edge,
-                rescalingFactor: rescalingFactor,
-                minZoom: minZoom,
-                proportionalZoom: proportional_zoom,
-                zoomX: zoom_x,
-                zoomY: zoom_y,
-                eyesight: eyesight,
-                xx: xx,
-                yy: yy,
-                naturalWidth: img.naturalWidth,
-                naturalHeight: img.naturalHeight,
-                width: img.width,
-                height: img.height,
-                img: img,
-				customCenter: customCenter,
-            });
+			}
         } catch (error) {
             console.error("Error fetching eyesight data:", error);
         }
@@ -554,20 +554,21 @@ async function secondaries() {
 
 			if (layerSecondaries) {
 				stepsCompleted.handleImageOnload = false; // this sux
+				let images = [];
+				let imagePromises = [];
+			
 				if (element == "custom") {
 					var reader = new FileReader();
 					reader.onload = function(e) {
 						var image = new Image();
 						image.src = e.target.result;
-						image.onload = handleImageOnload(i, totalImages, image, false, false, true, j);
-						image.onerror = function(){
-							totalImages.made++;
-							if(totalImages.made >= totalImages.toMake) {
-								ctx.imageSmoothingEnabled = true;
-								stepsCompleted.secondaries = true;
-								overlay();
-							}
-						}
+						imagePromises.push(new Promise((resolve, reject) => {
+							image.onload = () => {
+								images.push(image);
+								resolve();
+							};
+							image.onerror = reject;
+						}));
 					};
 					reader.readAsDataURL(charImgInput.files[0]);
 				} else {
@@ -575,25 +576,39 @@ async function secondaries() {
 					var packConfig = await fetchPackConfig.json();
 					const fetchGameConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
 					gameConfig = await fetchGameConfig.json();
-
-					console.log({element})
-					console.log({gameConfig})
+			
+					console.log({element});
+					console.log({gameConfig});
 					element = gameConfig.character_to_codename[element].codename;
-
-					image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+			
+					let imageUrl = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+					let image = new Image();
+					image.src = imageUrl;
 					image.crossOrigin = 'anonymous';
-
-					console.log("here")
-					image.onload = handleImageOnload(i, totalImages, image, element, document.getElementById(`player${i + 1}secondary${j}alt`).value, true, j);
-					console.log("here2")
-					image.onerror = function(){
-						totalImages.made++;
-						if(totalImages.made >= totalImages.toMake) {
-							ctx.imageSmoothingEnabled = true;
-							stepsCompleted.secondaries = true;
-							overlay();
-						}
-					}
+			
+					imagePromises.push(new Promise((resolve, reject) => {
+						image.onload = () => {
+							images.push(image);
+							resolve();
+						};
+						image.onerror = reject;
+					}));
+				}
+			
+				// Wait for all images to load
+				await Promise.all(imagePromises);
+			
+				// Process the loaded images
+				images.forEach((image, index) => {
+					let image2 = new Image();
+					image2.src = image.src;
+					image2.onload = handleImageOnload(i, totalImages, image, element, document.getElementById(`player${i + 1}secondary${j}alt`).value, true, j);
+				});
+			
+				if (totalImages.made >= totalImages.toMake) {
+					ctx.imageSmoothingEnabled = true;
+					stepsCompleted.secondaries = true;
+					overlay();
 				}
 			} else {
 				if (element == "custom") {
