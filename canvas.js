@@ -184,6 +184,14 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 		var customZoom = 1.2;
         var customCenter = [0.5, 0.3];
 
+        var game = document.getElementById("game").value;
+		var mainChar = char;
+        var pack = document.getElementById("pack").value;
+
+		if (game == "roa2" && pack == "costume") {
+			customZoom = 1.0; // shits already zoomed
+		}
+
 		if (document.getElementById(`player${i + 1}secondary`).childElementCount > 0) {
 			if (layerSecondaries) {
 				if (!isSecondaries) {
@@ -193,11 +201,6 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				}
 			}
 		}
-
-        var game = document.getElementById("game").value;
-		var gameYoffset = 0;
-        var mainChar = char;
-        var pack = document.getElementById("pack").value;
 
         try {
 			if (mainChar == "custom" || mainChar == false) {
@@ -211,7 +214,52 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 			} else {
 				const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
 				const config = await response.json();
-				const eyesight = config.eyesights[mainChar]["0"];
+				var eyesight = config?.eyesights?.[mainChar]["0"];
+
+				if (!eyesight) {
+					eyesight = {
+					  x: img.naturalWidth / 2,
+					  y: img.naturalHeight / 2,
+					};
+				} else {
+					if (game == "roa2") {
+						switch (mainChar) {
+							case "Zetterburn":
+								if (pack != "art") {
+									eyesight.x = img.naturalWidth / 2;
+								}
+								break;
+							case "Orcane":
+								eyesight.x = img.naturalWidth / 2;
+								break;
+							case "Maypul":
+								eyesight.x = img.naturalWidth / 2;
+								break;
+							case "Fleet":
+								if (pack == "costume") {
+									eyesight.x = img.naturalWidth / 2;
+								}
+								break;
+							case "Kragg":
+								if (pack == "costume") {
+									eyesight.x = img.naturalWidth / 2;
+									eyesight.y = img.naturalHeight / 3;
+								}
+								break;
+							case "Ranno":
+								eyesight.x = img.naturalWidth / 2;
+								break;
+						}
+					}
+					if (game == "ssbu") {
+						if (mainChar == "purin") {
+							eyesight.x = img.naturalWidth / 2;
+							eyesight.y = img.naturalHeight / 2;
+							customCenter = [0.5, 0.5];
+						}
+					}
+				}
+
 	
 				let proportional_zoom = 1;
 				if (config.average_size) {
