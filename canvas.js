@@ -384,6 +384,18 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 	
 					console.log("here2")
 					html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(canvas) {
+						if (shadows) {
+							var shadowCanvas = createCanvas(SIZE_SQUARE[i], SIZE_SQUARE[i]).getContext("2d");
+							shadowCanvas.beginPath();
+							shadowCanvas.rect(0, 0, SIZE_SQUARE[i], SIZE_SQUARE[i]);
+							shadowCanvas.fillStyle = PRIMARY_COLOR;
+							shadowCanvas.fill();
+							shadowCanvas.globalCompositeOperation = "destination-in";
+							var shadowOffset = SIZE_SQUARE[i] * 0.03;
+							shadowCanvas.drawImage(canvas, shadowOffset, shadowOffset);
+							ctx.drawImage(shadowCanvas.canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
+						}
+
 						ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
 						char.remove();
 						if (isSecondaries) {
