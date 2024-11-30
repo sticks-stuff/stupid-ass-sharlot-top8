@@ -365,7 +365,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				// offsetX = (xx + img.naturalWidth / 2) / img.naturalWidth;
 				// offsetY = (yy + img.naturalHeight / 2) / img.naturalHeight;
 	
-				resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom).then((resized) => {
+				resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom, game == "roa").then((resized) => {
 					console.log("here")
 					var char = document.createElement("div");
 					char.style.width = SIZE_SQUARE[i] + "px";
@@ -375,6 +375,10 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					char.style.backgroundSize = `${img.naturalWidth * zoom}px ${img.naturalHeight * zoom}px`;
 					char.style.backgroundImage = `url(${resized})`;
 					char.style.backgroundRepeat = "no-repeat";
+					if (game == "roa") {
+						char.style.imageRendering = "pixelated";
+						ctx.imageSmoothingEnabled = false;
+					}
 					
 					var offScreenContainer = document.createElement("div");
 					offScreenContainer.style.position = "absolute";
@@ -397,7 +401,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 						}
 
 						ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
-						char.remove();
+						offScreenContainer.remove();
 						if (isSecondaries) {
 							imagesToLoad.made++;
 							if(imagesToLoad.made >= imagesToLoad.toMake) {

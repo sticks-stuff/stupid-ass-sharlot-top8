@@ -7,9 +7,9 @@
 */
 pica = window.pica();
 
-async function resizeInCanvas(image, width, height) {
+async function resizeInCanvas(image, width, height, pixely) {
 	// Only resize if image is being downscaled
-	if (width >= image.width || height >= image.height) {
+	if ((width >= image.width || height >= image.height) || pixely) {
 	  return image.src;
 	}
   
@@ -20,13 +20,14 @@ async function resizeInCanvas(image, width, height) {
 	// Set width and height
 	canvas.width = width;
 	canvas.height = height;
-  
+
+	// Define pica options
+	const picaOptions = {
+	    alpha: true
+	};
+
 	// Use pica to resize the image
-	const result = await pica.resize(image, canvas, {
-		quality: 3,
-		alpha: true
-	});
-  
+	const result = await pica.resize(image, canvas, picaOptions);
 	// Export to a data-uri
 	const dataURI = await pica.toBlob(result, 'image/webp', 0.90);
   
