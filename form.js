@@ -155,9 +155,27 @@ function addSecondaryChar(i) {
 }
 
 function removeSecondaryChar(i, j) {
-	document.getElementById("player" + i + "secondary").removeChild(document.getElementById("player" + i + "secondary" + j));
-}
+    const secondaryContainer = document.getElementById("player" + i + "secondary");
+    secondaryContainer.removeChild(document.getElementById("player" + i + "secondary" + j));
 
+    // Reorder the remaining secondary character divs to ensure their ids are all sequential from 0
+    for (let k = 0; k < secondaryContainer.childElementCount; k++) {
+        const secondaryDiv = secondaryContainer.children[k];
+        secondaryDiv.id = "player" + i + "secondary" + k;
+
+        const charElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="char"]`);
+        if (charElement) charElement.id = `player${i}secondary${k}char`;
+
+        const altElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="alt"]`);
+        if (altElement) altElement.id = `player${i}secondary${k}alt`;
+
+        const charImgElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="charImg"]`);
+        if (charImgElement) charImgElement.id = `player${i}secondary${k}charImg`;
+
+        const buttonElement = secondaryDiv.querySelector(`button`);
+        if (buttonElement) buttonElement.setAttribute("onclick", `removeSecondaryChar(${i}, ${k})`);
+    }
+}
 async function updatePacks() {
 	var game = document.getElementById('game').value;
 	var pack = document.getElementById('pack');
