@@ -37,6 +37,36 @@ async function resizeInCanvas(image, width, height, pixely) {
 	return URL.createObjectURL(dataURI);
 }
 
+async function resizeInCanvasReturnCanvas(image, width, height, pixely) {
+	// Only resize if image is being downscaled
+	if ((width >= image.width || height >= image.height) || pixely) {
+        return image;
+      }
+    
+      // Initialize the canvas and its size
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+    
+      // Set width and height
+      canvas.width = width;
+      canvas.height = height;
+  
+      // Define pica options
+      const picaOptions = {
+          alpha: true
+      };
+  
+      // Use pica to resize the image
+      const result = await pica.resize(image, canvas, picaOptions);
+      // Export to a data-uri
+    //   const dataURI = await pica.toBlob(result, 'image/webp', 0.90);
+    
+      canvas.remove();
+    
+      // Do something with the result, like overwrite original
+      return result;
+  }
+  
 function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0) {
 
     if (arguments.length === 2) {
