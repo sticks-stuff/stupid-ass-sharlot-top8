@@ -127,6 +127,13 @@ function layerSecondariesChanged() {
 	console.log({layerSecondaries})
 }
 
+var shadows = document.getElementById("shadows").checked;
+
+function shadowsChanged() {
+	shadows = document.getElementById("shadows").checked;
+	console.log({shadows})
+}
+
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
 // Given a number of characters, returns an array os positions (0-1) for their eyesights
@@ -180,7 +187,6 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
         var cropX = 0;
         var cropY = 0;
         var flips = false;
-        var shadows = true;
 		var customZoom = 1.2;
         var customCenter = [0.5, 0.3];
 
