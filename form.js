@@ -345,3 +345,7 @@ function sendToForm() {
 		}
 	});
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+	styleChanged();
+});
