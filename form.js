@@ -266,6 +266,14 @@ function sendToForm() {
 		console.log(data);
 		document.getElementById("game").value = data["game"];
 		document.getElementById("toptext").value = data["toptext"];
+		if (data["toptext"].toLowerCase().includes("popoff")) {
+			document.getElementById("pop-style").checked = true;
+		} else if (data["toptext"].toLowerCase().includes("respawn") || data["toptext"].toLowerCase().includes("platform")) {
+			document.getElementById("resplat-style").checked = true;
+		} else {
+			document.getElementById("ranbat-style").checked = true;
+		}
+		styleChanged();
 		document.getElementById("bottomtext").value = data["bottomtext"];
 		document.getElementById("url").value = data["url"];
 		await loadGameConfig().then(() => {
