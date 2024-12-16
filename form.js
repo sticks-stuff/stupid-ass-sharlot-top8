@@ -193,7 +193,11 @@ async function updatePacks() {
 			pack.appendChild(option);
 		}
 	}
-	pack.value = "full";
+	if (Array.from(pack.options).some(option => option.value === "full")) {
+		pack.value = "full";
+	} else {
+		pack.value = pack.options[0].value;
+	}
 	updatePackInfo();
 	document.getElementById('pack').addEventListener('change', async function() {
 		updatePackInfo();
