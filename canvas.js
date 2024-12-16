@@ -751,10 +751,19 @@ async function secondaries() {
 								image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
 								image.crossOrigin = 'anonymous';
 							} else {
-								const fetchJson = await fetch('paths.json');
-								json = await fetchJson.json();
-								image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
-								image.crossOrigin = 'anonymous';
+								let value = document.getElementById(`player${i + 1}secondary${j}alt`).value;
+								let [number, extension] = value.split('.');
+								let paddedValue = `${number.padStart(2, '0')}.${extension}`;
+								const responsePadded = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${paddedValue}`);
+								if (responsePadded.ok) {
+									image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${paddedValue}`;
+									image.crossOrigin = 'anonymous';
+								} else {
+									const fetchJson = await fetch('paths.json');
+									json = await fetchJson.json();
+									image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
+									image.crossOrigin = 'anonymous';
+								}
 							}
 							
 						// }
