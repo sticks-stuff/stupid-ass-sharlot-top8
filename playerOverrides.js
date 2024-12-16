@@ -412,4 +412,7 @@ const PLAYER_OVERRIDES = {
             }
         }
     },
+    "Eccentric_Thistle": {
+        twitter: "Thistle_TypeR"
+    }
 }
