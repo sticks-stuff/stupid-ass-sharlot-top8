@@ -73,7 +73,7 @@ const bad_types = ["stage_icon", "stage_bg"];
                     .map(file => file.replace(new RegExp(config.prefix, 'g'), ''))
                     .filter(file => file !== 'README.md' && file !== 'config.json' && file.includes('.'));
 
-                pack[0] = pack[0].replace("base_files/icon", "icon");
+                // pack[0] = pack[0].replace("base_files/icon", "icon");
 
                 if (!finalJSON[game[0]][pack[0]]) {
                     finalJSON[game[0]][pack[0]] = {};

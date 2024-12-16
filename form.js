@@ -183,9 +183,13 @@ async function updatePacks() {
 	pack.innerHTML = "";
 
 	if (json[game]) {
-		for (const [key, value] of Object.entries(json[game])) {
-			if(key == "smashgg_game_id" || key == "name" || key.includes("icon")) continue;
-			var option = new Option(value["name"], key);
+		for (let [key, value] of Object.entries(json[game])) {
+			if(key == "smashgg_game_id" || key == "name") continue;
+			let name = value["name"];
+			if(key.includes("icon")) {
+				name = "Icon Pack";
+			}
+			var option = new Option(name, key);
 			pack.appendChild(option);
 		}
 	}
