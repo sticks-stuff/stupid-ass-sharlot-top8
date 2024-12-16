@@ -75,6 +75,7 @@ var packConfig = {};
 
 async function loadGameConfig() {
     var game = document.getElementById('game').value;
+	if (game === "") return;
     const fetchConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
     gameConfig = await fetchConfig.json();
 }
