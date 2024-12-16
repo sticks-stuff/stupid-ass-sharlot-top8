@@ -145,6 +145,12 @@ function blackSquaresChanged() {
 	blackSquares = document.getElementById("blackSquares").checked;
 }
 
+var blackSquaresSlider = document.getElementById("blackSquaresSlider").value;
+
+function blackSquaresSliderChanged() {
+	blackSquaresSlider = document.getElementById("blackSquaresSlider").value;
+}
+
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
 // Given a number of characters, returns an array os positions (0-1) for their eyesights
@@ -505,7 +511,8 @@ function go() {
 
 		if (blackSquares) {
 			for (let i = 0; i < 8; i++) {
-				ctx.fillStyle = 'black';
+				ctx.fillStyle = `rgba(0, 0, 0, ${blackSquaresSlider})`;
+				console.log(blackSquaresSlider);
 				ctx.fillRect(POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
 			}
 		}

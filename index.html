@@ -52,6 +52,9 @@
 		<input type="checkbox" id="darkenImage" name="darkenImage" checked="" onchange="darkenImageChanged()"> darken background image?
 		<br>
 		<input type="checkbox" id="blackSquares" name="blackSquares" onchange="blackSquaresChanged()"> add a black square behind each box?
+		&nbsp;
+		<label for="slider">black square opacity:</label>
+		<input type="range" id="blackSquaresSlider" name="blackSquaresSlider" min="0.0" max="1.0" step="0.01" value="1.0" oninput="blackSquaresSliderChanged()">
 		<br>
 		<label for="primaryColor">Primary Color:</label>
 		<input type="color" id="primaryColor" name="primaryColor" value="#682f77">
