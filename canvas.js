@@ -131,7 +131,18 @@ var shadows = document.getElementById("shadows").checked;
 
 function shadowsChanged() {
 	shadows = document.getElementById("shadows").checked;
-	console.log({shadows})
+}
+
+var darkenImage = document.getElementById("darkenImage").checked;
+
+function darkenImageChanged() {
+	darkenImage = document.getElementById("darkenImage").checked;
+}
+
+var blackSquares = document.getElementById("blackSquares").checked;
+
+function blackSquaresChanged() {
+	blackSquares = document.getElementById("blackSquares").checked;
 }
 
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
@@ -485,9 +496,20 @@ function go() {
 	base_image.onload = async () => {
 		await drawImageProp(ctx, base_image, 0, 0, SIZE[0], SIZE[1]);
 		ctx.beginPath();
-		ctx.rect(0, 0, SIZE[0], SIZE[1]);
-		ctx.fillStyle = '#0000004D'; //darken
-		ctx.fill();
+		if (darkenImage) {
+			ctx.beginPath();
+			ctx.rect(0, 0, SIZE[0], SIZE[1]);
+			ctx.fillStyle = 'rgba(0, 0, 0, 0.30)';
+			ctx.fill();
+		}
+
+		if (blackSquares) {
+			for (let i = 0; i < 8; i++) {
+				ctx.fillStyle = 'black';
+				ctx.fillRect(POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
+			}
+		}
+	
 
 		var imagesToLoad = { num: 0 };
 
