@@ -6,7 +6,7 @@ const RAW_GITHUB_URL = 'https://raw.githubusercontent.com/joaorb64/StreamHelperA
 const LOCAL_GITHUB_API_FILE = 'github_api_response.json';
 const finalJSON = {};
 
-async function fetchFilesFromGitHub(retries = 10) {
+async function fetchFilesFromGitHub(retries = 10, delay = 5000) {
     if (fs.existsSync(LOCAL_GITHUB_API_FILE)) {
         const data = JSON.parse(fs.readFileSync(LOCAL_GITHUB_API_FILE, 'utf8'));
         return data.tree.map(file => file.path);
@@ -25,7 +25,8 @@ async function fetchFilesFromGitHub(retries = 10) {
                 if (attempt === retries) {
                     throw error;
                 }
-                console.error(`Attempt ${attempt} failed. Retrying...`);
+                console.error(`Attempt ${attempt} failed. Retrying in ${delay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
         }
     }
