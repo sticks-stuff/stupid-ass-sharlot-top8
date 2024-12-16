@@ -67,7 +67,7 @@ async function resizeInCanvasReturnCanvas(image, width, height, pixely) {
       return result;
   }
   
-function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0) {
+function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0, pixely = false) {
 
     if (arguments.length === 2) {
         x = y = 0;
@@ -130,6 +130,9 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     offScreenCanvas.height = nh;
     const offScreenCtx = offScreenCanvas.getContext('2d');
 
+    // Set image smoothing based on pixely argument
+    offScreenCtx.imageSmoothingEnabled = !pixely;
+
     // Draw the image onto the off-screen canvas
     offScreenCtx.drawImage(img, cx, cy, cw, ch, 0, 0, nw, nh);
 
@@ -139,7 +142,7 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
     resizedCanvas.height = h2;
 
     pica.resize(offScreenCanvas, resizedCanvas).then(result => {
-        
+        ctx.imageSmoothingEnabled = !pixely;
             // Draw the resized image onto the main canvas
             if (shadow) {
                 var shadowCanvas = createCanvas(w2, h2).getContext("2d");
@@ -167,10 +170,11 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, p
             ctx.drawImage(resizedCanvas, x2, y2);
             console.log("???")
             ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.imageSmoothingEnabled = true;
     })
 }
 
-async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0) {
+async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX = 0, posOffsetY = 0, cropX = 0, cropY = 0, flips = false, shadow = false, offsetPixelX = 0, offsetPixelY = 0, pixely = false) {
 
     if (arguments.length === 2) {
         x = y = 0;
@@ -234,6 +238,9 @@ async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX 
     offScreenCanvas.height = nh;
     const offScreenCtx = offScreenCanvas.getContext('2d');
 
+    // Set image smoothing based on pixely argument
+    offScreenCtx.imageSmoothingEnabled = !pixely;
+
     // Draw the image onto the off-screen canvas
     offScreenCtx.drawImage(img, cx, cy, cw, ch, 0, 0, nw, nh);
 
@@ -242,7 +249,10 @@ async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX 
     resizedCanvas.width = w2;
     resizedCanvas.height = h2;
 
-    await pica.resize(offScreenCanvas, resizedCanvas)
+    await pica.resize(offScreenCanvas, resizedCanvas);
+
+    // Set image smoothing based on pixely argument
+    ctx.imageSmoothingEnabled = !pixely;
 
     // Draw the resized image onto the main canvas
     if (shadow) {
@@ -270,4 +280,5 @@ async function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY, posOffsetX 
 
     ctx.drawImage(resizedCanvas, x2, y2);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = true;
 }

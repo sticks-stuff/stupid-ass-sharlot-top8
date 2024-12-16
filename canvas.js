@@ -600,8 +600,9 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 			right_margin = 6;
 		}
 		if (stepsCompleted.handleSecondaryImageOnLoad) return;
+		let game = document.getElementById("game").value;
 
-		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize);
+		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize, 0, 0, 0, 0, 0, 0, false, false, 0, 0, game == "ssbm");
 		totalImages.made++;
 		console.log({totalImages})
 		if(totalImages.made >= totalImages.toMake) {
