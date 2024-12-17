@@ -218,9 +218,9 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 		if (document.getElementById(`player${i + 1}secondary`).childElementCount > 0) {
 			if (layerSecondaries) {
 				if (!isSecondaries) {
-					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount + 1, [0.5, 0.5])[0];
+					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount, customCenter)[0];
 				} else {
-					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount, [0.5, 0.5])[secondaryNumber];
+					customCenter = GenerateMulticharacterPositions(document.getElementById(`player${i + 1}secondary`).childElementCount, customCenter)[document.getElementById(`player${i + 1}secondary`).childElementCount - 1 - secondaryNumber];
 				}
 			}
 		}
