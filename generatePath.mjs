@@ -50,7 +50,15 @@ const bad_types = ["stage_icon", "stage_bg"];
         }
         const configUrl = `${RAW_GITHUB_URL}games/${game[0]}/base_files/config.json`;
         const config = await fetchJsonFromUrl(configUrl);
-        finalJSON[game[0]].smashgg_game_id = config.smashgg_game_id;
+        if (config.alternate_versions) {
+            finalJSON[game[0]].smashgg_game_id = [];
+            finalJSON[game[0]].smashgg_game_id.push(config.smashgg_game_id);
+            config.alternate_versions.forEach(alternate_version => {
+                finalJSON[game[0]].smashgg_game_id.push(alternate_version.smashgg_game_id);
+            });
+        } else {
+            finalJSON[game[0]].smashgg_game_id = config.smashgg_game_id;
+        }
         finalJSON[game[0]].name = config.name;
         await Promise.all(Object.entries(game[1].assets).map(async (pack) => {
             try {

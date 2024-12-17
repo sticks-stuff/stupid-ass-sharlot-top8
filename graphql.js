@@ -169,7 +169,15 @@ async function eventData(slug) {
     var displayGame = event["videogame"]["name"];
     var game = event["videogame"]["id"];
 
-	const matchingGame = Object.values(paths).find(path => path.smashgg_game_id === game);
+	const matchingGame = Object.values(paths).find(path => {
+		if (typeof path.smashgg_game_id === 'number') {
+			return path.smashgg_game_id === game;
+		} else if (Array.isArray(path.smashgg_game_id)) {
+			return path.smashgg_game_id.includes(game);
+		}
+		return false;
+	});
+
 	if (matchingGame) {
 		game = Object.keys(paths).find(key => paths[key] === matchingGame);
 	}
