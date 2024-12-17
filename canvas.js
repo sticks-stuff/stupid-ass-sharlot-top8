@@ -151,6 +151,12 @@ function blackSquaresSliderChanged() {
 	blackSquaresSlider = document.getElementById("blackSquaresSlider").value;
 }
 
+var hideEmpty = document.getElementById("hideEmpty").checked;
+
+function hideEmptyChanged() {
+	hideEmpty = document.getElementById("hideEmpty").checked;
+}
+
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
 // Given a number of characters, returns an array os positions (0-1) for their eyesights
@@ -799,6 +805,8 @@ function createCanvas(width, height) {
     return Object.assign(document.createElement("canvas"), {width, height});
 }
 
+const emptyMargin = 10;
+
 function overlay() {
 	if (stepsCompleted.overlay) return;
 	var canvas1 = createCanvas(SIZE[0], SIZE[1]).getContext("2d");
@@ -814,6 +822,14 @@ function overlay() {
 		canvas1.fill();
 		canvas1.globalCompositeOperation = "destination-in";
 		canvas1.drawImage(marco, 0, 0);
+		
+		if (hideEmpty) {
+			for(i = 0; i < 8; i++) {
+				if(document.getElementById(`player${i + 1}char`).value == "none") {
+					canvas1.clearRect(POS[i][0] - emptyMargin, POS[i][1] - emptyMargin, SIZE_SQUARE[i] + (emptyMargin * 2), SIZE_SQUARE[i] + (emptyMargin * 2));
+				}
+			}
+		}
 
 		var polo = new Image();
 		polo.src = 'assets/polo.png';
@@ -841,7 +857,23 @@ function numbers() {
 	base_image.src = 'assets/numeros.png';
 	base_image.onload = () => {
 		if (stepsCompleted.numbers) return;
-		ctx.drawImage(base_image, 0, 0);
+
+		var newCanvas = document.createElement('canvas');
+		newCanvas.width = base_image.width;
+		newCanvas.height = base_image.height;
+		var newCtx = newCanvas.getContext('2d');
+
+		newCtx.drawImage(base_image, 0, 0);
+		
+		if (hideEmpty) {
+			for (i = 0; i < 8; i++) {
+				if (document.getElementById(`player${i + 1}char`).value == "none") {
+					newCtx.clearRect(POS[i][0] - emptyMargin, POS[i][1] - emptyMargin, SIZE_SQUARE[i] + (emptyMargin * 2), SIZE_SQUARE[i] + (emptyMargin * 2));
+				}
+			}
+		}
+		
+		ctx.drawImage(newCanvas, 0, 0);
 		stepsCompleted.numbers = true;
 		text();
 	};
