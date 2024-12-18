@@ -774,7 +774,7 @@ async function secondaries() {
 								} else {
 									const fetchJson = await fetch('paths.json');
 									json = await fetchJson.json();
-									image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["icon"][element][0]}`;
+									image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${json[game]["base_files/icon"][element][0]}`;
 									image.crossOrigin = 'anonymous';
 								}
 							}
