@@ -258,12 +258,6 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 									eyesight.x = img.naturalWidth / 2;
 								}
 								break;
-							case "Orcane":
-								eyesight.x = img.naturalWidth / 2;
-								break;
-							case "Maypul":
-								eyesight.x = img.naturalWidth / 2;
-								break;
 							case "Fleet":
 								if (pack == "costume") {
 									eyesight.x = img.naturalWidth / 2;
@@ -276,6 +270,12 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 								}
 								break;
 							case "Ranno":
+							case "Clairen":
+							case "Wrastor":
+							case "Forsburn":
+							case "Maypul":
+							case "Loxodont":
+							case "Orcane":
 								eyesight.x = img.naturalWidth / 2;
 								break;
 						}
