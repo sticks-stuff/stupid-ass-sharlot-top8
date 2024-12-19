@@ -567,9 +567,9 @@ function go() {
 
 				mainChar = gameConfig.character_to_codename[mainChar].codename;
 
-				image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).value}`;
+				image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${mainChar}${packConfig.postfix}${document.getElementById(`player${i + 1}alt`).msDropdown.value}`;
 				image.crossOrigin = 'anonymous';
-				image.onload = handleImageOnload(i, imagesToLoad, image, mainChar, document.getElementById(`player${i + 1}alt`).value);
+				image.onload = handleImageOnload(i, imagesToLoad, image, mainChar, document.getElementById(`player${i + 1}alt`).msDropdown.value);
 				image.onerror = function(){
 					imagesToLoad.num++;
 					if(imagesToLoad.num >= 8) {
@@ -689,7 +689,7 @@ async function secondaries() {
 					console.log({gameConfig});
 					element = gameConfig.character_to_codename[element].codename;
 			
-					let imageUrl = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+					let imageUrl = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value}`;
 					let image = new Image();
 					image.src = imageUrl;
 					image.crossOrigin = 'anonymous';
@@ -710,7 +710,7 @@ async function secondaries() {
 				images.forEach((image, index) => {
 					let image2 = new Image();
 					image2.src = image.src;
-					image2.onload = handleImageOnload(i, totalImages, image, element, document.getElementById(`player${i + 1}secondary${j}alt`).value, true, j);
+					image2.onload = handleImageOnload(i, totalImages, image, element, document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value, true, j);
 				});
 			
 				if (totalImages.made >= totalImages.toMake) {
@@ -740,7 +740,7 @@ async function secondaries() {
 					reader.readAsDataURL(charImgInput.files[0]);
 				} else {
 					// if(game == "ultimate") {
-					// 	image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).value}.png`;
+					// 	image.src = `assets/${game}/stock_icons/chara_2_${convertNamesToInternal(element)}_0${document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value}.png`;
 					// } else if(game == "roa") {
 					// 	image.src = `assets/${game}/stock_icons/${element.split(' ').join('_').replace("&", "_")}.png`; //we dont use alts in stock icons for roa
 					// } else if(game == "roa2") {
@@ -759,12 +759,12 @@ async function secondaries() {
 							console.log(element)
 							element = gameConfig.character_to_codename[element].codename;
 	
-							const response = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`);
+							const response = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value}`);
 							if (response.ok) {
-								image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).value}`;
+								image.src = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value}`;
 								image.crossOrigin = 'anonymous';
 							} else {
-								let value = document.getElementById(`player${i + 1}secondary${j}alt`).value;
+								let value = document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value;
 								let [number, extension] = value.split('.');
 								let paddedValue = `${number.padStart(2, '0')}.${extension}`;
 								const responsePadded = await fetch(`https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${packConfig.prefix}${element}${packConfig.postfix}${paddedValue}`);

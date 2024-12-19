@@ -55,7 +55,7 @@ var packConfig = {};
 			<select name="player${i}char" id="player${i}char" id="player${i}char"></select>
 			<br>
 			<label for="player${i}alt">main char alt: </label>
-			<select name="player${i}alt" id="player${i}alt" id="player${i}alt"></select>
+			<div name="player${i}alt" id="player${i}alt" id="player${i}alt"></div>
 			<br>
 			<label for="player${i}charImg">custom: </label>
 			<input type="file" id="player${i}charImg" name="player${i}charImg" accept="image/*" onchange="imgChanged('player${i}')">
@@ -85,8 +85,7 @@ async function loadPackConfig() {
     const pack = document.getElementById('pack').value;
     if (pack === "") return;
     const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
-    const packConfig = await response.json();
-    return packConfig;
+    packConfig = await response.json()
 }
 
 function updatePackInfo() {
@@ -97,7 +96,7 @@ function updatePackInfo() {
 	if (document.getElementById('pack').value == "") {
 		return;
 	};
-    loadPackConfig().then(packConfig => {
+    loadPackConfig().then(() => {
         document.getElementById("pack_version").innerHTML = "Version " + packConfig.version || "";
         document.getElementById("pack_info").innerHTML = packConfig.description || "";
         document.getElementById("pack_credits").innerHTML = packConfig.credits || "";
@@ -114,7 +113,7 @@ function addSecondaryChar(i) {
 	div.className = "secondaryChar";
 	div.innerHTML = `
 		<select name="player${i}secondary${secondaryCount}char" id="player${i}secondary${secondaryCount}char"></select>
-		<select name="player${i}secondary${secondaryCount}alt" id="player${i}secondary${secondaryCount}alt"></select>
+		<div name="player${i}secondary${secondaryCount}alt" id="player${i}secondary${secondaryCount}alt"></div>
 		<label for="player${i}secondary${secondaryCount}charImg">custom: </label>
         <input type="file" id="player${i}secondary${secondaryCount}charImg" name="player${i}secondary${secondaryCount}charImg" accept="image/*" onchange="imgChanged('player${i}secondary${secondaryCount}')">
 		<button onclick="removeSecondaryChar(${i}, ${secondaryCount})">remove</button>
@@ -199,8 +198,10 @@ async function updatePacks() {
 		pack.value = pack.options[0].value;
 	}
 	updatePackInfo();
+	await loadPackConfig();
 	document.getElementById('pack').addEventListener('change', async function() {
 		updatePackInfo();
+		await loadPackConfig();
 		for (let i = 1; i <= 8; i++) {
 			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
 			for (let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
@@ -255,16 +256,23 @@ function updateAlts(char, alt) {
 	if (gameConfig.character_to_codename[char]) {
 		char = gameConfig.character_to_codename[char].codename;
 	}
-	console.log(char)
+	var ddJson = [];
 	if(json[game][pack][char]) {
 		console.log(json[game][pack]);
-		console.log({pack});
 		for (const [key, value] of Object.entries(json[game][pack][char])) {
-			console.log(value.split(".")[0]);
-			var option = new Option(value.split(".")[0], value);
-			alt.appendChild(option);
+			let obj = {};
+			obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${char}${packConfig.postfix}${value}`;
+			obj.value = value;
+			obj.text = value.split(".")[0];
+			ddJson.push(obj);
 		}
 	}
+	new MsDropdown(alt, {
+		byJson: {
+			data: ddJson, selectedIndex: 0, name: "alt.id"
+		},
+		enableAutoFilter:false
+	});
 }
 
 function sendToForm() {
@@ -289,6 +297,7 @@ function sendToForm() {
 			updatePacks();
 			updateChars();
 		});
+		await loadPackConfig();
 
 		for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 			const player = data.players[i];
@@ -330,7 +339,7 @@ function sendToForm() {
 				updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
 	
 				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
-					document.getElementById(`player${i + 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
+					document.getElementById(`player${i + 1}alt`).msDropdown.value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
 				}
 	
 				// for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
@@ -355,7 +364,7 @@ function sendToForm() {
 	
 					updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
 					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]]) {
-						document.getElementById(`player${i + 1}secondary${j - 1}alt`).value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]];
+						document.getElementById(`player${i + 1}secondary${j - 1}alt`).msDropdown.value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]];
 					}
 				}
 			}
