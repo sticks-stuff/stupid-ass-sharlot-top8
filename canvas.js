@@ -287,6 +287,13 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 							customCenter = [0.5, 0.5];
 						}
 					}
+					if (game == "ssbm") {
+						if (mainChar == "jigglypuff") {
+							eyesight.x = img.naturalWidth / 2;
+							eyesight.y = img.naturalHeight / 2;
+							customCenter = [0.5, 0.5];
+						}
+					}
 				}
 
 	
@@ -306,8 +313,9 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				const zoom_y = SIZE_SQUARE[i] / img.naturalHeight;
 	
 				let minZoom = 1;
-				const rescalingFactor = config?.rescaling_factor?.char?.alt || 1;
-				const uncropped_edge = config.uncropped_edge || [];
+				let altMinusExt = alt.split(".")[0];
+				const rescalingFactor = config?.rescaling_factor?.[char]?.[altMinusExt] || 1;
+				const uncropped_edge = config?.uncropped_edge || [];
 	
 				if (!uncropped_edge || uncropped_edge.length == 0) {
 					if (zoom_x > zoom_y) {
