@@ -65,7 +65,12 @@
 		<label for="secondaryColor">Secondary Color:</label>
 		<input type="color" id="secondaryColor" name="secondaryColor" value="#ff3d8b">
 		<br>
-		<input autocomplete="on" id="toptext" style="width:500px" placeholder="top text">
+		<input autocomplete="on" id="toptext" style="width:500px" placeholder="top text"> or logo <input type="file" id="logo" accept="image/*"><button onclick="removeLogo()">Remove Logo</button>
+		<script>
+			function removeLogo() {
+				document.getElementById('logo').value = "";
+			}
+		</script>
 		<br>
 		<input autocomplete="on" id="bottomtext" style="width:500px" placeholder="bottom text">
 		<br>

@@ -907,7 +907,28 @@ function text() {
 	// );
 
 	// fitText(ctx, box,       text,            fontdir, guess = 30, align = "left", alignv = "top", fill = 'rgb(255, 255, 255)', shadow = 'rgba(0,0,0,0)', shadowOffset = [0.55, 0.55], forcedFont = null, outlineThickness = 0, outlineColor = null)
-	fitText(ctx, POSTXT[0], document.getElementById("toptext").value, the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	var logoInput = document.getElementById('logo');
+	if (logoInput.files && logoInput.files[0]) {
+		var logo = new Image();
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			logo.src = e.target.result;
+			logo.onload = async function() {
+				var new_logo_width = SIZELOGO[0];
+				var new_logo_height = Math.floor(SIZELOGO[0] * logo.height / logo.width);
+				if (new_logo_height > SIZELOGO[1]) {
+					new_logo_height = SIZELOGO[1];
+					new_logo_width = Math.floor(new_logo_height * logo.width / logo.height);
+				}
+				await resizeInCanvasReturnCanvas(logo, new_logo_width, new_logo_height, false).then((resized) => {
+					ctx.drawImage(resized, POSLOGO[0], POSLOGO[1] + (SIZELOGO[1] - new_logo_height) / 2);
+				});
+			};
+		};
+		reader.readAsDataURL(logoInput.files[0]);
+	} else {
+		fitText(ctx, POSTXT[0], document.getElementById("toptext").value, the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
+	}
 
 	fitText(ctx, POSTXT[1], document.getElementById("bottomtext").value, the_font, 30, align="left", alignv="middle", fill=font_color2, shadow=font_shadow2)
 
