@@ -414,5 +414,17 @@ const PLAYER_OVERRIDES = {
     },
     "Eccentric_Thistle": {
         twitter: "Thistle_TypeR"
+    },
+    "BLACKOUT22": {
+        twitter: "FrancescoR6136"
+    },
+    "Smashworth": {
+        twitter: "ashworfi"
+    },
+    "Blu-Chipp": {
+        twitter: "Blu_chipp"
+    },
+    "Simikins": {
+        twitter: "_Simikins"
     }
 }
