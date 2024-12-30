@@ -235,7 +235,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 			if (mainChar == "custom" || mainChar == false) {
 				offsetX = 0.5;
 				offsetY = 0.5;
-				drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
+				await drawImageProp(ctx, e.target, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i], offsetX, offsetY, posOffsetX, posOffsetY, cropX, cropY, flips, shadows); 
 				imagesToLoad.num++;
 				if(imagesToLoad.num >= 8) {
 					secondaries();
@@ -623,13 +623,14 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 		if (stepsCompleted.handleSecondaryImageOnLoad) return;
 		let game = document.getElementById("game").value;
 
-		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize, 0, 0, 0, 0, 0, 0, false, false, 0, 0, game == "ssbm");
-		totalImages.made++;
-		console.log({totalImages})
-		if(totalImages.made >= totalImages.toMake) {
-			stepsCompleted.handleSecondaryImageOnLoad = true;
-			overlay();
-		}
+		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize, 0, 0, 0, 0, 0, 0, false, false, 0, 0, game == "ssbm").then(() => {
+			totalImages.made++;
+			console.log({totalImages})
+			if(totalImages.made >= totalImages.toMake) {
+				stepsCompleted.handleSecondaryImageOnLoad = true;
+				overlay();
+			}
+		});
 	};
 }
 
