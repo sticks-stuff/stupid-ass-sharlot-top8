@@ -157,6 +157,12 @@ function hideEmptyChanged() {
 	hideEmpty = document.getElementById("hideEmpty").checked;
 }
 
+var hideTwitterIcon = document.getElementById("hideEmpty").checked;
+
+function hideTwitterIconChanged() {
+	hideTwitterIcon = document.getElementById("hideTwitterIcon").checked;
+}
+
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
 // Given a number of characters, returns an array os positions (0-1) for their eyesights
@@ -970,14 +976,16 @@ function text() {
 					pajarito.width = psize[0];
 					pajarito.height = psize[1];
 				}
-		
-				ctx.drawImage(
-					pajarito,
-					POSTWI[i][0] + SIZETWI[i][0] * 0.02,
-					POSTWI[i][1],
-					pajarito.width,
-					pajarito.height
-				);
+
+				if (!hideTwitterIcon) {
+					ctx.drawImage(
+						pajarito,
+						POSTWI[i][0] + SIZETWI[i][0] * 0.02,
+						POSTWI[i][1],
+						pajarito.width,
+						pajarito.height
+					);
+				}
 		
 				// Other code for handling Twitter box dimensions, font, and text goes here
 				// ...
@@ -986,6 +994,10 @@ function text() {
 				var left_margin = pajarito.width*1.2
 				var top_margin = margin*SIZETWI[i][1]
 				var bottom_margin = margin*SIZETWI[i][1]
+
+				if (hideTwitterIcon) {
+					left_margin = 0;
+				}
 	
 				var twitter_box = [
 					POSTWI[i][0]+left_margin, 
