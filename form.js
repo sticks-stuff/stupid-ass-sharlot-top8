@@ -244,6 +244,18 @@ function updateChars() {
 				}
 			}
 		});
+		if (game == "roa") {
+			roaRecolor = document.createElement('input');
+			roaRecolor.type = 'text';
+			roaRecolor.placeholder = 'roa recolor code';
+			roaRecolor.id = `player${i}RoaRecolor`;
+			document.getElementById(`player${i}alt`).insertAdjacentElement('afterend', roaRecolor);
+		} else {
+			var roaRecolor = document.getElementById(`player${i}RoaRecolor`);
+			if (roaRecolor) {
+				roaRecolor.remove();
+			}
+		}
 		updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
 	}
 }

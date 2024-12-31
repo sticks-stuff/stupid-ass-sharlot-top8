@@ -407,6 +407,18 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				}
 				// offsetX = (xx + img.naturalWidth / 2) / img.naturalWidth;
 				// offsetY = (yy + img.naturalHeight / 2) / img.naturalHeight;
+
+				if (game == "roa") {
+					if (document.getElementById(`player${i + 1}RoaRecolor`).value != "") {
+						console.log("mainChar", mainChar);
+						const recoloredDataUrl = await recolorImage(img.src, mainChar, document.getElementById(`player${i + 1}RoaRecolor`).value);
+						const recoloredImg = new Image();
+						recoloredImg.src = recoloredDataUrl;
+						recoloredImg.naturalHeight = img.naturalHeight;
+						recoloredImg.naturalWidth = img.naturalWidth;
+						img = recoloredImg;
+					}
+				}
 	
 				resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom, game == "roa").then((resized) => {
 					console.log("here")
