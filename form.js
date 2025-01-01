@@ -1,16 +1,16 @@
 // this sucks LMAO
 
 function imgChanged(charDropdownId) {
-    var charDropdown = document.getElementById(charDropdownId + "char");
+	var charDropdown = document.getElementById(charDropdownId + "char");
 	var customOption = document.getElementById(charDropdownId + 'custom');
 	if (!customOption) {
-        customOption = document.createElement('option');
-        customOption.value = 'custom';
-        customOption.text = 'Custom';
-        customOption.id = charDropdownId + 'custom';
-        document.getElementById(charDropdownId + "char").add(customOption);
-    }
-    charDropdown.value = 'custom';
+		customOption = document.createElement('option');
+		customOption.value = 'custom';
+		customOption.text = 'Custom';
+		customOption.id = charDropdownId + 'custom';
+		document.getElementById(charDropdownId + "char").add(customOption);
+	}
+	charDropdown.value = 'custom';
 	updateAlts("custom", document.getElementById(charDropdownId + "alt"));
 }
 
@@ -74,18 +74,18 @@ var packConfig = {};
 })();
 
 async function loadGameConfig() {
-    var game = document.getElementById('game').value;
+	var game = document.getElementById('game').value;
 	if (game === "") return;
-    const fetchConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
-    gameConfig = await fetchConfig.json();
+	const fetchConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
+	gameConfig = await fetchConfig.json();
 }
 
 async function loadPackConfig() {
-    const game = document.getElementById('game').value;
-    const pack = document.getElementById('pack').value;
-    if (pack === "") return;
-    const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
-    packConfig = await response.json()
+	const game = document.getElementById('game').value;
+	const pack = document.getElementById('pack').value;
+	if (pack === "") return;
+	const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+	packConfig = await response.json()
 }
 
 function updatePackInfo() {
@@ -96,13 +96,13 @@ function updatePackInfo() {
 	if (document.getElementById('pack').value == "") {
 		return;
 	};
-    loadPackConfig().then(() => {
-        document.getElementById("pack_version").innerHTML = "Version " + packConfig.version || "";
-        document.getElementById("pack_info").innerHTML = packConfig.description || "";
-        document.getElementById("pack_credits").innerHTML = packConfig.credits || "";
-    }).catch(error => {
-        console.error("Error loading pack config:", error);
-    });
+	loadPackConfig().then(() => {
+		document.getElementById("pack_version").innerHTML = "Version " + packConfig.version || "";
+		document.getElementById("pack_info").innerHTML = packConfig.description || "";
+		document.getElementById("pack_credits").innerHTML = packConfig.credits || "";
+	}).catch(error => {
+		console.error("Error loading pack config:", error);
+	});
 }
 var currentGame = "";
 
@@ -115,7 +115,7 @@ function addSecondaryChar(i) {
 		<select name="player${i}secondary${secondaryCount}char" id="player${i}secondary${secondaryCount}char"></select>
 		<div name="player${i}secondary${secondaryCount}alt" id="player${i}secondary${secondaryCount}alt"></div>
 		<label for="player${i}secondary${secondaryCount}charImg">custom: </label>
-        <input type="file" id="player${i}secondary${secondaryCount}charImg" name="player${i}secondary${secondaryCount}charImg" accept="image/*" onchange="imgChanged('player${i}secondary${secondaryCount}')">
+		<input type="file" id="player${i}secondary${secondaryCount}charImg" name="player${i}secondary${secondaryCount}charImg" accept="image/*" onchange="imgChanged('player${i}secondary${secondaryCount}')">
 		<button onclick="removeSecondaryChar(${i}, ${secondaryCount})">remove</button>
 	`;
 	document.getElementById("player" + i + "secondary").appendChild(div);
@@ -133,12 +133,12 @@ function addSecondaryChar(i) {
 	char.addEventListener('change', function() {
 		updateAlts(document.getElementById("player" + i + "secondary" + secondaryCount + "char").value, document.getElementById("player" + i + "secondary" + secondaryCount + "alt"));
 		if (char.value != 'custom') {
-            document.getElementById("player" + i + "secondary" + secondaryCount + "charImg").value = '';
+			document.getElementById("player" + i + "secondary" + secondaryCount + "charImg").value = '';
 			var customOption = document.getElementById("player" + i + 'custom');
 			if (customOption) {
 				charDropdown.removeChild(customOption);
 			}
-        }
+		}
 	});
 
 	var alt = document.getElementById("player" + i + "secondary" + secondaryCount + "alt");
@@ -155,26 +155,26 @@ function addSecondaryChar(i) {
 }
 
 function removeSecondaryChar(i, j) {
-    const secondaryContainer = document.getElementById("player" + i + "secondary");
-    secondaryContainer.removeChild(document.getElementById("player" + i + "secondary" + j));
+	const secondaryContainer = document.getElementById("player" + i + "secondary");
+	secondaryContainer.removeChild(document.getElementById("player" + i + "secondary" + j));
 
-    // Reorder the remaining secondary character divs to ensure their ids are all sequential from 0
-    for (let k = 0; k < secondaryContainer.childElementCount; k++) {
-        const secondaryDiv = secondaryContainer.children[k];
-        secondaryDiv.id = "player" + i + "secondary" + k;
+	// Reorder the remaining secondary character divs to ensure their ids are all sequential from 0
+	for (let k = 0; k < secondaryContainer.childElementCount; k++) {
+		const secondaryDiv = secondaryContainer.children[k];
+		secondaryDiv.id = "player" + i + "secondary" + k;
 
-        const charElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="char"]`);
-        if (charElement) charElement.id = `player${i}secondary${k}char`;
+		const charElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="char"]`);
+		if (charElement) charElement.id = `player${i}secondary${k}char`;
 
-        const altElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="alt"]`);
-        if (altElement) altElement.id = `player${i}secondary${k}alt`;
+		const altElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="alt"]`);
+		if (altElement) altElement.id = `player${i}secondary${k}alt`;
 
-        const charImgElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="charImg"]`);
-        if (charImgElement) charImgElement.id = `player${i}secondary${k}charImg`;
+		const charImgElement = secondaryDiv.querySelector(`[id^="player${i}secondary"][id$="charImg"]`);
+		if (charImgElement) charImgElement.id = `player${i}secondary${k}charImg`;
 
-        const buttonElement = secondaryDiv.querySelector(`button`);
-        if (buttonElement) buttonElement.setAttribute("onclick", `removeSecondaryChar(${i}, ${k})`);
-    }
+		const buttonElement = secondaryDiv.querySelector(`button`);
+		if (buttonElement) buttonElement.setAttribute("onclick", `removeSecondaryChar(${i}, ${k})`);
+	}
 }
 async function updatePacks() {
 	var game = document.getElementById('game').value;
@@ -220,9 +220,9 @@ function updateChars() {
 			char.appendChild(option);
 			var game = document.getElementById('game').value;
 			for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-                var option = new Option(key, key);
-                char.appendChild(option);
-            }
+				var option = new Option(key, key);
+				char.appendChild(option);
+			}
 		}
 		if(currentGame == document.getElementById('game').value) continue;
 		var char = document.getElementById("player" + i + "char");
@@ -231,9 +231,9 @@ function updateChars() {
 		char.appendChild(option);
 		var game = document.getElementById('game').value;
 		for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-            var option = new Option(key, key);
-            char.appendChild(option);
-        }
+			var option = new Option(key, key);
+			char.appendChild(option);
+		}
 		char.addEventListener('change', function() {
 			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
 			if (document.getElementById("player" + i + "char").value != 'custom') {
@@ -285,7 +285,7 @@ function updateAlts(char, alt) {
 		byJson: {
 			data: ddJson, selectedIndex: 0, name: "alt.id"
 		},
-		enableAutoFilter:false
+		enableAutoFilter: true
 	});
 }
 

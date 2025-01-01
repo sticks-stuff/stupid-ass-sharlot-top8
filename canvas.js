@@ -82,11 +82,11 @@ var ctx = canvas.getContext('2d');
 // overlay();
 
 var stepsCompleted = {
-    handleImageOnload: false,
-    secondaries: false,
-    overlay: false,
-    numbers: false,
-    text: false
+	handleImageOnload: false,
+	secondaries: false,
+	overlay: false,
+	numbers: false,
+	text: false
 };
 
 const startGGre = /https:\/\/(www\.)?(smash|start)\.gg\/(tournament\/[^\/]+\/event\/[^\/]+)/g;
@@ -208,20 +208,20 @@ function GenerateMulticharacterPositions(
 
 function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSecondaries = false, secondaryNumber = 0) {
 	if (stepsCompleted.handleImageOnload) return;
-    return async (e) => {
-        var offsetX = 0.5;
-        var offsetY = 0;
-        var posOffsetX = 0;
-        var posOffsetY = 0;
-        var cropX = 0;
-        var cropY = 0;
-        var flips = false;
+	return async (e) => {
+		var offsetX = 0.5;
+		var offsetY = 0;
+		var posOffsetX = 0;
+		var posOffsetY = 0;
+		var cropX = 0;
+		var cropY = 0;
+		var flips = false;
 		var customZoom = 1.2;
-        var customCenter = [0.5, 0.3];
+		var customCenter = [0.5, 0.3];
 
-        var game = document.getElementById("game").value;
+		var game = document.getElementById("game").value;
 		var mainChar = char;
-        var pack = document.getElementById("pack").value;
+		var pack = document.getElementById("pack").value;
 
 		if (game == "roa2" && pack == "costume") {
 			customZoom = 1.0; // shits already zoomed
@@ -237,7 +237,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 			}
 		}
 
-        try {
+		try {
 			if (mainChar == "custom" || mainChar == false) {
 				offsetX = 0.5;
 				offsetY = 0.5;
@@ -521,10 +521,10 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					customCenter: customCenter,
 				});
 			}
-        } catch (error) {
-            console.error("Error fetching eyesight data:", error);
-        }
-    };
+		} catch (error) {
+			console.error("Error fetching eyesight data:", error);
+		}
+	};
 }
 
 function go() {
@@ -849,7 +849,7 @@ async function secondaries() {
 
 // Returns the renderable image (canvas)
 function createCanvas(width, height) {
-    return Object.assign(document.createElement("canvas"), {width, height});
+	return Object.assign(document.createElement("canvas"), {width, height});
 }
 
 const emptyMargin = 10;

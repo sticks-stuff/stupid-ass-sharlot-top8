@@ -86,8 +86,8 @@ async function eventData(slug) {
 	const fetchJson = await fetch('paths.json');
 	const paths = await fetchJson.json();
 	console.log(slug)
-    const freq = {};
-    freq["wins"] = {};
+	const freq = {};
+	freq["wins"] = {};
 	var page = 1;
 	var data = await eventQuery(slug, page);
 	while(page != data["data"]["event"]["sets"]["pageInfo"]["totalPages"]) {
@@ -97,19 +97,19 @@ async function eventData(slug) {
 		data["data"]["event"]["sets"]["nodes"] = data["data"]["event"]["sets"]["nodes"].concat(newData["data"]["event"]["sets"]["nodes"])
 		console.log(data);
 	}
-    const eventData = data["data"];
+	const eventData = data["data"];
 
-    try {
-        if (eventData["event"] === null) return null;
+	try {
+		if (eventData["event"] === null) return null;
 
-        for (const node of eventData["event"]["sets"]['nodes']) {
-            if (node["games"] === null) continue;
+		for (const node of eventData["event"]["sets"]['nodes']) {
+			if (node["games"] === null) continue;
 
-            for (const game of node["games"]) {
-                if (game["selections"]) {
-                    for (const selection of game["selections"]) {
-                        const player = selection["entrant"]["name"];
-                        const char = selection["character"]["name"];
+			for (const game of node["games"]) {
+				if (game["selections"]) {
+					for (const selection of game["selections"]) {
+						const player = selection["entrant"]["name"];
+						const char = selection["character"]["name"];
 
 						if(game["winnerId"] == selection["entrant"]["id"]) {
 							if (player in freq["wins"]) {
@@ -132,25 +132,25 @@ async function eventData(slug) {
 								freq[player] = { [char]: 1 };
 							}
 						}
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.error(error);
-    }
+					}
+				}
+			}
+		}
+	} catch (error) {
+		console.error(error);
+	}
 
-    const players = [];
-    for (const p of eventData["event"]["standings"]["nodes"]) {
-        const name = p["entrant"]["name"];
+	const players = [];
+	for (const p of eventData["event"]["standings"]["nodes"]) {
+		const name = p["entrant"]["name"];
 
-        let twi = null;
-        const P = p["entrant"]["participants"];
-        if (P.length === 1) {
-            if (P[0]["user"] && P[0]["user"]["authorizations"]) {
-                twi = "@" + P[0]["user"]["authorizations"][0]["externalUsername"];
-            }
-        }
+		let twi = null;
+		const P = p["entrant"]["participants"];
+		if (P.length === 1) {
+			if (P[0]["user"] && P[0]["user"]["authorizations"]) {
+				twi = "@" + P[0]["user"]["authorizations"][0]["externalUsername"];
+			}
+		}
 
 		var player = {};
 		player["tag"] = name;
@@ -163,11 +163,11 @@ async function eventData(slug) {
 		}
 
 		players.push(player);
-    }
+	}
 
-    const event = eventData["event"];
-    var displayGame = event["videogame"]["name"];
-    var game = event["videogame"]["id"];
+	const event = eventData["event"];
+	var displayGame = event["videogame"]["name"];
+	var game = event["videogame"]["id"];
 
 	const matchingGame = Object.values(paths).find(path => {
 		if (typeof path.smashgg_game_id === 'number') {
@@ -182,29 +182,29 @@ async function eventData(slug) {
 		game = Object.keys(paths).find(key => paths[key] === matchingGame);
 	}
 
-    const btext = [];
-    if (event["startAt"]) {
-        const fecha = new Date(event["startAt"] * 1000).toLocaleDateString();
-        btext.push(fecha);
-    }
-    if (event["tournament"]["city"]) {
-        const ciudad = event["tournament"]["city"];
-        btext.push(ciudad);
-    }
-    btext.push(event["numEntrants"] + " Participants");
-    const btextResult = btext.join(" - ");
+	const btext = [];
+	if (event["startAt"]) {
+		const fecha = new Date(event["startAt"] * 1000).toLocaleDateString();
+		btext.push(fecha);
+	}
+	if (event["tournament"]["city"]) {
+		const ciudad = event["tournament"]["city"];
+		btext.push(ciudad);
+	}
+	btext.push(event["numEntrants"] + " Participants");
+	const btextResult = btext.join(" - ");
 
-    const ttext = event["tournament"]["name"].split(" - ")[0] + " - " + displayGame;
+	const ttext = event["tournament"]["name"].split(" - ")[0] + " - " + displayGame;
 
-    const link = event["tournament"]["shortSlug"] ? `https://start.gg/${event["tournament"]["shortSlug"]}` : `start.gg/${event["tournament"]["slug"]}`;
+	const link = event["tournament"]["shortSlug"] ? `https://start.gg/${event["tournament"]["shortSlug"]}` : `start.gg/${event["tournament"]["slug"]}`;
 
-    const finalData = {
-        "players": players,
-        "toptext": ttext,
-        "bottomtext": btextResult,
-        "url": link,
-        "game": game
-    };
+	const finalData = {
+		"players": players,
+		"toptext": ttext,
+		"bottomtext": btextResult,
+		"url": link,
+		"game": game
+	};
 
-    return finalData;
+	return finalData;
 }
