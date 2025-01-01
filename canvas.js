@@ -456,7 +456,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 								shadowCanvas.globalCompositeOperation = "destination-in";
 								var shadowOffset = SIZE_SQUARE[i] * 0.03;
 								shadowCanvas.drawImage(canvas, shadowOffset, shadowOffset);
-								ctx.drawImage(shadowCanvas.canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
+								ctx.drawImage(shadowCanvas.canvas, POS[i][0] - 2, POS[i][1] - 2, SIZE_SQUARE[i], SIZE_SQUARE[i]);
 							}
 
 							ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
