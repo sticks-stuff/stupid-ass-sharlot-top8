@@ -573,7 +573,7 @@ function go() {
 		var imagesToLoad = { num: 0 };
 
 		for (let i = 0; i < 8; i++) {
-			var mainChar = document.getElementById(`player${i + 1}char`).value;
+			var mainChar = document.getElementById(`player${i + 1}char`).msDropdown.value;
 
 			if(mainChar == "none") {
 				imagesToLoad.num++;
@@ -678,7 +678,7 @@ async function secondaries() {
 	var totalImages = { made: 0, toMake: 0 };
 	for (let i = 0; i < 8; i++) {
 		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
-			if(document.getElementById(`player${i + 1}secondary${j}char`).value != "none") {
+			if(document.getElementById(`player${i + 1}secondary${j}char`).msDropdown.value != "none") {
 				totalImages.toMake++;
 			}
 		}
@@ -690,7 +690,7 @@ async function secondaries() {
 		var char_offset = 0;
 
 		for (let j = 0; j < document.getElementById(`player${i + 1}secondary`).childElementCount; j++) {
-			var element = document.getElementById(`player${i + 1}secondary${j}char`).value;
+			var element = document.getElementById(`player${i + 1}secondary${j}char`).msDropdown.value;
 			if(element == "none") {
 				totalImages.made++;
 				if(totalImages.made >= totalImages.toMake) {
@@ -872,7 +872,7 @@ function overlay() {
 		
 		if (hideEmpty) {
 			for(i = 0; i < 8; i++) {
-				if(document.getElementById(`player${i + 1}char`).value == "none") {
+				if(document.getElementById(`player${i + 1}char`).msDropdown.value == "none") {
 					canvas1.clearRect(POS[i][0] - emptyMargin, POS[i][1] - emptyMargin, SIZE_SQUARE[i] + (emptyMargin * 2), SIZE_SQUARE[i] + (emptyMargin * 2));
 				}
 			}
@@ -914,7 +914,7 @@ function numbers() {
 		
 		if (hideEmpty) {
 			for (i = 0; i < 8; i++) {
-				if (document.getElementById(`player${i + 1}char`).value == "none") {
+				if (document.getElementById(`player${i + 1}char`).msDropdown.value == "none") {
 					newCtx.clearRect(POS[i][0] - emptyMargin, POS[i][1] - emptyMargin, SIZE_SQUARE[i] + (emptyMargin * 2), SIZE_SQUARE[i] + (emptyMargin * 2));
 				}
 			}

@@ -2,15 +2,20 @@
 
 function imgChanged(charDropdownId) {
 	var charDropdown = document.getElementById(charDropdownId + "char");
-	var customOption = document.getElementById(charDropdownId + 'custom');
-	if (!customOption) {
-		customOption = document.createElement('option');
-		customOption.value = 'custom';
-		customOption.text = 'Custom';
-		customOption.id = charDropdownId + 'custom';
-		document.getElementById(charDropdownId + "char").add(customOption);
+	var customOption = charDropdown.msDropdown.namedItem('custom');
+	if (customOption) {
+		charDropdown.msDropdown.remove(customOption);
 	}
-	charDropdown.value = 'custom';
+	const input = document.getElementById(charDropdownId + 'charImg');
+	if (input.files && input.files[0]) {
+		const file = input.files[0];
+		const imageUrl = URL.createObjectURL(file);
+		var option = new Option("custom", "custom");
+		option.setAttribute("name", "custom");
+		option.setAttribute("data-image", imageUrl);
+		charDropdown.msDropdown.add(option, 0);
+		charDropdown.msDropdown.value = "custom";
+	}
 	updateAlts("custom", document.getElementById(charDropdownId + "alt"));
 }
 
@@ -32,10 +37,16 @@ var packConfig = {};
 	}
 
 	game.addEventListener('change', async function() {
-		await loadGameConfig().then(() => {
+		await loadGameConfig().then(async () => {
 			updatePacks();
-			updateChars();
+			await updateChars();
 		});
+		for (let i = 1; i <= 8; i++) {
+			const secondaryContainer = document.getElementById("player" + i + "secondary");
+			for (let j = secondaryContainer.childElementCount - 1; j >= 0; j--) {
+				removeSecondaryChar(i, j); //we remove this shit otherwise secondaries break when we change games
+			}
+		}
 	});
 
 	for(i = 1; i <= 8; i++) {
@@ -52,7 +63,7 @@ var packConfig = {};
 			<input type="text" id="player${i}twt" name="player${i}twt">
 			<br>
 			<label for="player${i}char">main char: </label>
-			<select name="player${i}char" id="player${i}char" id="player${i}char"></select>
+			<div name="player${i}char" id="player${i}char" id="player${i}char"></div>
 			<br>
 			<label for="player${i}alt">main char alt: </label>
 			<div name="player${i}alt" id="player${i}alt" id="player${i}alt"></div>
@@ -67,9 +78,9 @@ var packConfig = {};
 		document.getElementById("playerFormContainer").appendChild(div);
 	}
 
-	await loadGameConfig().then(() => {
+	await loadGameConfig().then(async () => {
 		updatePacks();
-		updateChars();
+		await updateChars();
 	});
 })();
 
@@ -106,13 +117,13 @@ function updatePackInfo() {
 }
 var currentGame = "";
 
-function addSecondaryChar(i) {
+async function addSecondaryChar(i) {
 	var div = document.createElement('div'); 
 	var secondaryCount = document.getElementById("player" + i + "secondary").childElementCount;
 	div.id = "player" + i + "secondary" + secondaryCount;
 	div.className = "secondaryChar";
 	div.innerHTML = `
-		<select name="player${i}secondary${secondaryCount}char" id="player${i}secondary${secondaryCount}char"></select>
+		<div name="player${i}secondary${secondaryCount}char" id="player${i}secondary${secondaryCount}char"></div>
 		<div name="player${i}secondary${secondaryCount}alt" id="player${i}secondary${secondaryCount}alt"></div>
 		<label for="player${i}secondary${secondaryCount}charImg">custom: </label>
 		<input type="file" id="player${i}secondary${secondaryCount}charImg" name="player${i}secondary${secondaryCount}charImg" accept="image/*" onchange="imgChanged('player${i}secondary${secondaryCount}')">
@@ -122,36 +133,57 @@ function addSecondaryChar(i) {
 
 	var char = document.getElementById("player" + i + "secondary" + secondaryCount + "char");
 	char.innerHTML = "";
-	var option = new Option("none", "none");
-	char.appendChild(option);
 	var game = document.getElementById('game').value;
-	var pack = document.getElementById('pack').value;
-	for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-		var option = new Option(key, key);
-		char.appendChild(option);
+	if (game != undefined) {
+		var iconPackConfig = await (await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/config.json`)).json();
 	}
-	char.addEventListener('change', function() {
-		updateAlts(document.getElementById("player" + i + "secondary" + secondaryCount + "char").value, document.getElementById("player" + i + "secondary" + secondaryCount + "alt"));
-		if (char.value != 'custom') {
+	var pack = document.getElementById('pack').value;
+	var ddJson = [];
+	let obj = {};
+	obj.value = "none";
+	obj.text = "none";
+	ddJson.push(obj);
+	for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
+		if (iconPackConfig != undefined) {
+			if(json[game]["base_files/icon"][value.codename]) {
+				let obj = {};
+				obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${iconPackConfig.prefix}${value.codename}${iconPackConfig.postfix}${json[game]["base_files/icon"][value.codename][0]}`;
+				obj.value = key;
+				obj.text = key;
+				ddJson.push(obj);
+			}
+		}
+	}
+	new MsDropdown(char, {
+		byJson: {
+			data: ddJson, selectedIndex: 0, name: "characters.id"
+		},
+		enableAutoFilter: true
+	});
+	char.msDropdown.on("close", function() {
+		var secondaryCount = document.getElementById("player" + i + "secondary").childElementCount - 1;
+		updateAlts(document.getElementById("player" + i + "secondary" + secondaryCount + "char").msDropdown.value, document.getElementById("player" + i + "secondary" + secondaryCount + "alt"));
+		if (document.getElementById("player" + i + "secondary" + secondaryCount + "char").msDropdown.value != 'custom') {
 			document.getElementById("player" + i + "secondary" + secondaryCount + "charImg").value = '';
-			var customOption = document.getElementById("player" + i + 'custom');
+			var customOption = document.getElementById("player" + i + "secondary" + secondaryCount + "char").msDropdown.namedItem('custom');
 			if (customOption) {
-				charDropdown.removeChild(customOption);
+				char.msDropdown.remove(customOption);
 			}
 		}
 	});
+	updateAlts(char.msDropdown.value, document.getElementById("player" + i + "secondary" + secondaryCount + "alt"));
 
-	var alt = document.getElementById("player" + i + "secondary" + secondaryCount + "alt");
-	alt.innerHTML = "";
-	var option = new Option("none", "none");
-	alt.appendChild(option);
-	var game = document.getElementById('game').value;
-	if(json[game][pack][char]) {
-		for (const [key, value] of Object.entries(json[game][pack][char])) {
-			var option = new Option(value, value);
-			alt.appendChild(option);
-		}
-	}
+	// var alt = document.getElementById("player" + i + "secondary" + secondaryCount + "alt");
+	// alt.innerHTML = "";
+	// var option = new Option("none", "none");
+	// alt.appendChild(option);
+	// var game = document.getElementById('game').value;
+	// if(json[game][pack][char]) {
+	// 	for (const [key, value] of Object.entries(json[game][pack][char])) {
+	// 		var option = new Option(value, value);
+	// 		alt.appendChild(option);
+	// 	}
+	// }
 }
 
 function removeSecondaryChar(i, j) {
@@ -203,44 +235,79 @@ async function updatePacks() {
 		updatePackInfo();
 		await loadPackConfig();
 		for (let i = 1; i <= 8; i++) {
-			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
+			updateAlts(document.getElementById("player" + i + "char").msDropdown.value, document.getElementById("player" + i + "alt"));
 			for (let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
-				updateAlts(document.getElementById("player" + i + "secondary" + j + "char").value, document.getElementById("player" + i + "secondary" + j + "alt"));
+				updateAlts(document.getElementById("player" + i + "secondary" + j + "char").msDropdown.value, document.getElementById("player" + i + "secondary" + j + "alt"));
 			}
 		}
 	});
 }
 
-function updateChars() {
+async function updateChars() {
+	var game = document.getElementById('game').value;
+	if (game != undefined) {
+		var iconPackConfig = await (await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/config.json`)).json();
+	}
 	for(let i = 1; i <= 8; i++) {
 		for(let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
 			var char = document.getElementById("player" + i + "secondary" + j + "char");
 			char.innerHTML = "";
-			var option = new Option("none", "none");
-			char.appendChild(option);
 			var game = document.getElementById('game').value;
+			var ddJson = [];
+			let obj = {};
+			obj.value = "none";
+			obj.text = "none";
+			ddJson.push(obj);	
 			for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-				var option = new Option(key, key);
-				char.appendChild(option);
+				if (iconPackConfig != undefined) {
+					if(json[game]["base_files/icon"][value.codename]) {
+						let obj = {};
+						obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${iconPackConfig.prefix}${value.codename}${iconPackConfig.postfix}${json[game]["base_files/icon"][value.codename][0]}`;
+						obj.value = key;
+						obj.text = key;
+						ddJson.push(obj);
+					}
+				}
 			}
+			new MsDropdown(char, {
+				byJson: {
+					data: ddJson, selectedIndex: 0, name: "characters.id"
+				},
+				enableAutoFilter: true
+			});
 		}
 		if(currentGame == document.getElementById('game').value) continue;
 		var char = document.getElementById("player" + i + "char");
 		char.innerHTML = "";
-		var option = new Option("none", "none");
-		char.appendChild(option);
-		var game = document.getElementById('game').value;
+		var ddJson = [];
+		let obj = {};
+		obj.value = "none";
+		obj.text = "none";
+		ddJson.push(obj);
 		for (const [key, value] of Object.entries(gameConfig.character_to_codename)) {
-			var option = new Option(key, key);
-			char.appendChild(option);
+			if (iconPackConfig != undefined) {
+				if(json[game]["base_files/icon"][value.codename]) {
+					let obj = {};
+					obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/${iconPackConfig.prefix}${value.codename}${iconPackConfig.postfix}${json[game]["base_files/icon"][value.codename][0]}`;
+					obj.value = key;
+					obj.text = key;
+					ddJson.push(obj);
+				}
+			}
 		}
-		char.addEventListener('change', function() {
-			updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
-			if (document.getElementById("player" + i + "char").value != 'custom') {
+		new MsDropdown(char, {
+			byJson: {
+				data: ddJson, selectedIndex: 0, name: "characters.id"
+			},
+			enableAutoFilter: true
+		});
+		char.msDropdown.on("close", function() {
+			updateAlts(document.getElementById("player" + i + "char").msDropdown.value, document.getElementById("player" + i + "alt"));
+			if (document.getElementById("player" + i + "char").msDropdown.value != 'custom') {
 				document.getElementById("player" + i + "charImg").value = '';
-				var customOption = document.getElementById("player" + i + 'custom');
+				var customOption = document.getElementById("player" + i + "char").msDropdown.namedItem('custom');
 				if (customOption) {
-					charDropdown.removeChild(customOption);
+					document.getElementById("player" + i + "char").msDropdown.remove(customOption);
 				}
 			}
 		});
@@ -258,7 +325,7 @@ function updateChars() {
 				roaRecolor.remove();
 			}
 		}
-		updateAlts(document.getElementById("player" + i + "char").value, document.getElementById("player" + i + "alt"));
+		updateAlts(document.getElementById("player" + i + "char").msDropdown.value, document.getElementById("player" + i + "alt"));
 	}
 }
 
@@ -307,9 +374,9 @@ function sendToForm() {
 		styleChanged();
 		document.getElementById("bottomtext").value = data["bottomtext"];
 		document.getElementById("url").value = data["url"];
-		await loadGameConfig().then(() => {
+		await loadGameConfig().then(async () => {
 			updatePacks();
-			updateChars();
+			await updateChars();
 		});
 		await loadPackConfig();
 
@@ -349,8 +416,8 @@ function sendToForm() {
 						}
 					}
 				}
-				document.getElementById(`player${i + 1}char`).value = mainChar;
-				updateAlts(document.getElementById(`player${i + 1}char`).value, document.getElementById(`player${i + 1}alt`));
+				document.getElementById(`player${i + 1}char`).msDropdown.value = mainChar;
+				updateAlts(document.getElementById(`player${i + 1}char`).msDropdown.value, document.getElementById(`player${i + 1}alt`));
 	
 				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
 					document.getElementById(`player${i + 1}alt`).msDropdown.value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
@@ -372,11 +439,11 @@ function sendToForm() {
 							break;
 						}
 					}
-					addSecondaryChar(i + 1);
-					document.getElementById(`player${i + 1}secondary${j - 1}char`).value = secondary;
+					await addSecondaryChar(i + 1);
+					document.getElementById(`player${i + 1}secondary${j - 1}char`).msDropdown.value = secondary;
 					console.log(`Adding ${secondary} character for player ${i + 1} with tag ${tag}`);
 	
-					updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
+					updateAlts(document.getElementById(`player${i + 1}secondary${j - 1}char`).msDropdown.value, document.getElementById(`player${i + 1}secondary${j - 1}alt`));
 					if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]]) {
 						document.getElementById(`player${i + 1}secondary${j - 1}alt`).msDropdown.value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[j][0]];
 					}
