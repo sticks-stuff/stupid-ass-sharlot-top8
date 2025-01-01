@@ -443,9 +443,12 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 	
 					console.log("here2")
 					html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(ogCanvas) {
-						resizeInCanvasReturnCanvas(ogCanvas, SIZE_SQUARE[i], SIZE_SQUARE[i]).then((canvas) => {
+						resizeInCanvasReturnCanvas(ogCanvas, SIZE_SQUARE[i], SIZE_SQUARE[i], game == "roa").then((canvas) => {
 							if (shadows) {
 								var shadowCanvas = createCanvas(SIZE_SQUARE[i], SIZE_SQUARE[i]).getContext("2d");
+								if (game == "roa") {
+									shadowCanvas.imageSmoothingEnabled = false;
+								}
 								shadowCanvas.beginPath();
 								shadowCanvas.rect(0, 0, SIZE_SQUARE[i], SIZE_SQUARE[i]);
 								shadowCanvas.fillStyle = PRIMARY_COLOR;
