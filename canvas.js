@@ -157,7 +157,7 @@ function hideEmptyChanged() {
 	hideEmpty = document.getElementById("hideEmpty").checked;
 }
 
-var hideTwitterIcon = document.getElementById("hideEmpty").checked;
+var hideTwitterIcon = document.getElementById("hideTwitterIcon").checked;
 
 function hideTwitterIconChanged() {
 	hideTwitterIcon = document.getElementById("hideTwitterIcon").checked;
