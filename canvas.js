@@ -450,40 +450,49 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					document.body.appendChild(offScreenContainer);
 	
 					console.log("here2")
-					html2canvas(char, {backgroundColor: null, useCORS: true}).then(function(ogCanvas) {
-						resizeInCanvasReturnCanvas(ogCanvas, SIZE_SQUARE[i], SIZE_SQUARE[i], game == "roa").then((canvas) => {
-							if (shadows) {
-								var shadowCanvas = createCanvas(SIZE_SQUARE[i], SIZE_SQUARE[i]).getContext("2d");
-								if (game == "roa") {
-									shadowCanvas.imageSmoothingEnabled = false;
-								}
-								shadowCanvas.beginPath();
-								shadowCanvas.rect(0, 0, SIZE_SQUARE[i], SIZE_SQUARE[i]);
-								shadowCanvas.fillStyle = PRIMARY_COLOR;
-								shadowCanvas.fill();
-								shadowCanvas.globalCompositeOperation = "destination-in";
-								var shadowOffset = SIZE_SQUARE[i] * 0.03;
-								shadowCanvas.drawImage(canvas, shadowOffset, shadowOffset);
-								ctx.drawImage(shadowCanvas.canvas, POS[i][0] - 2, POS[i][1] - 2, SIZE_SQUARE[i], SIZE_SQUARE[i]);
-							}
+					domtoimage.toPng(char).then(function (dataUrl) {
+						var ogCanvas = document.createElement('canvas');
+						ogCanvas.width = SIZE_SQUARE[i];
+						ogCanvas.height = SIZE_SQUARE[i];
+						var ogCtx = ogCanvas.getContext('2d');
 
-							ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
-							offScreenContainer.remove();
-							if (isSecondaries) {
-								imagesToLoad.made++;
-								if(imagesToLoad.made >= imagesToLoad.toMake) {
-									ctx.imageSmoothingEnabled = true;
-									stepsCompleted.handleSecondaryImageOnLoad = true;
-									overlay();
+						var img = new Image();
+						img.src = dataUrl;
+						img.onload = function() {
+							ogCtx.drawImage(img, 0, 0, SIZE_SQUARE[i], SIZE_SQUARE[i]);
+							resizeInCanvasReturnCanvas(ogCanvas, SIZE_SQUARE[i], SIZE_SQUARE[i], game == "roa").then((canvas) => {
+								if (shadows) {
+									var shadowCanvas = createCanvas(SIZE_SQUARE[i], SIZE_SQUARE[i]).getContext("2d");
+									if (game == "roa") {
+										shadowCanvas.imageSmoothingEnabled = false;
+									}
+									shadowCanvas.beginPath();
+									shadowCanvas.rect(0, 0, SIZE_SQUARE[i], SIZE_SQUARE[i]);
+									shadowCanvas.fillStyle = PRIMARY_COLOR;
+									shadowCanvas.fill();
+									shadowCanvas.globalCompositeOperation = "destination-in";
+									var shadowOffset = SIZE_SQUARE[i] * 0.03;
+									shadowCanvas.drawImage(canvas, shadowOffset, shadowOffset);
+									ctx.drawImage(shadowCanvas.canvas, POS[i][0] - 2, POS[i][1] - 2, SIZE_SQUARE[i], SIZE_SQUARE[i]);
 								}
-							} else {
-								imagesToLoad.num++;
-								if (imagesToLoad.num >= 8) {
-									stepsCompleted.handleImageOnload = true;
-									secondaries();
+								ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
+								offScreenContainer.remove();
+								if (isSecondaries) {
+									imagesToLoad.made++;
+									if(imagesToLoad.made >= imagesToLoad.toMake) {
+										ctx.imageSmoothingEnabled = true;
+										stepsCompleted.handleSecondaryImageOnLoad = true;
+										overlay();
+									}
+								} else {
+									imagesToLoad.num++;
+									if (imagesToLoad.num >= 8) {
+										stepsCompleted.handleImageOnload = true;
+										secondaries();
+									}
 								}
-							}
-						});
+							});
+						};
 					});
 				})
 	
