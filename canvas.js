@@ -413,6 +413,14 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				if (game == "roa") {
 					if (document.getElementById(`player${i + 1}RoaRecolor`).value != "") {
 						console.log("mainChar", mainChar);
+						if (mainChar == "Ori") {
+							img = new Image();
+							img.src = "./lib/RoA-Skin-Recolorer/Ori.png";
+						}
+						if (mainChar == "Olympia") {
+							img = new Image();
+							img.src = "./lib/RoA-Skin-Recolorer/Olympia.png"; // these two characters have a "unrecoloured" sprite that is used internally and is recoloured to their default when using costume 1
+						}
 						const recoloredDataUrl = await recolorImage(img.src, mainChar, document.getElementById(`player${i + 1}RoaRecolor`).value);
 						const recoloredImg = new Image();
 						recoloredImg.src = recoloredDataUrl;
