@@ -245,11 +245,13 @@ function updateChars() {
 			}
 		});
 		if (game == "roa") {
-			roaRecolor = document.createElement('input');
-			roaRecolor.type = 'text';
-			roaRecolor.placeholder = 'roa recolor code';
-			roaRecolor.id = `player${i}RoaRecolor`;
-			document.getElementById(`player${i}alt`).insertAdjacentElement('afterend', roaRecolor);
+			if (!document.getElementById(`player${i}RoaRecolor`)) {
+				var roaRecolor = document.createElement('input');
+				roaRecolor.type = 'text';
+				roaRecolor.placeholder = 'roa recolor code';
+				roaRecolor.id = `player${i}RoaRecolor`;
+				document.getElementById(`player${i}alt`).insertAdjacentElement('afterend', roaRecolor);
+			}
 		} else {
 			var roaRecolor = document.getElementById(`player${i}RoaRecolor`);
 			if (roaRecolor) {
