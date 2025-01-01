@@ -408,14 +408,14 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				// offsetX = (xx + img.naturalWidth / 2) / img.naturalWidth;
 				// offsetY = (yy + img.naturalHeight / 2) / img.naturalHeight;
 
+				var ogImg = img;
+
 				if (game == "roa") {
 					if (document.getElementById(`player${i + 1}RoaRecolor`).value != "") {
 						console.log("mainChar", mainChar);
 						const recoloredDataUrl = await recolorImage(img.src, mainChar, document.getElementById(`player${i + 1}RoaRecolor`).value);
 						const recoloredImg = new Image();
 						recoloredImg.src = recoloredDataUrl;
-						recoloredImg.naturalHeight = img.naturalHeight;
-						recoloredImg.naturalWidth = img.naturalWidth;
 						img = recoloredImg;
 					}
 				}
@@ -427,7 +427,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					char.style.height = SIZE_SQUARE[i] + "px";
 					// char.style.backgroundPosition = `${xx}px ${yy - 30}px`;
 					char.style.backgroundPosition = `${xx}px ${yy}px`;
-					char.style.backgroundSize = `${img.naturalWidth * zoom}px ${img.naturalHeight * zoom}px`;
+					char.style.backgroundSize = `${ogImg.naturalWidth * zoom}px ${ogImg.naturalHeight * zoom}px`;
 					char.style.backgroundImage = `url(${resized})`;
 					char.style.backgroundRepeat = "no-repeat";
 					if (game == "roa") {
