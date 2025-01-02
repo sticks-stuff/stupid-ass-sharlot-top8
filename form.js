@@ -31,10 +31,21 @@ var packConfig = {};
 	var game = document.getElementById('game');
 
 	console.log(json);
+	var ddJson = [];
 	for (const [key, value] of Object.entries(json)) {
-		var option = new Option(value["name"], key);
-		game.appendChild(option);
+		let obj = {};
+		obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${key}/base_files/logo_small.png`;
+		obj.value = key;
+		obj.text = value["name"];
+		ddJson.push(obj);
 	}
+	new MsDropdown(game, {
+		byJson: {
+			data: ddJson, selectedIndex: 0, name: "game"
+		},
+		enableAutoFilter: true
+	});
+
 
 	game.addEventListener('change', async function() {
 		await loadGameConfig().then(async () => {
@@ -85,14 +96,14 @@ var packConfig = {};
 })();
 
 async function loadGameConfig() {
-	var game = document.getElementById('game').value;
+	var game = document.getElementById('game').msDropdown.value;
 	if (game === "") return;
 	const fetchConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
 	gameConfig = await fetchConfig.json();
 }
 
 async function loadPackConfig() {
-	const game = document.getElementById('game').value;
+	const game = document.getElementById('game').msDropdown.value;
 	const pack = document.getElementById('pack').value;
 	if (pack === "") return;
 	const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
@@ -133,7 +144,7 @@ async function addSecondaryChar(i) {
 
 	var char = document.getElementById("player" + i + "secondary" + secondaryCount + "char");
 	char.innerHTML = "";
-	var game = document.getElementById('game').value;
+	var game = document.getElementById('game').msDropdown.value;
 	if (game != undefined) {
 		var iconPackConfig = await (await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/config.json`)).json();
 	}
@@ -209,7 +220,7 @@ function removeSecondaryChar(i, j) {
 	}
 }
 async function updatePacks() {
-	var game = document.getElementById('game').value;
+	var game = document.getElementById('game').msDropdown.value;
 	var pack = document.getElementById('pack');
 	pack.innerHTML = "";
 
@@ -244,7 +255,7 @@ async function updatePacks() {
 }
 
 async function updateChars() {
-	var game = document.getElementById('game').value;
+	var game = document.getElementById('game').msDropdown.value;
 	if (game != undefined) {
 		var iconPackConfig = await (await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/icon/config.json`)).json();
 	}
@@ -252,7 +263,7 @@ async function updateChars() {
 		for(let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
 			var char = document.getElementById("player" + i + "secondary" + j + "char");
 			char.innerHTML = "";
-			var game = document.getElementById('game').value;
+			var game = document.getElementById('game').msDropdown.value;
 			var ddJson = [];
 			let obj = {};
 			obj.value = "none";
@@ -276,7 +287,7 @@ async function updateChars() {
 				enableAutoFilter: true
 			});
 		}
-		if(currentGame == document.getElementById('game').value) continue;
+		if(currentGame == document.getElementById('game').msDropdown.value) continue;
 		var char = document.getElementById("player" + i + "char");
 		char.innerHTML = "";
 		var ddJson = [];
@@ -332,7 +343,7 @@ async function updateChars() {
 function updateAlts(char, alt) {
 	console.log("updating alts", char, alt);
 	alt.innerHTML = "";
-	var game = document.getElementById('game').value;
+	var game = document.getElementById('game').msDropdown.value;
 	var pack = document.getElementById('pack').value;
 	if (gameConfig.character_to_codename[char]) {
 		char = gameConfig.character_to_codename[char].codename;
@@ -362,7 +373,7 @@ function sendToForm() {
 
 	eventData(Array.from(input.matchAll(startGGre), m => m[3])).then(async data => {
 		console.log(data);
-		document.getElementById("game").value = data["game"];
+		document.getElementById("game").msDropdown.value = data["game"];
 		document.getElementById("toptext").value = data["toptext"];
 		if (data["toptext"].toLowerCase().includes("popoff")) {
 			document.getElementById("pop-style").checked = true;

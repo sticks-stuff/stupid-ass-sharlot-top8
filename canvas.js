@@ -219,7 +219,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 		var customZoom = 1.2;
 		var customCenter = [0.5, 0.3];
 
-		var game = document.getElementById("game").value;
+		var game = document.getElementById("game").msDropdown.value;
 		var mainChar = char;
 		var pack = document.getElementById("pack").value;
 
@@ -584,7 +584,7 @@ function go() {
 			}
 	
 			var image = new Image();
-			var game = document.getElementById("game").value;
+			var game = document.getElementById("game").msDropdown.value;
 			var pack = document.getElementById("pack").value;
 
 
@@ -659,7 +659,7 @@ function handleSecondaryImageOnLoad(i, char_offset, totalImages) {
 			right_margin = 6;
 		}
 		if (stepsCompleted.handleSecondaryImageOnLoad) return;
-		let game = document.getElementById("game").value;
+		let game = document.getElementById("game").msDropdown.value;
 
 		drawImageProp(ctx, e.target, POS[i][0] + size[0] - iconSize - right_margin, POS[i][1] + char_offset * (iconSize + 4) + right_margin, iconSize, iconSize, 0, 0, 0, 0, 0, 0, false, false, 0, 0, game == "ssbm").then(() => {
 			totalImages.made++;
@@ -702,7 +702,7 @@ async function secondaries() {
 			image = new Image();
 
 			var image = new Image();
-			var game = document.getElementById("game").value;
+			var game = document.getElementById("game").msDropdown.value;
 			var pack = document.getElementById("pack").value;
 
 			var charImgInput = document.getElementById(`player${i + 1}secondary${j}charImg`);
