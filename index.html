@@ -78,6 +78,12 @@
 		<br>
 		<label for="backgroundImage">custom background image</label>
 		<input type="file" id="backgroundImage">
+		<button onclick="removeBackgroundImage()">Remove background image</button>
+		<script>
+			function removeBackgroundImage() {
+				document.getElementById('backgroundImage').value = "";
+			}
+		</script>
 		<br>
 		<input type="checkbox" id="layerSecondaries" name="layerSecondaries" onchange="layerSecondariesChanged()"> layer secondaries? (useful for team games, or doubles) (set main character to none for this to work correctly) (buggy, might require pressing generate multiple times)
 		<br>
