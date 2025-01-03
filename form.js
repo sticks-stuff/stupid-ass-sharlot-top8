@@ -467,3 +467,28 @@ function sendToForm() {
 document.addEventListener('DOMContentLoaded', function() {
 	styleChanged();
 });
+
+function clearAll() {
+	document.getElementById("startgglink").value = "";
+	document.getElementById("toptext").value = "";
+	document.getElementById("bottomtext").value = "";
+	document.getElementById("url").value = "";
+	document.getElementById('backgroundImage').value = "";
+	document.getElementById('logo').value = "";
+
+	for (let i = 1; i <= 8; i++) {
+		document.getElementById(`player${i}name`).value = "";
+		document.getElementById(`player${i}twt`).value = "";
+		document.getElementById(`player${i}char`).msDropdown.value = "none";
+		updateAlts("none", document.getElementById(`player${i}alt`));
+		document.getElementById(`player${i}charImg`).value = "";
+		const roaRecolor = document.getElementById(`player${i}RoaRecolor`);
+		if (roaRecolor) {
+			roaRecolor.value = "";
+		}
+		const secondaryContainer = document.getElementById("player" + i + "secondary");
+		for (let j = secondaryContainer.childElementCount - 1; j >= 0; j--) {
+			removeSecondaryChar(i, j);
+		}
+	}
+}
