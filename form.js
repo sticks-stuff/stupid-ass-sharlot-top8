@@ -17,11 +17,18 @@ function imgChanged(charDropdownId) {
 		charDropdown.msDropdown.value = "custom";
 	}
 	updateAlts("custom", document.getElementById(charDropdownId + "alt"));
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
 
 var json = {};
 var gameConfig = {};
 var packConfig = {};
+
+var gamesLoaded = false;
 
 (async function () {
 
@@ -58,6 +65,11 @@ var packConfig = {};
 				removeSecondaryChar(i, j); //we remove this shit otherwise secondaries break when we change games
 			}
 		}
+		try {
+			saveFormState();
+		} catch (e) {
+			
+		}
 	});
 
 	for(i = 1; i <= 8; i++) {
@@ -93,6 +105,7 @@ var packConfig = {};
 		updatePacks();
 		await updateChars();
 	});
+	gamesLoaded = true;
 })();
 
 async function loadGameConfig() {
@@ -125,6 +138,11 @@ function updatePackInfo() {
 	}).catch(error => {
 		console.error("Error loading pack config:", error);
 	});
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
 var currentGame = "";
 
@@ -181,6 +199,11 @@ async function addSecondaryChar(i) {
 				char.msDropdown.remove(customOption);
 			}
 		}
+		try {
+			saveFormState();
+		} catch (e) {
+			
+		}
 	});
 	updateAlts(char.msDropdown.value, document.getElementById("player" + i + "secondary" + secondaryCount + "alt"));
 
@@ -195,6 +218,11 @@ async function addSecondaryChar(i) {
 	// 		alt.appendChild(option);
 	// 	}
 	// }
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
 
 function removeSecondaryChar(i, j) {
@@ -217,6 +245,11 @@ function removeSecondaryChar(i, j) {
 
 		const buttonElement = secondaryDiv.querySelector(`button`);
 		if (buttonElement) buttonElement.setAttribute("onclick", `removeSecondaryChar(${i}, ${k})`);
+	}
+	try {
+		saveFormState();
+	} catch (e) {
+		
 	}
 }
 async function updatePacks() {
@@ -251,8 +284,20 @@ async function updatePacks() {
 				updateAlts(document.getElementById("player" + i + "secondary" + j + "char").msDropdown.value, document.getElementById("player" + i + "secondary" + j + "alt"));
 			}
 		}
+		try {
+			saveFormState();
+		} catch (e) {
+			
+		}
 	});
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
+
+var charsLoaded = false;
 
 async function updateChars() {
 	var game = document.getElementById('game').msDropdown.value;
@@ -321,6 +366,11 @@ async function updateChars() {
 					document.getElementById("player" + i + "char").msDropdown.remove(customOption);
 				}
 			}
+			try {
+				saveFormState();
+			} catch (e) {
+				
+			}
 		});
 		if (game == "roa") {
 			if (!document.getElementById(`player${i}RoaRecolor`)) {
@@ -338,7 +388,15 @@ async function updateChars() {
 		}
 		updateAlts(document.getElementById("player" + i + "char").msDropdown.value, document.getElementById("player" + i + "alt"));
 	}
+	charsLoaded = true;
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
+
+var altsLoaded = false;
 
 function updateAlts(char, alt) {
 	console.log("updating alts", char, alt);
@@ -365,6 +423,21 @@ function updateAlts(char, alt) {
 		},
 		enableAutoFilter: true
 	});
+	alt.msDropdown.on("close", function() {
+		try {
+			saveFormState();
+		} catch (e) {
+			
+		}
+	});
+	if (alt.id == "player8alt") {
+		altsLoaded = true;
+	}
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
 
 function sendToForm() {
@@ -462,10 +535,25 @@ function sendToForm() {
 			}
 		}
 	});
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
+
+var triedToLoad = false;
 
 document.addEventListener('DOMContentLoaded', function() {
 	styleChanged();
+
+	const intervalId = setInterval(async () => {
+		if (gamesLoaded && charsLoaded && altsLoaded) {
+			clearInterval(intervalId);
+			await loadFormState();
+			triedToLoad = true;
+		}
+	}, 100); // Check every 100ms
 });
 
 function clearAll() {
@@ -491,4 +579,107 @@ function clearAll() {
 			removeSecondaryChar(i, j);
 		}
 	}
+	try {
+		saveFormState();
+	} catch (e) {
+		
+	}
 }
+
+function saveFormState() {
+	if (triedToLoad == false) return;
+
+	const formState = {
+		startgglink: document.getElementById("startgglink").value,
+		toptext: document.getElementById("toptext").value,
+		bottomtext: document.getElementById("bottomtext").value,
+		url: document.getElementById("url").value,
+		backgroundImage: document.getElementById("backgroundImage").value,
+		logo: document.getElementById("logo").value,
+		game: document.getElementById("game").msDropdown.value,
+		pack: document.getElementById("pack").value,
+		players: []
+	};
+
+	for (let i = 1; i <= 8; i++) {
+		const player = {
+			name: document.getElementById(`player${i}name`).value,
+			twt: document.getElementById(`player${i}twt`).value,
+			char: document.getElementById(`player${i}char`).msDropdown.value,
+			alt: document.getElementById(`player${i}alt`).msDropdown.value,
+			charImg: document.getElementById(`player${i}charImg`).value,
+			secondary: []
+		};
+
+		const secondaryContainer = document.getElementById(`player${i}secondary`);
+		for (let j = 0; j < secondaryContainer.childElementCount; j++) {
+			const secondary = {
+				char: document.getElementById(`player${i}secondary${j}char`).msDropdown.value,
+				alt: document.getElementById(`player${i}secondary${j}alt`).msDropdown.value,
+				charImg: document.getElementById(`player${i}secondary${j}charImg`).value
+			};
+			player.secondary.push(secondary);
+		}
+
+		formState.players.push(player);
+	}
+
+	localStorage.setItem('formState', JSON.stringify(formState));
+}
+
+async function loadFormState() {
+	const formState = JSON.parse(localStorage.getItem('formState'));
+	if (!formState) return;
+
+	document.getElementById("startgglink").value = formState.startgglink;
+	document.getElementById("toptext").value = formState.toptext;
+	document.getElementById("bottomtext").value = formState.bottomtext;
+	document.getElementById("url").value = formState.url;
+	document.getElementById("backgroundImage").value = formState.backgroundImage;
+	document.getElementById("logo").value = formState.logo;
+	
+	document.getElementById("game").msDropdown.value = formState.game;
+	// document.getElementById('game').dispatchEvent(new Event('change'));
+
+	await loadGameConfig().then(async () => {
+		updatePacks();
+		await updateChars();
+	});
+
+	document.getElementById("pack").value = formState.pack;
+	// document.getElementById('pack').dispatchEvent(new Event('change'));
+	
+	updatePackInfo();
+	await loadPackConfig();
+	for (let i = 1; i <= 8; i++) {
+		updateAlts(document.getElementById("player" + i + "char").msDropdown.value, document.getElementById("player" + i + "alt"));
+		for (let j = 0; j < document.getElementById("player" + i + "secondary").childElementCount; j++) {
+			updateAlts(document.getElementById("player" + i + "secondary" + j + "char").msDropdown.value, document.getElementById("player" + i + "secondary" + j + "alt"));
+		}
+	}
+	
+	formState.players.forEach((player, i) => {
+		document.getElementById(`player${i + 1}name`).value = player.name;
+		document.getElementById(`player${i + 1}twt`).value = player.twt;
+		document.getElementById(`player${i + 1}char`).msDropdown.value = player.char;
+		updateAlts(player.char, document.getElementById(`player${i + 1}alt`));
+		document.getElementById(`player${i + 1}alt`).msDropdown.value = player.alt;
+		document.getElementById(`player${i + 1}charImg`).value = player.charImg;
+
+		player.secondary.forEach((secondary, j) => {
+			addSecondaryChar(i + 1).then(() => {
+				document.getElementById(`player${i + 1}secondary${j}char`).msDropdown.value = secondary.char;
+				updateAlts(secondary.char, document.getElementById(`player${i + 1}secondary${j}alt`));
+				document.getElementById(`player${i + 1}secondary${j}alt`).msDropdown.value = secondary.alt;
+				document.getElementById(`player${i + 1}secondary${j}charImg`).value = secondary.charImg;
+			});
+		});
+	});
+}
+
+document.querySelectorAll('input, select').forEach(element => {
+	element.addEventListener('change', saveFormState);
+});
+document.querySelectorAll('input[type=file]').forEach(element => {
+	element.addEventListener('input', saveFormState);
+});
