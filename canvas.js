@@ -627,6 +627,15 @@ function go() {
 		}
 	};
 
+	document.getElementById("twitterText").value = `Congratulations to ${document.getElementById("player1twt").value || document.getElementById("player1name").value} for taking ${document.getElementById("game").msDropdown.uiData.data.text} at ${document.getElementById("toptext").value.split(" - ")[0]}!
+
+1st) ${document.getElementById("player1twt").value || document.getElementById("player1name").value} 🥇
+2nd) ${document.getElementById("player2twt").value || document.getElementById("player2name").value} 🥈
+3rd) ${document.getElementById("player3twt").value || document.getElementById("player3name").value} 🥉
+
+Bracket: ${document.getElementById("startgglink").value}
+
+Top 8 Image:`; // this sucks lmfao
 }
 
 var SMALL_ICON = 32;
