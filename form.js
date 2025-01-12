@@ -441,6 +441,7 @@ function updateAlts(char, alt) {
 }
 
 function sendToForm() {
+	clearAll();
 	var input = document.getElementById("startgglink").value.replace("events", "event");
 	console.log(input.matchAll(startGGre), m => m[3]);
 
@@ -557,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function clearAll() {
-	document.getElementById("startgglink").value = "";
+	// document.getElementById("startgglink").value = "";
 	document.getElementById("toptext").value = "";
 	document.getElementById("bottomtext").value = "";
 	document.getElementById("url").value = "";
