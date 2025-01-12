@@ -548,13 +548,15 @@ var triedToLoad = false;
 document.addEventListener('DOMContentLoaded', function() {
 	styleChanged();
 
-	const intervalId = setInterval(async () => {
-		if (gamesLoaded && charsLoaded && altsLoaded) {
-			clearInterval(intervalId);
-			await loadFormState();
-			triedToLoad = true;
-		}
-	}, 100); // Check every 100ms
+	// disabling auto load for now as its annoying
+	
+	// const intervalId = setInterval(async () => {
+	// 	if (gamesLoaded && charsLoaded && altsLoaded) {
+	// 		clearInterval(intervalId);
+	// 		await loadFormState();
+	// 		triedToLoad = true;
+	// 	}
+	// }, 100); // Check every 100ms
 });
 
 function clearAll() {
