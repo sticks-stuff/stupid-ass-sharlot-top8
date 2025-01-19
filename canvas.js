@@ -300,6 +300,13 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 							customCenter = [0.5, 0.5];
 						}
 					}
+					if (game == "pplus") {
+						if (mainChar == "30") { // ivysaur
+							eyesight.x = img.naturalWidth / 2;
+							eyesight.y = img.naturalHeight / 2;
+							customCenter = [0.5, 0.5];
+						}
+					}
 				}
 
 	
