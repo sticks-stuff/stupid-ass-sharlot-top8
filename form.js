@@ -268,7 +268,15 @@ async function updatePacks() {
 			pack.appendChild(option);
 		}
 	}
-	if (Array.from(pack.options).some(option => option.value === "full")) {
+	if (game == "roa") {
+		pack.value = "costume";
+		document.getElementById('pixelyRendering').checked = true;
+		document.getElementById('pixelyRendering').dispatchEvent(new Event('change'));
+	} else if (game == "pplus") {
+		pack.value = "portrait";
+	} else if (game == "roa2") {
+		pack.value = "costume";
+	} else if (Array.from(pack.options).some(option => option.value === "full")) {
 		pack.value = "full";
 	} else {
 		pack.value = pack.options[0].value;
