@@ -284,6 +284,13 @@ async function updatePacks() {
 				updateAlts(document.getElementById("player" + i + "secondary" + j + "char").msDropdown.value, document.getElementById("player" + i + "secondary" + j + "alt"));
 			}
 		}
+		if (document.getElementById('game').msDropdown.value == "roa" && document.getElementById('pack').value == "costume") {
+			document.getElementById('pixelyRendering').checked = true;
+			document.getElementById('pixelyRendering').dispatchEvent(new Event('change'));
+		} else {
+			document.getElementById('pixelyRendering').checked = false;
+			document.getElementById('pixelyRendering').dispatchEvent(new Event('change'));
+		}
 		try {
 			saveFormState();
 		} catch (e) {
@@ -464,6 +471,8 @@ function sendToForm() {
 			await updateChars();
 		});
 		await loadPackConfig();
+		document.getElementById('pixelyRendering').checked = false;
+		document.getElementById('pixelyRendering').dispatchEvent(new Event('change'));
 
 		for (let i = 0; i < Math.min(data.players.length, 8); i++) {
 			const player = data.players[i];

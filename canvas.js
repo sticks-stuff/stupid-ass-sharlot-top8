@@ -163,6 +163,14 @@ function hideTwitterIconChanged() {
 	hideTwitterIcon = document.getElementById("hideTwitterIcon").checked;
 }
 
+var pixelyRendering = document.getElementById("pixelyRendering").checked;
+
+function pixelyRenderingChanged() {
+	console.log("pixelyRenderingChanged")
+	pixelyRendering = document.getElementById("pixelyRendering").checked;
+	console.log({pixelyRendering})
+}
+
 const degrees_to_radians = (deg) => (deg * Math.PI) / 180.0;
 
 // Given a number of characters, returns an array os positions (0-1) for their eyesights
@@ -437,7 +445,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					}
 				}
 	
-				resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom, game == "roa").then((resized) => {
+				resizeInCanvas(img, img.naturalWidth * zoom, img.naturalHeight * zoom, pixelyRendering).then((resized) => {
 					console.log("here")
 					var char = document.createElement("div");
 					char.style.width = SIZE_SQUARE[i] + "px";
@@ -447,7 +455,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					char.style.backgroundSize = `${ogImg.naturalWidth * zoom}px ${ogImg.naturalHeight * zoom}px`;
 					char.style.backgroundImage = `url(${resized})`;
 					char.style.backgroundRepeat = "no-repeat";
-					if (game == "roa") {
+					if (pixelyRendering) {
 						char.style.imageRendering = "pixelated";
 						ctx.imageSmoothingEnabled = false;
 					}
@@ -469,10 +477,10 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 						img.src = dataUrl;
 						img.onload = function() {
 							ogCtx.drawImage(img, 0, 0, SIZE_SQUARE[i], SIZE_SQUARE[i]);
-							resizeInCanvasReturnCanvas(ogCanvas, SIZE_SQUARE[i], SIZE_SQUARE[i], game == "roa").then((canvas) => {
+							resizeInCanvasReturnCanvas(ogCanvas, SIZE_SQUARE[i], SIZE_SQUARE[i], pixelyRendering).then((canvas) => {
 								if (shadows) {
 									var shadowCanvas = createCanvas(SIZE_SQUARE[i], SIZE_SQUARE[i]).getContext("2d");
-									if (game == "roa") {
+									if (pixelyRendering) {
 										shadowCanvas.imageSmoothingEnabled = false;
 									}
 									shadowCanvas.beginPath();
