@@ -247,9 +247,12 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					secondaries();
 				}
 			} else {
+				let altMinusExt = alt.split(".")[0];
+				let altMinusExtNoNumPadding = altMinusExt.replace(/^0+/, '') || '0'; //turns 0000 into 0000, 0001 into 1, etc
+
 				const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
 				const config = await response.json();
-				var eyesight = config?.eyesights?.[mainChar]["0"];
+				var eyesight = config?.eyesights?.[mainChar]?.[altMinusExt] || config?.eyesights?.[mainChar]?.[altMinusExtNoNumPadding] || config?.eyesights?.[mainChar]["0"];
 
 				if (!eyesight) {
 					eyesight = {
@@ -326,8 +329,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				const zoom_y = SIZE_SQUARE[i] / img.naturalHeight;
 	
 				let minZoom = 1;
-				let altMinusExt = alt.split(".")[0];
-				const rescalingFactor = config?.rescaling_factor?.[char]?.[altMinusExt] || 1;
+				const rescalingFactor = config?.rescaling_factor?.[char]?.[altMinusExt] || config?.rescaling_factor?.[char]?.[altMinusExtNoNumPadding] || config?.rescaling_factor?.[char]?.["0"] || 1;
 				const uncropped_edge = config?.uncropped_edge || [];
 	
 				if (!uncropped_edge || uncropped_edge.length == 0) {
