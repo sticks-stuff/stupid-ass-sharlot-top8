@@ -418,17 +418,20 @@ function updateAlts(char, alt) {
 	alt.innerHTML = "";
 	var game = document.getElementById('game').msDropdown.value;
 	var pack = document.getElementById('pack').value;
+	let codename = char
 	if (gameConfig.character_to_codename[char]) {
-		char = gameConfig.character_to_codename[char].codename;
+		codename = gameConfig.character_to_codename[char].codename;
 	}
 	var ddJson = [];
-	if(json[game][pack][char]) {
+	if(json[game][pack][codename]) {
 		console.log(json[game][pack]);
-		for (const [key, value] of Object.entries(json[game][pack][char])) {
+		for (const [key, value] of Object.entries(json[game][pack][codename])) {
 			let obj = {};
-			obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${char}${packConfig.postfix}${value}`;
+			obj.image = `https://raw.githubusercontent.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/${packConfig.prefix}${codename}${packConfig.postfix}${value}`;
 			obj.value = value;
-			obj.text = value.split(".")[0];
+			let altMinusExt = value.split(".")[0];
+			let altMinusExtNoNumPadding = altMinusExt.replace(/^0+/, '') || '0'; //turns 0000 into 0, 0001 into 1, etc
+			obj.text = gameConfig.character_to_codename[char]?.skin_name[altMinusExtNoNumPadding]?.name || gameConfig.character_to_codename[char]?.skin_name[altMinusExt]?.name || altMinusExt;
 			ddJson.push(obj);
 		}
 	}

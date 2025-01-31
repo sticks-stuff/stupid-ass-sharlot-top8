@@ -256,7 +256,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 				}
 			} else {
 				let altMinusExt = alt.split(".")[0];
-				let altMinusExtNoNumPadding = altMinusExt.replace(/^0+/, '') || '0'; //turns 0000 into 0000, 0001 into 1, etc
+				let altMinusExtNoNumPadding = altMinusExt.replace(/^0+/, '') || '0'; //turns 0000 into 0, 0001 into 1, etc
 
 				const response = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
 				const config = await response.json();
@@ -461,8 +461,8 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					}
 					
 					var offScreenContainer = document.createElement("div");
-					offScreenContainer.style.position = "absolute";
-					offScreenContainer.style.left = "-9999px";
+					// offScreenContainer.style.position = "absolute";
+					// offScreenContainer.style.left = "-9999px";
 					offScreenContainer.appendChild(char);
 					document.body.appendChild(offScreenContainer);
 	
@@ -493,7 +493,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 									ctx.drawImage(shadowCanvas.canvas, POS[i][0] - 2, POS[i][1] - 2, SIZE_SQUARE[i], SIZE_SQUARE[i]);
 								}
 								ctx.drawImage(canvas, POS[i][0], POS[i][1], SIZE_SQUARE[i], SIZE_SQUARE[i]);
-								offScreenContainer.remove();
+								// offScreenContainer.remove();
 								if (isSecondaries) {
 									imagesToLoad.made++;
 									if(imagesToLoad.made >= imagesToLoad.toMake) {
@@ -621,7 +621,10 @@ function go() {
 				};
 				reader.readAsDataURL(charImgInput.files[0]);
 			} else {
-				const fetchPackConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+				var fetchPackConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/${pack}/config.json`);
+				if (game == "pplus" && pack == "portrait") {
+					fetchPackConfig = await fetch(`./config.json`);
+				}
 				var packConfig = await fetchPackConfig.json();
 				const fetchGameConfig = await fetch(`https://raw.githack.com/joaorb64/StreamHelperAssets/main/games/${game}/base_files/config.json`);
 				gameConfig = await fetchGameConfig.json();
