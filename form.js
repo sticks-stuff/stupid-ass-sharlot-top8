@@ -431,7 +431,7 @@ function updateAlts(char, alt) {
 			obj.value = value;
 			let altMinusExt = value.split(".")[0];
 			let altMinusExtNoNumPadding = altMinusExt.replace(/^0+/, '') || '0'; //turns 0000 into 0, 0001 into 1, etc
-			obj.text = gameConfig.character_to_codename[char]?.skin_name[altMinusExtNoNumPadding]?.name || gameConfig.character_to_codename[char]?.skin_name[altMinusExt]?.name || altMinusExt;
+			obj.text = gameConfig.character_to_codename[char]?.skin_name?.[altMinusExtNoNumPadding]?.name || gameConfig.character_to_codename[char]?.skin_name?.[altMinusExt]?.name || altMinusExt;
 			ddJson.push(obj);
 		}
 	}
