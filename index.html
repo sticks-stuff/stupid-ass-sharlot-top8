@@ -121,7 +121,7 @@
 		<br>
 		<button onclick="go()">generate</button>
 		<br>
-		<button onclick="clearAll()">clear all</button>
+		<button onclick="confirmClearAll()">clear all</button>
 		<br>
 		<canvas id="canvas"></canvas>
 		<br>
@@ -144,7 +144,7 @@
 		
 		<script src="lib/color-picker/index.min.js"></script>
 		<script>
-			function enableColorInput(source) {
+			function enableColorInput(source) { // color picker
 				if (source.hasColorInput) {
 					return;
 				}
@@ -177,6 +177,12 @@
 				});
 			}
 			document.querySelectorAll('input[type=color]').forEach(enableColorInput);
+			
+			function confirmClearAll() {
+				if(confirm("are u sure you want to clear all?")) {
+					clearAll();
+				}
+			}
 		</script>
 	</body>
 
