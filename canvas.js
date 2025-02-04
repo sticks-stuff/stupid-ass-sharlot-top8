@@ -231,9 +231,7 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 		var mainChar = char;
 		var pack = document.getElementById("pack").value;
 
-		if (game == "roa2" && pack == "costume") {
-			customZoom = 1.0; // shits already zoomed
-		}
+		customZoom = parseFloat(document.getElementById(`player${i + 1}customZoom`).value) || 1.2;
 
 		if (document.getElementById(`player${i + 1}secondary`).childElementCount > 0) {
 			if (layerSecondaries) {
@@ -268,55 +266,14 @@ function handleImageOnload(i, imagesToLoad, img, char = false, alt = false, isSe
 					  y: img.naturalHeight / 2,
 					};
 				} else {
-					if (game == "roa2") {
-						switch (mainChar) {
-							case "Zetterburn":
-								if (pack != "art") {
-									eyesight.x = img.naturalWidth / 2;
-								}
-								break;
-							case "Fleet":
-								if (pack == "costume") {
-									eyesight.x = img.naturalWidth / 2;
-								}
-								break;
-							case "Kragg":
-								if (pack == "costume") {
-									eyesight.x = img.naturalWidth / 2;
-									eyesight.y = img.naturalHeight / 3;
-								}
-								break;
-							case "Ranno":
-							case "Clairen":
-							case "Wrastor":
-							case "Forsburn":
-							case "Maypul":
-							case "Loxodont":
-							case "Orcane":
-								eyesight.x = img.naturalWidth / 2;
-								break;
-						}
+					if (document.getElementById(`player${i + 1}ignoreEyesightX`).checked) {
+						eyesight.x = img.naturalWidth / 2;
 					}
-					if (game == "ssbu") {
-						if (mainChar == "purin") {
-							eyesight.x = img.naturalWidth / 2;
-							eyesight.y = img.naturalHeight / 2;
-							customCenter = [0.5, 0.5];
-						}
+					if (document.getElementById(`player${i + 1}ignoreEyesightY`).checked) {
+						eyesight.y = img.naturalHeight / 2;
 					}
-					if (game == "ssbm") {
-						if (mainChar == "jigglypuff") {
-							eyesight.x = img.naturalWidth / 2;
-							eyesight.y = img.naturalHeight / 2;
-							customCenter = [0.5, 0.5];
-						}
-					}
-					if (game == "pplus") {
-						if (mainChar == "30") { // ivysaur
-							eyesight.x = img.naturalWidth / 2;
-							eyesight.y = img.naturalHeight / 2;
-							customCenter = [0.5, 0.5];
-						}
+					if (document.getElementById(`player${i + 1}ignoreEyesightX`).checked && document.getElementById(`player${i + 1}ignoreEyesightY`).checked) {
+						customCenter = [0.5, 0.5];
 					}
 				}
 

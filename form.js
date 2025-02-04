@@ -94,6 +94,16 @@ var gamesLoaded = false;
 			<label for="player${i}charImg">custom: </label>
 			<input type="file" id="player${i}charImg" name="player${i}charImg" accept="image/*" onchange="imgChanged('player${i}')">
 			<br>
+			<input type="checkbox" id="player${i}ignoreEyesightX" name="player${i}ignoreEyesightX">
+			<label for="player${i}ignoreEyesightX">center character X</label>
+			<br>
+			<input type="checkbox" id="player${i}ignoreEyesightY" name="player${i}ignoreEyesightY">
+			<label for="player${i}ignoreEyesightY">center character Y</label>
+			<br>
+			<input type="number" id="player${i}customZoom" name="player${i}customZoom" value="1.2" step="0.1">
+			<label for="player${i}customZoom">zoom</label>
+			<br>
+			<br>
 			<button onclick="addSecondaryChar(${i})">add secondary character</button>
 			<div id="player${i}secondary">
 			</div>
@@ -107,6 +117,75 @@ var gamesLoaded = false;
 	});
 	gamesLoaded = true;
 })();
+
+function mainCharChanged(i) {
+	const mainChar = document.getElementById("player" + i + "char").msDropdown.value;
+	console.log({mainChar})
+	const game = document.getElementById('game').msDropdown.value;
+	const pack = document.getElementById('pack').value;
+
+	// reset
+	document.getElementById(`player${i}customZoom`).value = 1.2;
+	document.getElementById(`player${i}ignoreEyesightX`).checked = false;
+	document.getElementById(`player${i}ignoreEyesightY`).checked = false;
+
+	if (game == "roa2" && pack == "costume") {
+		document.getElementById(`player${i}customZoom`).value = 1.0;
+	}
+
+	if (game == "roa2") {
+		switch (mainChar) {
+			case "Zetterburn":
+				if (pack != "art") {
+					document.getElementById(`player${i}ignoreEyesightX`).checked = true;
+				}
+				break;
+			case "Fleet":
+				if (pack == "costume") {
+					document.getElementById(`player${i}ignoreEyesightX`).checked = true;
+				}
+				break;
+			case "Kragg":
+				if (pack == "costume") {
+					document.getElementById(`player${i}ignoreEyesightX`).checked = true;
+					document.getElementById(`player${i}ignoreEyesightY`).checked = true;
+				}
+				break;
+			case "Ranno":
+			case "Clairen":
+			case "Wrastor":
+			case "Forsburn":
+			case "Maypul":
+			case "Loxodont":
+			case "Orcane":
+				document.getElementById(`player${i}ignoreEyesightX`).checked = true;
+				break;
+		}
+	}
+	if (game == "ssbu") {
+		if (mainChar == "Jigglypuff") {
+			document.getElementById(`player${i}ignoreEyesightX`).checked = true;
+			document.getElementById(`player${i}ignoreEyesightY`).checked = true;
+			document.getElementById(`player${i}customZoom`).value = 1.4;
+		}
+	}
+	if (game == "ssbm") {
+		if (mainChar == "Jigglypuff") {
+			console.log("here")
+			document.getElementById(`player${i}ignoreEyesightX`).checked = true;
+			document.getElementById(`player${i}ignoreEyesightY`).checked = true;
+		}
+	}
+	if (game == "pplus") {
+		if (mainChar == "Ivysaur") {
+			document.getElementById(`player${i}ignoreEyesightY`).checked = true;
+			document.getElementById(`player${i}customZoom`).value = 1.0;
+		}
+		if (mainChar == "Jigglypuff") {
+			document.getElementById(`player${i}customZoom`).value = 1.0;
+		}
+	}
+}
 
 async function loadGameConfig() {
 	var game = document.getElementById('game').msDropdown.value;
@@ -276,6 +355,8 @@ async function updatePacks() {
 		pack.value = "portrait";
 	} else if (game == "roa2") {
 		pack.value = "costume";
+	} else if (game == "ssbm") {
+		pack.value = "CSProject_AltFull";
 	} else if (Array.from(pack.options).some(option => option.value === "full")) {
 		pack.value = "full";
 	} else {
@@ -386,6 +467,7 @@ async function updateChars() {
 			} catch (e) {
 				
 			}
+			mainCharChanged(i);
 		});
 		if (game == "roa") {
 			if (!document.getElementById(`player${i}RoaRecolor`)) {
@@ -523,6 +605,7 @@ function sendToForm() {
 				}
 				document.getElementById(`player${i + 1}char`).msDropdown.value = mainChar;
 				updateAlts(document.getElementById(`player${i + 1}char`).msDropdown.value, document.getElementById(`player${i + 1}alt`));
+				mainCharChanged(i + 1);
 	
 				if(PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]]) {
 					document.getElementById(`player${i + 1}alt`).msDropdown.value = PLAYER_OVERRIDES[tag]?.characters?.[data["game"]]?.[player.chars[0][0]];
