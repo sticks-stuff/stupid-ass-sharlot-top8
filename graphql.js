@@ -1,69 +1,76 @@
-var query = 
-`
-query SetsQuery($slug: String, $page: Int) {
+
+// Query for event info and standings (run once)
+const eventInfoQuery = `
+query EventInfo($slug: String) {
 	event(slug: $slug) {
-	  id
-	  name
-	  numEntrants
-	  state
-	  startAt
-	  videogame {
 		id
 		name
-		displayName
-	  }
-	  tournament { name city slug shortSlug}
-
-	  standings(query: {
-		page: 1
-		perPage: 20
-		sortBy: "standing"
-	  }){
-		nodes{
-		  placement
-		  entrant{
+		numEntrants
+		state
+		startAt
+		videogame {
+			id
 			name
-			participants {
-			  user {
-				authorizations(types:TWITTER) {
-				  externalUsername
+			displayName
+		}
+		tournament { name city slug shortSlug }
+		standings(query: {
+			page: 1
+			perPage: 20
+			sortBy: "standing"
+		}){
+			nodes{
+				placement
+				entrant{
+					name
+					participants {
+						user {
+							authorizations(types:TWITTER) {
+								externalUsername
+							}
+						}
+					}
 				}
-			  }
 			}
-		  }
 		}
-	  }
-	
-	  sets(page: $page, perPage: 40, sortType: RECENT) {
-		pageInfo {
-			total
-			totalPages
-			page
-			perPage
-			sortBy
-			filter
-		}
-		nodes {
-		  games {
-			winnerId	
-			selections {
-			  entrant {
-				name
-				id
-			  }
-			  selectionValue
-			  character {
-				name
-			  }
-			}
-		  }
-		} 
-	  }
 	}
-}
-`
+}`;
 
-async function eventQuery(slug, page) {
+// Query for sets only (paginated)
+const setsQuery = `
+query SetsQuery($slug: String, $page: Int, $perPage: Int) {
+	event(slug: $slug) {
+		sets(page: $page, perPage: $perPage, sortType: RECENT) {
+			pageInfo {
+				total
+				totalPages
+				page
+				perPage
+				sortBy
+				filter
+			}
+			nodes {
+				games {
+					winnerId
+					selections {
+						entrant {
+							name
+							id
+						}
+						selectionValue
+						character {
+							name
+						}
+					}
+				}
+			}
+		}
+	}
+}`;
+
+
+
+async function eventInfoQueryFetch(slug) {
 	let response = await fetch("https://api.start.gg/gql/alpha", {
 		method: "POST",
 		headers: {
@@ -72,14 +79,32 @@ async function eventQuery(slug, page) {
 			Accept: "application/json",
 		},
 		body: JSON.stringify({
-			query,
-			variables: { slug: `${slug}`, page },
+			query: eventInfoQuery,
+			variables: { slug: `${slug}` },
 		}),
 	});
-	let data = await response.json()
-	console.log({data});
+	let data = await response.json();
 	return data;
 }
+
+async function setsQueryFetch(slug, page, perPage = 40) {
+	let response = await fetch("https://api.start.gg/gql/alpha", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${accessToken}`,
+			Accept: "application/json",
+		},
+		body: JSON.stringify({
+			query: setsQuery,
+			variables: { slug: `${slug}`, page, perPage },
+		}),
+	});
+	let data = await response.json();
+	return data;
+}
+
+
 
 
 async function eventData(slug) {
@@ -88,16 +113,62 @@ async function eventData(slug) {
 	console.log(slug)
 	const freq = {};
 	freq["wins"] = {};
-	var page = 1;
-	var data = await eventQuery(slug, page);
-	while(page != data["data"]["event"]["sets"]["pageInfo"]["totalPages"]) {
-		console.log(page);
-		page++;
-		var newData = await eventQuery(slug, page);
-		data["data"]["event"]["sets"]["nodes"] = data["data"]["event"]["sets"]["nodes"].concat(newData["data"]["event"]["sets"]["nodes"])
-		console.log(data);
+
+	// 1. Fetch event info and standings (once)
+	const eventInfoData = await eventInfoQueryFetch(slug);
+	if (!eventInfoData || !eventInfoData.data || !eventInfoData.data.event) {
+		throw new Error("Event info not found");
 	}
-	const eventData = data["data"];
+	const eventData = eventInfoData.data;
+
+	// 2. Fetch sets (paginated, with error handling)
+	async function fetchAllSets(slug, perPage) {
+		let page = 1;
+		let allSetNodes = [];
+		let totalPages = 1;
+		let errorDetected = false;
+		do {
+			let data = await setsQueryFetch(slug, page, perPage);
+			//console.log(`Fetched page ${page} with perPage=${perPage}`);
+			//console.log(data);
+			// Detect complexity error
+			if (data && data.errors && Array.isArray(data.errors)) {
+				const complexityError = data.errors.find(e => e.message && e.message.includes("complexity"));
+				if (complexityError) {
+					errorDetected = true;
+					break;
+				}
+			}
+			const setsPageInfo = data["data"] && data["data"]["event"] && data["data"]["event"]["sets"] ? data["data"]["event"]["sets"]["pageInfo"] : null;
+			if (setsPageInfo && setsPageInfo.totalPages) {
+				totalPages = setsPageInfo.totalPages;
+			}
+			const nodes = data["data"] && data["data"]["event"] && data["data"]["event"]["sets"] && data["data"]["event"]["sets"]["nodes"] ? data["data"]["event"]["sets"]["nodes"] : [];
+			allSetNodes = allSetNodes.concat(nodes);
+			page++;
+		} while (page <= totalPages);
+		return { allSetNodes, errorDetected };
+	}
+
+	let perPage = 40;
+	let setsResult;
+	do {
+		setsResult = await fetchAllSets(slug, perPage);
+		if (setsResult.errorDetected) {
+			if (perPage > 10) {
+				perPage = Math.max(10, Math.floor(perPage / 2));
+				console.warn(`Query complexity error detected, retrying with perPage=${perPage}`);
+			} else {
+				throw new Error("Query complexity error persists even at perPage=10");
+			}
+		}
+	} while (setsResult.errorDetected);
+
+	// Attach all sets to eventData for downstream logic
+	if (eventData && eventData["event"]) {
+		if (!eventData["event"]["sets"]) eventData["event"]["sets"] = {};
+		eventData["event"]["sets"]["nodes"] = setsResult.allSetNodes;
+	}
 
 	try {
 		if (eventData["event"] === null) return null;
